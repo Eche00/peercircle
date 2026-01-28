@@ -154,15 +154,16 @@ The **Reveal mechanic** is the heart of PeerCircle. It prevents users from seein
 
 ## Development Plan (10 Days)
 
-### Day 1 – Product Definition & UX
+### Day 1 – Project Setup & Base Layout
 
-* Define session types (Follow / Like) and visibility logic (Public / Private).
-* Map out the **Password Gate → Submission → Lock → Reveal** state machine.
+* Core layout (Sidebar, Header, Navbar, Footer, Mobile-first container).
 
-### Day 2 – Project Setup & Base Layout
+### Day 2 – Auth / Dashboard
 
-* Next.js / TypeScript setup with Tailwind CSS.
-* Core layout (Navbar, Footer, Mobile-first container).
+* Joined sessions
+* Created sessions
+* Status tracking (Waiting / Active / Completed) UI
+* Auth Page UI
 
 ### Day 3 – Session Listing & Search Flow
 
