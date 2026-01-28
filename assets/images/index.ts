@@ -1,0 +1,6 @@
+export { default as usdtimage } from './USDT.png'
+export { default as sendImg } from './send.png'
+export { default as facebookImage } from './facebook.png'
+export { default as instaImage } from './instagram.png'
+export { default as microImage } from './microsoft.png'
+export { default as xImage } from './twitter.png'
