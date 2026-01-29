@@ -28,10 +28,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <section className="w-screen overflow-hidden">
-          {children}
-        </section>
-
+        {children}
       </body>
     </html>
   );
