@@ -1,28 +1,17 @@
 'use client';
 
+import { sideBarItems, sideBarItems2 } from '@/utils/routes';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-
-
 
 
 function Sidebar() {
     const pathname = usePathname()
 
-    // Sidebar Nav 
-    const sideBarItems = [
-        { name: "Home", link: '/', icon: 'home' },
-        { name: "About", link: '/about', icon: 'info' },
-        { name: "Events", link: '/events', icon: 'calendar' },
-        { name: "Excos", link: '/excos', icon: 'people' },
-        { name: "Student Voice", link: '/studentvoice', icon: 'speak' },
-
-    ];
-
 
     return (
         <div className="bg-[#16181B] text-white fixed top-0 left-0 w-67.5 h-screen flex flex-col  py-2 gap-10">
-            {/* lSidebar Container */}
+            {/* Sidebar Container */}
             <section className="w-[80%] mx-auto flex flex-col gap-2">
                 {/* Logo Section  */}
                 <div className="flex items-center relative pb-6">
@@ -34,7 +23,11 @@ function Sidebar() {
 
                 {/* Link Section  */}
                 {sideBarItems.map((item) =>
-                    <Link href={item.link} key={item.name} className={pathname === item.link ? 'text-white font-bold bg-[#161B22] py-3 px-4 rounded-lg' : 'text-gray-400 py-3 px-4 rounded-lg hover:bg-[#161B22]/10'}>{item.name}</Link>)
+                    <Link href={item.link} key={item.name} className={pathname === item.link ? 'text-white font-bold bg-[#8F4AE3] py-3 px-4 rounded-lg flex items-center gap-3' : 'text-gray-400 py-3 px-4 rounded-lg hover:bg-[#8F4AE3]/10 flex items-center gap-3'}>{item.icon} {item.name}</Link>)
+                }
+                <hr className=' w-full h-[0.1px] bg-gray-600 border-none' />
+                {sideBarItems2.map((item) =>
+                    <Link href={item.link} key={item.name} className={pathname === item.link ? 'text-white font-bold bg-[#8F4AE3] py-3 px-4 rounded-lg flex items-center gap-3' : 'text-gray-400 py-3 px-4 rounded-lg hover:bg-[#8F4AE3]/10 flex items-center gap-3'}>{item.icon} {item.name}</Link>)
                 }
 
             </section>
