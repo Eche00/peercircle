@@ -1,8 +1,14 @@
 import React from 'react'
+import Hero from './homepage/Hero'
 
 function page() {
     return (
-        <div>home</div>
+        <div>
+            {/* container */}
+            <main>
+                <Hero />
+            </main>
+        </div>
     )
 }
 

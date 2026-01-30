@@ -8,7 +8,7 @@ import DragHandleIcon from '@mui/icons-material/DragHandle';
 function Header() {
     const pathname = usePathname()
     return (
-        <div className='bg-[#16181B] text-white sm:py-3 py-2  fixed top-0 left-0 w-full z-10  '>
+        <div className='bg-[#16181B] text-white sm:py-3 py-2  fixed top-0 left-0 w-full z-50  '>
 
             {/* container  */}
             <section className='flex items-center justify-center gap-2 sm:w-[90%] w-[98%] mx-auto'>
@@ -24,7 +24,7 @@ function Header() {
                 {/* Navigation */}
                 <div className='sm:flex hidden flex-1 items-center justify-center'>
                     <nav className='w-fit bg-[#191A1E] flex items-center gap-4 py-3 px-6 rounded-lg'>
-                        {publicItems.map((item) => (<Link href={item.link} className={item.link === pathname ? 'text-[#8F4AE3] text-[16px] font-semibold duration-300' : ' text-white hover:text-gray-300 duration-100'}>{item.name}</Link>))}
+                        {publicItems.map((item) => (<Link href={item.link} key={item.name} className={item.link === pathname ? 'text-[#8F4AE3] text-[16px] font-semibold duration-300' : ' text-white hover:text-gray-300 duration-100'}>{item.name}</Link>))}
                     </nav>
                 </div>
 
