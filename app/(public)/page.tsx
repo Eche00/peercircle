@@ -1,5 +1,6 @@
 import React from 'react'
 import Hero from './homepage/Hero'
+import Aim from './homepage/Aim'
 
 function page() {
     return (
@@ -7,6 +8,7 @@ function page() {
             {/* container */}
             <main>
                 <Hero />
+                <Aim />
             </main>
         </div>
     )
