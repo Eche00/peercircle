@@ -62,7 +62,7 @@ export const benefits = [
 
 function Aim() {
     return (
-        <div className=' min-h-screen relative'>
+        <div className=' min-h-screen relative bg-[#16181B]'>
             <div className='circleBlur absolute top-5 -right-30 z-0'></div>
             <div className='circleBlur absolute top-1/2 -translate-y-1/2 -left-30 z-0'></div>
             {/* container  */}
@@ -77,7 +77,7 @@ function Aim() {
                             <span className='sm:text-[24px] text-[16px] font-semibold text-[#8F4AE3]'>{header.name}</span></motion.div>))}
                     </div>
                     <div className=" flex flex-wrap items-center  justify-center sm:gap-8 gap-[33.93px] w-full mx-auto pt-16">
-                        {benefits.map(b => (<motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} viewport={{ once: true }} key={b.title} className='flex items-center flex-col justify-center gap-2 sm:w-118.75 w-[336.9px] sm:h-76.5 h-[245.45px] rounded-[30px] bg-[#8F4AE3]/10'>
+                        {benefits.map(b => (<motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} viewport={{ once: true }} key={b.title} className='flex items-center flex-col justify-center gap-2 sm:w-98.75 w-[336.9px] sm:h-76.5 h-[245.45px] rounded-[30px] bg-[#212329] border border-gray-800 hover:border-[#8F4AE3]'>
                             <span className='w-16 h-16 bg-[#8F4AE3] flex items-center justify-center rounded-lg'>{b.icon}</span>
                             <span className='sm:text-[24px] text-[17.03px] font-semibold text-white'>{b.title}</span>
                             <span className='sm:text-[20px] text-[14.19px] font-medium text-white sm:max-w-89.75 max-w-[254.67px]'>{b.desc}</span>

@@ -62,7 +62,7 @@ function Faqs() {
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, delay: index * 0.1 }}
                             viewport={{ once: true }}
-                            className="bg-[#8F4AE3]/10 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+                            className="bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
                         >
                             <h3 className="text-[20px] sm:text-[22px] font-semibold text-white mb-3">
                                 {faq.question}

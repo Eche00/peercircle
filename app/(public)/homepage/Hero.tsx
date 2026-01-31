@@ -7,11 +7,14 @@ import Link from 'next/link'
 
 function Hero() {
     return (
-        <div className='relative flex min-h-screen bg-cover bg-center ' style={{ backgroundImage: `url(${HeroBgImage.src})` }}>
+        <div className='relative flex min-h-screen bg-cover bg-center '
+        //  style={{ backgroundImage: `url(${HeroBgImage.src})` }}
+        >
             {/* Overlay */}
-            <div className="absolute inset-0 bg-black/50" />
+            {/* <div className="absolute inset-0 bg-black/50" /> */}
 
             <section className=' max-w-[90%] mx-auto flex sm:flex-row md:flex-row flex-col items-center  justify-center z-20'>
+                {/* Left hero section  */}
                 <motion.div
                     className=" flex-1 gap-50 sm:pt-0 pt-10"
                     initial={{ opacity: 0, x: -100 }}
@@ -38,12 +41,13 @@ function Hero() {
                         </Link>
                         <Link
                             href="/dashboard/sessions"
-                            className=" sm:py-2.5 py-3 px-3 text-[16px] sm:text-[18px] font-normal border  rounded-[10px] flex items-center justify-center ">
+                            className="  sm:py-5 sm:px-9 py-3 px-3 text-[16px] sm:text-[18px] text-[#8F4AE3] font-medium border border-[#8F4AE3]  rounded-[10px] flex items-center justify-center ">
                             {" "}
                             Join a Session
                         </Link>
                     </div>
                 </motion.div>
+                {/* Right hero section  */}
                 <motion.div initial={{ opacity: 0, scale: 0.8 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 1, ease: "linear" }}

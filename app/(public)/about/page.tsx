@@ -99,7 +99,7 @@ function AboutPage() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="flex-1 w-full h-[300px] sm:h-[400px] bg-[#8F4AE3]/10 rounded-2xl flex items-center justify-center border border-[#8F4AE3]/20"
+            className="flex-1 w-full h-75 sm:h-100 bg-[#8F4AE3]/10 rounded-2xl flex items-center justify-center border border-[#8F4AE3]/20"
           >
             {/* Placeholder for an abstract image or graphic */}
             <Diversity3 className="text-[120px] text-[#8F4AE3]/40" />
