@@ -71,9 +71,8 @@ function Footer() {
                             <li>Partnerships</li>
                         </ul>
                     </div>
-
                 </section>
-                <p className="  text-[16px] font-normal text-[#FFFFFF] flex items-center justify-center gap-2.5 text-center pt-20 pb-10"><span>@</span> 2026S PEERCIRCLE. all Right Reserved </p>
+                <p className="  text-[16px] font-normal text-[#FFFFFF] flex items-center justify-center gap-2.5 text-center pt-20 pb-10"><span>©</span> 2026 PEERCIRCLE. all Right Reserved </p>
 
             </footer>
         </div>
