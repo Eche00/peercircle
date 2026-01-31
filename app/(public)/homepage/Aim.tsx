@@ -1,6 +1,6 @@
 'use client'
 
-import { Assignment, Attribution, AutoMode, ConnectWithoutContact, Diversity1, JoinFull, ScreenShare, SelfImprovement, SensorOccupied, TravelExplore } from '@mui/icons-material'
+import { Assignment, Attribution, AutoMode, ConnectWithoutContact, Diversity1, JoinFull, Savings, ScreenShare, SelfImprovement, SensorOccupied, TravelExplore } from '@mui/icons-material'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
@@ -20,6 +20,10 @@ export const roadMapHeader = [
     {
         name: 'Get Started',
         icon: <Assignment />,
+    },
+    {
+        name: 'Earn',
+        icon: <Savings />,
     },
 ]
 export const benefits = [
@@ -50,9 +54,10 @@ export const benefits = [
     },
     {
         icon: <SelfImprovement />,
-        title: 'Long-Term Growth',
-        desc: 'Grow habits, confidence, and momentum through consistent peer support.',
-    },
+        title: 'Reward Yourself',
+        desc: 'Earn points as you engage and contribute to your peer circle.',
+    }
+
 ]
 
 function Aim() {
@@ -67,9 +72,9 @@ function Aim() {
                     <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} viewport={{ once: true }} className='soraFont sm:text-[54px] text-[28px] font-semibold text-[#F0F0F0] p-2.5  leading-[100%] pb-'>Let’s See How PeerCircle <span className='text-[#8F4AE3]'> Works</span></motion.h2>
                     <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} viewport={{ once: true }} className=' sm:text-[24px] text-[20px] font-medium text-[#F0F0F0] p-2.5  leading-[100%] '>Discover how simple steps and strong peer connections help you stay consistent and grow together.</motion.p>
                     <div className=" flex flex-wrap items-center  justify-center sm:gap-8 gap-[33.93px] w-full mx-auto pt-16">
-                        {roadMapHeader.map(header => (<motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} viewport={{ once: true }} key={header.name} className='flex items-center flex-col justify-center sm:gap-4 gap-[12.03px] sm:w-57.5 w-43.25 sm:h-57.25 h-[172.24px] rounded-2xl bg-[#8F4AE3]/10'>
+                        {roadMapHeader.map(header => (<motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} viewport={{ once: true }} key={header.name} className='flex items-center flex-col justify-center sm:gap-4 gap-[12.03px] sm:w-47.5 w-33.25 sm:h-47.25 h-33 rounded-2xl bg-[#8F4AE3]/10'>
                             <span className='w-10 h-10 bg-[#8F4AE3] flex items-center justify-center rounded-lg'>{header.icon}</span>
-                            <span className='sm:text-[24px] text-[18.05px] font-semibold text-[#8F4AE3]'>{header.name}</span></motion.div>))}
+                            <span className='sm:text-[24px] text-[16px] font-semibold text-[#8F4AE3]'>{header.name}</span></motion.div>))}
                     </div>
                     <div className=" flex flex-wrap items-center  justify-center sm:gap-8 gap-[33.93px] w-full mx-auto pt-16">
                         {benefits.map(b => (<motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} viewport={{ once: true }} key={b.title} className='flex items-center flex-col justify-center gap-2 sm:w-118.75 w-[336.9px] sm:h-76.5 h-[245.45px] rounded-[30px] bg-[#8F4AE3]/10'>
