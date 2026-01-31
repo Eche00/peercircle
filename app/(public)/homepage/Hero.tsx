@@ -13,12 +13,12 @@ function Hero() {
             {/* Overlay */}
             {/* <div className="absolute inset-0 bg-black/50" /> */}
 
-            <section className=' max-w-[90%] mx-auto flex sm:flex-row md:flex-row flex-col items-center  justify-center z-20'>
+            <section className=' max-w-[90%] mx-auto flex  md:flex-row flex-col items-center  justify-center z-20'>
                 {/* Left hero section  */}
                 <motion.div
                     className=" flex-1 gap-50 sm:pt-0 pt-10"
-                    initial={{ opacity: 0, x: -100 }}
-                    whileInView={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, scale: 0.7 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 1, ease: "linear" }}>
                     <div className=" flex flex-col sm:text-start text-center sm:items-start items-center gap-6">

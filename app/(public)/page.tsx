@@ -6,7 +6,7 @@ import Faqs from './homepage/Faqs'
 function page() {
     return (
         <div>
-            {/* container */}
+            {/* Homepage container */}
             <main>
                 <Hero />
                 <Aim />
