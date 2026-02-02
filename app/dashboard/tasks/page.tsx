@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 "use client";
 
 import React, { useState } from "react";
@@ -101,7 +100,7 @@ export default function TasksPage() {
         <div className="flex items-center gap-4 bg-[#212329] p-4 rounded-2xl border border-gray-800 shadow-lg">
           <div className="flex items-center gap-3 pr-4 border-r border-gray-700">
             <div className="w-10 h-10 bg-[#8F4AE3]/10 rounded-xl flex items-center justify-center text-[#8F4AE3]">
-              <starsOutlined />
+              <StarsOutlined />
             </div>
             <div>
               <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">
@@ -115,7 +114,7 @@ export default function TasksPage() {
           </div>
           <div className="flex items-center gap-3 pl-2">
             <div className="w-10 h-10 bg-green-500/10 rounded-xl flex items-center justify-center text-green-500">
-              <checkCircleOutline />
+              <CheckCircleOutline />
             </div>
             <div>
               <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">
@@ -226,7 +225,7 @@ export default function TasksPage() {
                 animate={{ scale: 1 }}
                 className="absolute -top-2 -right-2 bg-green-500 text-white w-6 h-6 rounded-full flex items-center justify-center shadow-lg"
               >
-                <checkCircleOutline className="text-[14px]" />
+                <CheckCircleOutline className="text-[14px]" />
               </motion.div>
             )}
           </motion.div>
@@ -275,18 +274,3 @@ export default function TasksPage() {
     </div>
   );
 }
-
-// Helper components for icons to ensure they follow user constraints
-const starsOutlined = () => <StarsOutlined />;
-const checkCircleOutline = () => <CheckCircleOutline />;
-=======
-import React from 'react'
-
-function page() {
-    return (
-        <div>page</div>
-    )
-}
-
-export default page
->>>>>>> 649a1fc6aa81e997492b66aefbb77a027d687eb1

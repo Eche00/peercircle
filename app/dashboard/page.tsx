@@ -1,7 +1,6 @@
-<<<<<<< HEAD
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import {
   AssessmentOutlined,
@@ -10,10 +9,14 @@ import {
   TrendingUpOutlined,
   NotificationImportantOutlined,
   Bolt,
+  PestControlRodent,
+  ArrowForwardIos,
 } from "@mui/icons-material";
 import Link from "next/link";
 
 export default function DashboardPage() {
+  const [prevSessions, setPrevSessions] = useState<boolean>(false);
+
   const stats = [
     {
       label: "Active Sessions",
@@ -84,7 +87,101 @@ export default function DashboardPage() {
         <div className="absolute bottom-[-20%] left-[-5%] w-48 h-48 bg-black/10 rounded-full blur-3xl"></div>
       </motion.div>
 
-      {/* Stats Grid */}
+      {/* Top Grid: Trust Points & Stats */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* TRUST POINTS CARD (Merged from remote) */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-3xl p-8 shadow-xl flex flex-col items-center justify-center relative overflow-hidden group"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-[#8F4AE3]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mb-6 relative z-10">
+            Trust Points
+          </p>
+
+          {/* PREMIUM CIRCLE BADGE */}
+          <div className="relative w-32 h-32 flex items-center justify-center z-10">
+            <svg className="absolute w-full h-full -rotate-90">
+              <circle
+                cx="64"
+                cy="64"
+                r="60"
+                fill="transparent"
+                stroke="rgba(143, 74, 227, 0.1)"
+                strokeWidth="8"
+              />
+              <circle
+                cx="64"
+                cy="64"
+                r="60"
+                fill="transparent"
+                stroke="#8F4AE3"
+                strokeWidth="8"
+                strokeDasharray="377"
+                strokeDashoffset="94"
+                strokeLinecap="round"
+              />
+            </svg>
+            <div className="text-center">
+              <p className="text-3xl font-black text-white">750</p>
+              <p className="text-[10px] text-gray-500 font-bold uppercase">
+                Points
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-6 bg-[#8F4AE3]/10 px-4 py-1.5 rounded-full relative z-10 border border-[#8F4AE3]/20">
+            <p className="text-xs text-[#8F4AE3] font-bold">
+              Tier: <span className="text-white">Platinum</span>
+            </p>
+          </div>
+        </motion.div>
+
+        {/* ACTIVITY FEED (Merged from remote) */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="lg:col-span-3 bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-3xl px-8 py-6 shadow-xl flex flex-col"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-bold text-white flex items-center gap-2 uppercase tracking-wide">
+              <div className="w-2 h-2 rounded-full bg-[#8F4AE3] animate-pulse"></div>
+              Activity Feed
+            </h2>
+            <span className="text-xs text-gray-500 font-medium">
+              Latest updates
+            </span>
+          </div>
+
+          <div className="space-y-4">
+            {[
+              { event: "Earned Trust Points", date: "Feb 1, 2025" },
+              { event: "Withdrawal Approved", date: "Feb 3, 2025" },
+              { event: "Escrow Completed", date: "Jan 30, 2025" },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className="flex items-center justify-between group cursor-pointer hover:translate-x-1 transition-transform"
+              >
+                <span className="text-gray-300 group-hover:text-white transition-colors flex items-center gap-3 font-medium">
+                  <div className="w-1.5 h-1.5 rounded-full bg-gray-700 group-hover:bg-[#8F4AE3]"></div>
+                  {item.event}
+                </span>
+                <span className="text-[#8F4AE3] text-xs font-bold bg-[#8F4AE3]/5 px-3 py-1 rounded-lg border border-[#8F4AE3]/10">
+                  {item.date}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <button className="mt-8 text-sm text-gray-500 hover:text-white transition-colors font-bold uppercase tracking-wider text-center">
+            View Full History
+          </button>
+        </motion.div>
+      </div>
+
+      {/* Quick Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
           <motion.div
@@ -110,10 +207,9 @@ export default function DashboardPage() {
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.5 }}
-          className="lg:col-span-2 bg-[#212329] rounded-3xl border border-gray-800 overflow-hidden"
+          className="lg:col-span-2 bg-[#212329] rounded-3xl border border-gray-800 overflow-hidden shadow-xl"
         >
-          <div className="p-6 border-b border-gray-800 flex justify-between items-center bg-gray-800/20">
+          <div className="p-6 border-b border-gray-800 flex justify-between items-center bg-gray-800/10">
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               <TaskAltOutlined className="text-[#8F4AE3]" /> Quick Tasks
             </h2>
@@ -147,7 +243,7 @@ export default function DashboardPage() {
                 className="flex items-center justify-between p-4 hover:bg-white/5 rounded-2xl transition-colors group"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-2 h-2 rounded-full bg-[#8F4AE3]"></div>
+                  <div className="w-2 h-2 rounded-full bg-[#8F4AE3] group-hover:scale-150 transition-transform"></div>
                   <div>
                     <p className="font-bold text-white group-hover:text-[#8F4AE3] transition-colors">
                       {task.title}
@@ -157,32 +253,34 @@ export default function DashboardPage() {
                         {task.reward}
                       </span>
                       <span className="text-xs text-gray-500 flex items-center gap-1">
-                        <trendingUpOutlined style={{ fontSize: "12px" }} />{" "}
+                        <TrendingUpOutlined style={{ fontSize: "12px" }} />{" "}
                         {task.time}
                       </span>
                     </div>
                   </div>
                 </div>
-                <button className="text-gray-500 hover:text-white transition-colors">
+                <Link
+                  href="/dashboard/tasks"
+                  className="text-gray-500 hover:text-white transition-colors"
+                >
                   <ArrowForwardIos style={{ fontSize: "14px" }} />
-                </button>
+                </Link>
               </div>
             ))}
           </div>
         </motion.div>
 
-        {/* Growth Chart / Info Widget */}
+        {/* Steady Growth Analytics Widget */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.6 }}
-          className="bg-[#212329] rounded-3xl border border-gray-800 p-6 flex flex-col items-center text-center justify-center relative overflow-hidden group"
+          className="bg-[#212329] rounded-3xl border border-gray-800 p-8 flex flex-col items-center text-center justify-center relative overflow-hidden group shadow-xl"
         >
           <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
             <TrendingUpOutlined style={{ fontSize: "100px" }} />
           </div>
-          <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center text-green-500 mb-6 group-hover:scale-110 transition-transform">
-            <trendingUpOutlined style={{ fontSize: "40px" }} />
+          <div className="w-24 h-24 bg-green-500/10 rounded-full flex items-center justify-center text-green-500 mb-6 group-hover:scale-110 transition-transform shadow-inner">
+            <TrendingUpOutlined style={{ fontSize: "40px" }} />
           </div>
           <h3 className="text-xl font-bold text-white mb-2">Steady Growth</h3>
           <p className="text-gray-400 text-sm mb-6">
@@ -193,175 +291,85 @@ export default function DashboardPage() {
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: "85%" }}
-              transition={{ duration: 1, delay: 0.8 }}
+              transition={{ duration: 1, delay: 0.5 }}
               className="h-full bg-green-500 shadow-lg shadow-green-500/20"
             />
           </div>
-          <button className="w-full py-3 rounded-xl border border-gray-700 text-gray-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+          <button className="w-full py-4 rounded-xl border border-gray-700 text-gray-400 font-bold hover:bg-white/5 hover:text-white transition-all uppercase tracking-widest text-xs">
             View Analytics
           </button>
         </motion.div>
       </div>
+
+      {/* SESSIONS JOINED SECTION (Merged from remote) */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mt-4"
+      >
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+            <AssessmentOutlined className="text-[#8F4AE3]" />
+            Sessions Joined
+          </h2>
+        </div>
+
+        {prevSessions ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { title: "Active — Following", status: "Funds Secured" },
+              {
+                title: "Active — Inspection Phase",
+                status: "Inspection Ongoing",
+              },
+              {
+                title: "Completed — Earned 50 Pts",
+                status: "Buyer & Seller Review",
+              },
+            ].map((sess, i) => (
+              <div
+                key={i}
+                className="bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-3xl p-6 shadow-xl group transition-all"
+              >
+                <div className="h-40 bg-gray-800/50 rounded-2xl mb-4 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#8F4AE3]/10 to-transparent"></div>
+                </div>
+                <p className="text-md font-bold text-white mb-1 group-hover:text-[#8F4AE3] transition-colors">
+                  {sess.title}
+                </p>
+                <p className="text-xs text-gray-500 font-medium">
+                  Status: <span className="text-gray-300">{sess.status}</span>
+                </p>
+                <button className="mt-6 w-full py-3 rounded-xl bg-[#8F4AE3] hover:bg-[#7a3bc7] text-sm font-bold transition-all shadow-lg shadow-[#8F4AE3]/10">
+                  View Details
+                </button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <motion.div
+            whileHover={{ scale: 1.01 }}
+            className="bg-[#212329] border-2 border-dashed border-[#8F4AE3]/30 min-h-[300px] flex flex-col items-center justify-center rounded-[40px] mt-2 group hover:border-[#8F4AE3] transition-colors"
+          >
+            <div className="w-20 h-20 bg-[#8F4AE3]/10 rounded-full flex items-center justify-center text-[#8F4AE3] mb-6 group-hover:rotate-12 transition-transform">
+              <PestControlRodent fontSize="large" />
+            </div>
+            <p className="text-lg text-white font-bold mb-2">
+              Finding your flow?
+            </p>
+            <p className="text-sm text-gray-400 text-center max-w-xs mb-8">
+              No active sessions found. Join a peer circle to start growing and
+              earn Trust Points.
+            </p>
+            <Link
+              href="/dashboard/sessions"
+              className="py-4 px-10 rounded-2xl bg-[#8F4AE3] hover:bg-[#7a3bc7] text-white font-bold transition-all shadow-xl shadow-[#8F4AE3]/20"
+            >
+              Join First Session
+            </Link>
+          </motion.div>
+        )}
+      </motion.div>
     </div>
   );
 }
-
-// Minimal helpers
-const trendingUpOutlined = () => <TrendingUpOutlined />;
-const ArrowForwardIos = ({ style }: { style: any }) => (
-  <Link href="/dashboard/tasks" legacyBehavior>
-    <a style={style} className="cursor-pointer">
-      →
-    </a>
-  </Link>
-);
-=======
-'use client'
-import { PestControlRodent } from "@mui/icons-material";
-import Link from "next/link";
-import React, { useState } from "react";
-
-function Dashboard() {
-    const [prevSessions, setPrevSessions] = useState<boolean>(false)
-    return (
-        <div className="min-h-screen text-white sm:p-6 ">
-            {/* TOP GRID — BALANCE / TRUST / ACTIVITY */}
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-
-                {/* TRUST POINTS CARD */}
-                <div className="bg-linear-to-br from-[#1b1f3b] bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-2xl p-6 shadow-lg flex flex-col items-center justify-center">
-                    <p className="text-sm text-gray-400 mb-4"> Trust Points </p>
-                    {/* CIRCLE BADGE */}
-                    <div className="h-28 w-28 rounded-full border-4 border-purple-500 flex items-center justify-center">
-                        <div className="text-center">
-                            <p className="text-2xl font-bold">750</p>
-                            <p className="text-xs text-gray-400">Points</p>
-                        </div>
-                    </div>
-                    <p className="text-xs text-gray-400 mt-4"> Trust Tier: <span className="text-purple-400">Platinum</span> </p>
-                </div>
-
-                {/* ACTIVITY FEED — EXTENDS TO EDGE */}
-                <div className="lg:col-span-3 bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-2xl px-6 py-4 shadow-lg">
-                    <div className="flex items-center justify-between mb-3">
-                        <p className="text-xs uppercase tracking-wide text-gray-400">
-                            Activity Feed
-                        </p>
-                        <span className="text-[11px] text-gray-500">
-                            Latest updates
-                        </span>
-                    </div>
-
-                    <ul className="space-y-2 text-sm">
-                        <li className="flex justify-between border-b border-gray-800 pb-2">
-                            <span className="text-gray-300">
-                                Earned Trust Points
-                            </span>
-                            <span className="text-purple-400 text-xs">
-                                Feb 1, 2025
-                            </span>
-                        </li>
-
-                        <li className="flex justify-between border-b border-gray-800 pb-2">
-                            <span className="text-gray-300">
-                                Withdrawal Approved
-                            </span>
-                            <span className="text-purple-400 text-xs">
-                                Feb 3, 2025
-                            </span>
-                        </li>
-
-                        <li className="flex justify-between">
-                            <span className="text-gray-300">
-                                Escrow Completed
-                            </span>
-                            <span className="text-purple-400 text-xs">
-                                Jan 30, 2025
-                            </span>
-                        </li>
-                    </ul>
-                </div>
-
-
-            </div>
-
-
-            {/* SESSIONS JOINED SECTION */}
-            <div className="mt-10">
-                <h2 className="text-lg font-semibold mb-4">
-                    Sessions Joined
-                </h2>
-
-                {prevSessions ?
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-                        {/* SESSION CARD */}
-                        <div className="bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-2xl p-4 shadow-lg">
-                            <div className="h-32 bg-gray-800 rounded-lg mb-4" />
-
-                            <p className="text-sm font-medium">
-                                Active — Following
-                            </p>
-
-                            <p className="text-xs text-gray-400 mt-1">
-                                Status: Funds Secured
-                            </p>
-
-                            <button className="mt-4 w-full py-2 rounded-lg bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 cursor-pointer text-sm">
-                                View Details
-                            </button>
-                        </div>
-
-                        {/* SESSION CARD */}
-                        <div className="bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-2xl p-4 shadow-lg">
-                            <div className="h-32 bg-gray-800 rounded-lg mb-4" />
-
-                            <p className="text-sm font-medium">
-                                Active — Inspection Phase
-                            </p>
-
-                            <p className="text-xs text-gray-400 mt-1">
-                                Status: Inspection Ongoing
-                            </p>
-
-                            <button className="mt-4 w-full py-2 rounded-lg bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 cursor-pointer text-sm">
-                                View Details
-                            </button>
-                        </div>
-
-                        {/* SESSION CARD */}
-                        <div className="bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-2xl p-4 shadow-lg">
-                            <div className="h-32 bg-gray-800 rounded-lg mb-4" />
-
-                            <p className="text-sm font-medium">
-                                Completed — Earned 50 Pts
-                            </p>
-
-                            <p className="text-xs text-gray-400 mt-1">
-                                Status: Buyer & Seller Review
-                            </p>
-
-                            <button className="mt-4 w-full py-2 rounded-lg bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 cursor-pointer text-sm">
-                                View Details
-                            </button>
-                        </div>
-                    </div>
-                    :
-                    <div className="bg-[#212329] border border-[#8F4AE3] sm:h-[250px] h-[200px] flex flex-col items-center justify-center rounded-2xl mt-5">
-                        <span><PestControlRodent fontSize="large" /></span>
-                        <p className="text-sm text-gray-400 text-center">
-                            No active sessions found. Join one to get started.
-                        </p>
-
-                        <Link href='/dashboard/sessions' className="mt-4 w-fit py-2 px-4 rounded-lg bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 cursor-pointer text-sm">
-                            Join Session
-                        </Link>
-                    </div>
-                }
-            </div>
-        </div>
-    );
-}
-
-export default Dashboard;
->>>>>>> 649a1fc6aa81e997492b66aefbb77a027d687eb1
