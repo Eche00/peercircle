@@ -8,7 +8,7 @@ export default function DashboardLayout({
 }: { children: React.ReactNode; }) {
     return (
 
-        <section className="flex flex-col w-full max-w-full overflow-x-hidden">
+        <section className="flex flex-col w-full max-w-full overflow-x-hidden ">
             <aside className="md:flex hidden">
                 <Sidebar />
             </aside>
