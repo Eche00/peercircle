@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 "use client";
 
 import React, { useState } from "react";
@@ -278,3 +279,14 @@ export default function TasksPage() {
 // Helper components for icons to ensure they follow user constraints
 const starsOutlined = () => <StarsOutlined />;
 const checkCircleOutline = () => <CheckCircleOutline />;
+=======
+import React from 'react'
+
+function page() {
+    return (
+        <div>page</div>
+    )
+}
+
+export default page
+>>>>>>> 649a1fc6aa81e997492b66aefbb77a027d687eb1
