@@ -4,6 +4,7 @@ import HistoryIcon from '@mui/icons-material/History';
 import AccessibilityIcon from '@mui/icons-material/Accessibility';
 import Groups3Icon from '@mui/icons-material/Groups3';
 import React from 'react';
+import { LocalConvenienceStore } from '@mui/icons-material';
 
 
 type SideBarItem = {
@@ -19,6 +20,7 @@ type PublicRoutes = {
 export const sideBarItems: SideBarItem[] = [
     { name: "Home", link: '/dashboard', icon: <OtherHousesIcon /> },
     { name: "Sessions", link: '/dashboard/sessions', icon: <AssessmentIcon /> },
+    { name: "Tasks", link: '/dashboard/tasks', icon: <LocalConvenienceStore /> },
     { name: "Communities", link: '/dashboard/communities', icon: <Groups3Icon /> },
 
 ];
