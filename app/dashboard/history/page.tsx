@@ -7,7 +7,7 @@ import {
   StarsOutlined,
   RocketLaunchOutlined,
   AccountBalanceWalletOutlined,
-  AssignmentTurnedInLine,
+  AssignmentTurnedIn,
   GroupsOutlined,
   ArrowForwardIos,
   FilterList,
