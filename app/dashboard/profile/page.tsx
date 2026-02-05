@@ -73,7 +73,9 @@ function ProfilePage() {
           {/* HEADER */}
           <div className="bg-[#212329] rounded-2xl p-6 hover:border hover:border-[#8F4AE3] flex flex-wrap items-center justify-between gap-2">
             <div>
-              <h1 className="text-xl font-semibold">Welcome</h1>
+              <h1 className="text-xl font-semibold">
+                Welcome, {user?.displayName || "Creator"}
+              </h1>
               <p className="text-sm text-gray-400">
                 Member since Feb 2 · Platinum
               </p>
