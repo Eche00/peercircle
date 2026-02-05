@@ -3,25 +3,37 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
 
 export default function SignInPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(null);
 
     const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
-    console.log("Sign In Data:", data);
-
-    // Simulate API delay
-    setTimeout(() => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      router.push("/dashboard");
+    } catch (err: any) {
+      console.error("Sign In Error:", err);
+      if (err.code === "auth/invalid-credential") {
+        setError("Invalid email or password.");
+      } else {
+        setError("Failed to sign in. Please try again.");
+      }
       setIsLoading(false);
-      // nah here you go put dashboard router call
-    }, 1000);
+    }
   };
 
   return (
@@ -32,6 +44,12 @@ export default function SignInPage() {
           Sign in to continue your growth journey
         </p>
       </div>
+
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-2 rounded-lg text-sm text-center">
+          {error}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">

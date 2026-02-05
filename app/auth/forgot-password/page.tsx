@@ -3,25 +3,35 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { ArrowBack, CheckCircle } from "@mui/icons-material";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 export default function ForgotPasswordPage() {
-  const [status, setStatus] = useState<"idle" | "submitting" | "success">(
-    "idle",
-  );
+  const [status, setStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("submitting");
+    setErrorMessage(null);
 
     const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
+    const email = formData.get("email") as string;
 
-    console.log("Forgot Password Data:", data);
-
-    // Simulate API delay
-    setTimeout(() => {
+    try {
+      await sendPasswordResetEmail(auth, email);
       setStatus("success");
-    }, 1500);
+    } catch (err: any) {
+      console.error("Reset Password Error:", err);
+      setStatus("error");
+      if (err.code === "auth/user-not-found") {
+        setErrorMessage("No account found with this email.");
+      } else {
+        setErrorMessage("Failed to send reset link. Please try again.");
+      }
+    }
   };
 
   return (
@@ -32,6 +42,12 @@ export default function ForgotPasswordPage() {
           Enter your email to receive reset instructions
         </p>
       </div>
+
+      {status === "error" && (
+        <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-2 rounded-lg text-sm text-center">
+          {errorMessage}
+        </div>
+      )}
 
       {status === "success" ? (
         <div className="flex flex-col gap-6 items-center text-center animate-in fade-in zoom-in duration-300">
