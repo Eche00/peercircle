@@ -1,14 +1,22 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signOut } from "firebase/auth";
+import { signOut, onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { Twitter, LinkedIn, GitHub, Lock, Security } from "@mui/icons-material";
 
 function ProfilePage() {
   const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
 
   const handleSignOut = async () => {
     try {
@@ -65,7 +73,7 @@ function ProfilePage() {
           {/* HEADER */}
           <div className="bg-[#212329] rounded-2xl p-6 hover:border hover:border-[#8F4AE3] flex flex-wrap items-center justify-between gap-2">
             <div>
-              <h1 className="text-xl font-semibold">Welcome, John Doe</h1>
+              <h1 className="text-xl font-semibold">Welcome</h1>
               <p className="text-sm text-gray-400">
                 Member since Feb 2 · Platinum
               </p>
@@ -81,25 +89,34 @@ function ProfilePage() {
             <h2 className="text-sm font-semibold mb-4">Account Details</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {["Full Name", "Email Address", "Phone Number"].map(
-                (label, i) => (
+              <div className="relative">
+                <label className="text-xs text-gray-500 mb-1 block ml-1">
+                  Full Name
+                </label>
+                <div className="relative">
                   <input
-                    key={i}
-                    placeholder={label}
-                    readOnly={label === "Email Address"} // make email read-only
-                    className={`bg-[#16181B] rounded-lg px-4 py-2 text-sm focus:outline-none ${
-                      label === "Email Address"
-                        ? "text-gray-500 cursor-not-allowed" // style read-only differently
-                        : "hover:border hover:border-[#8F4AE3] focus:border-[#8F4AE3]"
-                    }`}
+                    value={user?.displayName || "Loading..."}
+                    readOnly
+                    className="w-full bg-[#16181B] rounded-lg px-4 py-3 text-sm text-gray-400 focus:outline-none cursor-not-allowed border border-transparent"
                   />
-                ),
-              )}
-            </div>
+                  <Lock className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 w-4 h-4" />
+                </div>
+              </div>
 
-            <button className="mt-4 px-5 py-2 bg-[#8F4AE3] hover:bg-[#7A3ED1] rounded-lg text-sm">
-              Save Changes
-            </button>
+              <div className="relative">
+                <label className="text-xs text-gray-500 mb-1 block ml-1">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <input
+                    value={user?.email || "Loading..."}
+                    readOnly
+                    className="w-full bg-[#16181B] rounded-lg px-4 py-3 text-sm text-gray-400 focus:outline-none cursor-not-allowed border border-transparent"
+                  />
+                  <Lock className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 w-4 h-4" />
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* CONNECT SOCIAL MEDIA (replaced SMS section) */}
