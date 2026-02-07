@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   AssessmentOutlined,
@@ -13,9 +13,30 @@ import {
   ArrowForwardIos,
 } from "@mui/icons-material";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 export default function DashboardPage() {
   const [prevSessions, setPrevSessions] = useState<boolean>(false);
+  const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState<string>("Creator");
+  const router = useRouter();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.push("/auth/sign-in");
+      } else {
+        if (user.displayName) {
+            setUserName(user.displayName.split(" ")[0]); // Use first name
+        }
+        setLoading(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [router]);
 
   const stats = [
     {
@@ -48,6 +69,14 @@ export default function DashboardPage() {
     },
   ];
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#8F4AE3]"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-8 pb-10">
       {/* Welcome Section */}
@@ -58,7 +87,7 @@ export default function DashboardPage() {
       >
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Welcome back, Creator!</h1>
+            <h1 className="text-3xl font-bold mb-2">Welcome back, {userName}!</h1>
             <p className="text-white/80 max-w-md">
               Your peer circle is growing. You have 3 tasks waiting for your
               attention today.

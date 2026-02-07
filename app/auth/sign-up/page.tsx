@@ -3,12 +3,17 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
 
 export default function SignUpPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -16,24 +21,52 @@ export default function SignUpPage() {
     setError(null);
 
     const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
+    const fullName = formData.get("fullName") as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const confirmPassword = formData.get("confirmPassword") as string;
 
-    if (data.password !== data.confirmPassword) {
+    if (password !== confirmPassword) {
       setError("Passwords do not match");
       setIsLoading(false);
       return;
     }
 
-    // Remove confirmPassword before sending (simulated)
-    const { confirmPassword, ...submissionData } = data;
+    try {
+      // Create Authentication User
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
+      const user = userCredential.user;
 
-    console.log("Sign Up Data:", submissionData);
+      // Update Profile Display Name
+      await updateProfile(user, { displayName: fullName });
 
-    // Simulate API delay
-    setTimeout(() => {
+      // Create User Document in Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        email: user.email,
+        fullName: fullName,
+        createdAt: new Date().toISOString(),
+        trustPoints: 0,
+        role: "user",
+      });
+
+      console.log("User created:", user.uid);
+      router.push("/dashboard");
+    } catch (err: any) {
+      console.error("Sign Up Error:", err);
+      if (err.code === "auth/email-already-in-use") {
+        setError("Email is already in use.");
+      } else if (err.code === "auth/weak-password") {
+        setError("Password should be at least 6 characters.");
+      } else {
+        setError("Failed to create account. Please try again.");
+      }
       setIsLoading(false);
-      //redirect go dey here bro
-    }, 1000);
+    }
   };
 
   return (
