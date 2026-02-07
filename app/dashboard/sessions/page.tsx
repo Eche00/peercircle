@@ -3,10 +3,14 @@ import { Search } from '@mui/icons-material'
 import React, { useState } from 'react'
 import CreateModal from '../CreateModal'
 import { AnimatePresence } from 'framer-motion'
+import JoinSessionModal from '../JoinSessionModal'
+import SessionDetails from '../SessionDetails'
 
 function Page() {
     const [search, setSearch] = useState<string>('')
     const [createModal, setCreateModal] = useState<boolean>(false)
+    const [joinModal, setJoinModal] = useState<boolean>(false)
+    const [detailsModal, setDetailsModal] = useState<boolean>(false)
 
 
     const joinableSessions = [
@@ -206,6 +210,7 @@ function Page() {
                                             ? 'bg-gray-700 cursor-not-allowed text-gray-400'
                                             : 'bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 cursor-pointer'
                                             }`}
+                                        onClick={() => setJoinModal(true)}
                                     >
                                         {session.joined >= session.max ? 'Full' : 'Join'}
                                     </button>
@@ -271,7 +276,7 @@ function Page() {
                                     Host: <span className="text-gray-300">{session.host}</span>
                                 </p>
 
-                                <button className="px-4 py-2 rounded-lg text-sm bg-[#0F1116] hover:border hover:border-[#8F4AE3] cursor-pointer">
+                                <button className="px-4 py-2 rounded-lg text-sm bg-[#0F1116] hover:border hover:border-[#8F4AE3] cursor-pointer" onClick={() => setDetailsModal(true)}>
                                     View Details
                                 </button>
                             </div>
@@ -283,6 +288,8 @@ function Page() {
             {/* create modal  */}
             <AnimatePresence>
                 {createModal && <CreateModal onClose={() => setCreateModal(false)} />}
+                {joinModal && <JoinSessionModal onClose={() => setJoinModal(false)} />}
+                {detailsModal && <SessionDetails onClose={() => setDetailsModal(false)} />}
             </AnimatePresence>
         </div>
     )
