@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   AssignmentOutlined,
@@ -14,73 +14,67 @@ import {
   ArrowForwardIos,
   Celebration,
 } from "@mui/icons-material";
+import { fetchDailyTasks, toggleTaskStatus, Task } from "@/utils/taskActions";
 
-interface Task {
-  id: string;
-  title: string;
-  description: string;
-  points: number;
-  platform: "Instagram" | "Twitter" | "Facebook" | "LinkedIn" | "General";
-  status: "pending" | "completed";
-  icon: React.ReactNode;
-}
-
-const INITIAL_TASKS: Task[] = [
-  {
-    id: "1",
-    title: "Follow @creative_mind on Instagram",
-    description: "Support a fellow creator by following their journey.",
-    points: 50,
-    platform: "Instagram",
-    status: "pending",
-    icon: <Instagram className="text-pink-500" />,
-  },
-  {
-    id: "2",
-    title: "Retweet PeerCircle Announcement",
-    description: "Help spread the word about our community growth.",
-    points: 30,
-    platform: "Twitter",
-    status: "pending",
-    icon: <Twitter className="text-blue-400" />,
-  },
-  {
-    id: "3",
-    title: "Like 3 posts from #PeerCommunity",
-    description: "Engage with the latest updates from the community.",
-    points: 40,
-    platform: "General",
-    status: "pending",
-    icon: <AssignmentOutlined className="text-[#8F4AE3]" />,
-  },
-  {
-    id: "4",
-    title: "Share your milestone on LinkedIn",
-    description: "Let your professional network know about your growth.",
-    points: 60,
-    platform: "LinkedIn",
-    status: "completed",
-    icon: <LinkedIn className="text-blue-700" />,
-  },
-];
+const PLATFORM_ICONS: Record<string, React.ReactNode> = {
+  Instagram: <Instagram className="text-pink-500" />,
+  Twitter: <Twitter className="text-blue-400" />,
+  Facebook: <Facebook className="text-blue-600" />,
+  LinkedIn: <LinkedIn className="text-blue-700" />,
+  General: <AssignmentOutlined className="text-[#8F4AE3]" />,
+};
 
 export default function TasksPage() {
-  const [tasks, setTasks] = useState<Task[]>(INITIAL_TASKS);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadTasks = async () => {
+      try {
+        const data = await fetchDailyTasks();
+        setTasks(data);
+      } catch (error) {
+        console.error("Failed to fetch tasks:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadTasks();
+  }, []);
 
   const completedCount = tasks.filter((t) => t.status === "completed").length;
   const totalPoints = tasks
     .filter((t) => t.status === "completed")
     .reduce((sum, t) => sum + t.points, 0);
 
-  const toggleTask = (id: string) => {
-    setTasks((prev) =>
-      prev.map((t) =>
-        t.id === id
-          ? { ...t, status: t.status === "completed" ? "pending" : "completed" }
-          : t,
-      ),
-    );
+  const toggleTask = async (
+    id: string,
+    currentStatus: "pending" | "completed",
+  ) => {
+    try {
+      await toggleTaskStatus(id, currentStatus);
+      setTasks((prev) =>
+        prev.map((t) =>
+          t.id === id
+            ? {
+                ...t,
+                status: t.status === "completed" ? "pending" : "completed",
+              }
+            : t,
+        ),
+      );
+    } catch (error) {
+      console.error("Failed to toggle task:", error);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#8F4AE3]"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-8 pb-10">
@@ -173,7 +167,7 @@ export default function TasksPage() {
                   : "bg-gray-800/50"
               }`}
             >
-              {task.icon}
+              {PLATFORM_ICONS[task.platform] || PLATFORM_ICONS.General}
             </div>
 
             {/* Task Details */}
@@ -204,7 +198,7 @@ export default function TasksPage() {
 
             {/* Action Button */}
             <button
-              onClick={() => toggleTask(task.id)}
+              onClick={() => toggleTask(task.id, task.status)}
               className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
                 task.status === "completed"
                   ? "bg-green-500 text-white"
