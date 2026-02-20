@@ -1,8 +1,27 @@
 import DashHeader from "@/components/DashHeader";
 import Sidebar from "./Sidebar";
+import { Metadata } from "next";
 
 
-
+export const metadata: Metadata = {
+    title: "PeerCircle Dashboard",
+    description: "Organic social growth, engagement groups, and session coordination for creators.",
+    icons: {
+        icon: "/logo.png",
+    },
+    keywords: [
+        "PeerCircle",
+        "dashboard",
+        "social media growth",
+        "engagement groups",
+        "session management",
+        "Instagram followers boost",
+        "organic growth tool",
+        "creator coordination",
+        "community-driven growth",
+        "social media analytics",
+    ],
+};
 export default function DashboardLayout({
     children,
 }: { children: React.ReactNode; }) {
