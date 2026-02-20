@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { signOut, onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { Twitter, LinkedIn, GitHub, Lock, Security } from "@mui/icons-material";
+import { handleSignOut } from "@/utils/logics/userinfo";
 
 function ProfilePage() {
   const router = useRouter();
@@ -18,14 +19,14 @@ function ProfilePage() {
     return () => unsubscribe();
   }, []);
 
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-      router.push("/auth/sign-in");
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  };
+  // const handleSignOut = async () => {
+  //   try {
+  //     await signOut(auth);
+  //     router.push("/auth/sign-in");
+  //   } catch (error) {
+  //     console.error("Error signing out:", error);
+  //   }
+  // };
 
   return (
     <div className="min-h-screen text-white sm:p-6">

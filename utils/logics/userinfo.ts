@@ -1,6 +1,8 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { auth } from '@/lib/firebase'
+import { signOut } from 'firebase/auth'
+import { useRouter } from 'next/navigation'
 
 export interface UserInfo {
     uid: string
@@ -9,9 +11,7 @@ export interface UserInfo {
     firstName: string
 }
 
-/**
-  Hook to get the current authenticated user's info
- */
+// Hook to get the current authenticated user's info
 export function useUserInfo(): UserInfo | null {
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null)
 
@@ -34,3 +34,13 @@ export function useUserInfo(): UserInfo | null {
 
     return userInfo
 }
+export const handleSignOut = async () => {
+    const router = useRouter();
+
+    try {
+        await signOut(auth);
+        router.push("/auth/sign-in");
+    } catch (error) {
+        console.error("Error signing out:", error);
+    }
+};
