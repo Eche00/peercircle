@@ -29,7 +29,7 @@ export default function DashboardPage() {
         router.push("/auth/sign-in");
       } else {
         if (user.displayName) {
-            setUserName(user.displayName.split(" ")[0]); // Use first name
+          setUserName(user.displayName.split(" ")[0]); // Use first name
         }
         setLoading(false);
       }
@@ -83,7 +83,7 @@ export default function DashboardPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-[#8F4AE3] to-[#a855f7] p-8 rounded-3xl text-white shadow-2xl relative overflow-hidden"
+        className="bg-linear-to-r from-[#8F4AE3] to-[#a855f7] p-8 rounded-3xl text-white shadow-2xl relative overflow-hidden"
       >
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
@@ -124,7 +124,7 @@ export default function DashboardPage() {
           animate={{ opacity: 1, scale: 1 }}
           className="bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-3xl p-8 shadow-xl flex flex-col items-center justify-center relative overflow-hidden group"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-[#8F4AE3]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="absolute inset-0 bg-linear-to-br from-[#8F4AE3]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
           <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mb-6 relative z-10">
             Trust Points
           </p>
@@ -361,7 +361,7 @@ export default function DashboardPage() {
                 className="bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-3xl p-6 shadow-xl group transition-all"
               >
                 <div className="h-40 bg-gray-800/50 rounded-2xl mb-4 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#8F4AE3]/10 to-transparent"></div>
+                  <div className="absolute inset-0 bg-linear-to-br from-[#8F4AE3]/10 to-transparent"></div>
                 </div>
                 <p className="text-md font-bold text-white mb-1 group-hover:text-[#8F4AE3] transition-colors">
                   {sess.title}
@@ -378,7 +378,7 @@ export default function DashboardPage() {
         ) : (
           <motion.div
             whileHover={{ scale: 1.01 }}
-            className="bg-[#212329] border-2 border-dashed border-[#8F4AE3]/30 min-h-[300px] flex flex-col items-center justify-center rounded-[40px] mt-2 group hover:border-[#8F4AE3] transition-colors"
+            className="bg-[#212329] border-2 border-dashed border-[#8F4AE3]/30 min-h-75 flex flex-col items-center justify-center rounded-[40px] mt-2 group hover:border-[#8F4AE3] transition-colors"
           >
             <div className="w-20 h-20 bg-[#8F4AE3]/10 rounded-full flex items-center justify-center text-[#8F4AE3] mb-6 group-hover:rotate-12 transition-transform">
               <PestControlRodent fontSize="large" />

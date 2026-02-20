@@ -4,45 +4,36 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import CloseIcon from '@mui/icons-material/Close'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import { motion } from 'framer-motion'
+import { useSessionForm } from '@/utils/logics/sessions'
 
-function generatePassword(length = 20) {
-    const chars =
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-    let result = ''
-    for (let i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length))
-    }
-    return result
-}
+
 
 function CreateModal({ onClose }: { onClose: () => void }) {
-    const [visibility, setVisibility] = useState<'public' | 'private'>('public')
-    const [password, setPassword] = useState('')
-    const [ruleInput, setRuleInput] = useState('')
-    const [rules, setRules] = useState<string[]>([])
-    const hostName = 'Bueze' // auto-filled later from auth
+    const {
+        // state
+        title,
+        service,
+        maxParticipants,
+        visibility,
+        password,
+        ruleInput,
+        rules,
+        currentUser,
 
-    useEffect(() => {
-        if (visibility === 'private') {
-            setPassword(generatePassword())
-        } else {
-            setPassword('')
-        }
-    }, [visibility])
+        // setters
+        setTitle,
+        setService,
+        setMaxParticipants,
+        setVisibility,
+        setRuleInput,
 
-    const copyPassword = async () => {
-        await navigator.clipboard.writeText(password)
-    }
+        // actions
+        addRule,
+        removeRule,
+        copyPassword,
+        handleCreate,
+    } = useSessionForm()
 
-    const addRule = () => {
-        if (!ruleInput.trim()) return
-        setRules((prev) => [...prev, ruleInput.trim()])
-        setRuleInput('')
-    }
-
-    const removeRule = (index: number) => {
-        setRules((prev) => prev.filter((_, i) => i !== index))
-    }
 
     return (
         <div
@@ -73,6 +64,8 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                         <label className="text-xs text-gray-400">Session Title</label>
                         <input
                             placeholder="e.g. Instagram Followers Boost"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
                             className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border border-[#8F4AE3]"
                         />
                     </div>
@@ -80,7 +73,11 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                     {/* SERVICE TYPE */}
                     <div>
                         <label className="text-xs text-gray-400">Service Type</label>
-                        <select className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border border-[#8F4AE3]">
+                        <select
+                            value={service}
+                            onChange={(e) => setService(e.target.value)}
+                            className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border border-[#8F4AE3]"
+                        >
                             <option>Followers</option>
                             <option>Likes</option>
                             <option>Comments</option>
@@ -92,7 +89,9 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                         <label className="text-xs text-gray-400">Max Participants</label>
                         <input
                             type="number"
-                            defaultValue={20}
+                            value={maxParticipants}
+                            readOnly
+                            onChange={(e) => setMaxParticipants(Number(e.target.value))}
                             className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border border-[#8F4AE3]"
                         />
                     </div>
@@ -101,7 +100,7 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                     <div>
                         <label className="text-xs text-gray-400">Host</label>
                         <input
-                            value={hostName}
+                            value={currentUser?.displayName?.split(" ")[0] ?? "Creator"}
                             readOnly
                             className="w-full mt-1 bg-[#0F1116] text-gray-400 cursor-not-allowed rounded-lg px-4 py-2 text-sm"
                         />
@@ -203,7 +202,7 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                 </div>
 
                 {/* ACTION */}
-                <button className="mt-8 w-full py-3 rounded-lg bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 text-sm font-medium cursor-pointer">
+                <button onClick={handleCreate} className="mt-8 w-full py-3 rounded-lg bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 text-sm font-medium cursor-pointer">
                     Create Session
                 </button>
             </motion.aside>
