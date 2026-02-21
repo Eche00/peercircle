@@ -7,28 +7,37 @@ import {
   OpenInNew,
 } from '@mui/icons-material'
 import { motion } from 'framer-motion'
+import { Session } from '@/utils/logics/sessions'
+import { collection, query, where, onSnapshot } from 'firebase/firestore'
+import { db } from '@/lib/firebase'
+import { useEffect } from 'react'
 
-type SessionStatus = 'Finished' | 'In Progress'
-
-function SessionDetails({ onClose }: { onClose: () => void }) {
-  const session = {
-    id: 'IG-2044',
-    title: 'Instagram Followers Boost',
-    service: 'Followers',
-    status: 'In Progress' as SessionStatus,
-    joined: 16,
-    timer: 2,
-    max: 20,
-    host: 'Chris',
-  }
+function SessionDetails({ session, onClose }: { session: Session, onClose: () => void }) {
 
   // URLs of other participants (excluding you)
-  const participants = [
-    { id: 1, url: 'https://instagram.com/user_one' },
-    { id: 2, url: 'https://instagram.com/user_two' },
-    { id: 3, url: 'https://instagram.com/user_three' },
-    { id: 4, url: 'https://instagram.com/user_four' },
-  ]
+  const [participants, setParticipants] = useState<
+    { id: string; link: string; userId: any }[]
+  >([])
+
+  useEffect(() => {
+    if (!session?.id) return
+
+    const q = query(
+      collection(db, 'participants'),
+      where('sessionId', '==', session.id)
+    )
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const list = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as any
+
+      setParticipants(list)
+    })
+
+    return () => unsubscribe()
+  }, [session.id])
 
   // Track which links you’ve visited
   const [visited, setVisited] = useState<number[]>([])
@@ -40,19 +49,12 @@ function SessionDetails({ onClose }: { onClose: () => void }) {
   }
 
   const sessionIncludes = [
-    'Real Instagram followers',
     'Mutual engagement system',
     'No bots or fake accounts',
     'Fair participation for all members',
   ]
 
-  const sessionRules = [
-    'You must follow all participants',
-    'Unfollowing before completion removes you',
-    'One account per participant',
-    'Session ends when all slots are filled',
-    'Do not automate actions',
-  ]
+
 
   return (
     <div className="fixed inset-0 top-16.5 bg-black/60 z-50 flex justify-end" onClick={onClose}>
@@ -79,7 +81,7 @@ function SessionDetails({ onClose }: { onClose: () => void }) {
           </div>
 
           <div className="flex items-center justify-between gap-2 pt-2">
-            <p className="text-xs text-gray-400">Timer: {session.timer}.00</p>
+            {/* <p className="text-xs text-gray-400">Timer: {session.timer}.00</p> */}
             <span
               className={`text-xs px-3 py-1 rounded-full ${session.status === 'Finished'
                 ? 'bg-green-500/20 text-green-400'
@@ -100,57 +102,57 @@ function SessionDetails({ onClose }: { onClose: () => void }) {
           </div>
           <div>
             <p className="text-xs text-gray-400">Host</p>
-            <p>{session.host}</p>
+            <p>{session.hostName}</p>
           </div>
           <div>
             <p className="text-xs text-gray-400">Participants</p>
             <p>
-              {session.joined}/{session.max}
+              {session.joined}/{session.maxParticipants}
             </p>
           </div>
         </div>
 
         {/* PARTICIPANT ACTIONS */}
-        {session.status === 'In Progress' && (
-          <div>
-            <h3 className="text-sm font-medium mb-3">
-              Participants to engage with
-            </h3>
+        {/* {session.status === 'In Progress' && ( */}
+        <div>
+          <h3 className="text-sm font-medium mb-3">
+            Participants to engage with
+          </h3>
 
-            <div className="space-y-2">
-              {participants.map((p) => (
-                <a
-                  key={p.id}
-                  href={p.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => handleVisit(p.id)}
-                  className="flex items-center justify-between bg-[#0F1116] px-4 py-3 rounded-lg border border-gray-800 hover:border-[#8F4AE3]"
-                >
-                  <span className="text-xs text-gray-300 truncate">
-                    {p.url}
-                  </span>
+          <div className="space-y-2">
+            {participants.map((p) => (
+              <a
+                key={p.id}
+                href={p.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => handleVisit(p.userId)}
+                className="flex items-center justify-between bg-[#0F1116] px-4 py-3 rounded-lg border border-gray-800 hover:border-[#8F4AE3]"
+              >
+                <span className="text-xs text-gray-300 truncate">
+                  {p.link.length > 30 ? p.link.slice(0, 30) + '...' : p.link}
+                </span>
 
-                  {visited.includes(p.id) ? (
-                    <CheckCircleOutline
-                      fontSize="small"
-                      className="text-green-400"
-                    />
-                  ) : (
-                    <OpenInNew
-                      fontSize="small"
-                      className="text-gray-400"
-                    />
-                  )}
-                </a>
-              ))}
-            </div>
-
-            <p className="text-[11px] text-gray-500 mt-3">
-              Click each profile to complete your participation
-            </p>
+                {visited.includes(p.userId) ? (
+                  <CheckCircleOutline
+                    fontSize="small"
+                    className="text-green-400"
+                  />
+                ) : (
+                  <OpenInNew
+                    fontSize="small"
+                    className="text-gray-400"
+                  />
+                )}
+              </a>
+            ))}
           </div>
-        )}
+
+          <p className="text-[11px] text-gray-500 mt-3">
+            Click each profile to complete your participation
+          </p>
+        </div>
+        {/* )}  */}
 
         {/* WHAT'S INCLUDED */}
         <div>
@@ -175,7 +177,7 @@ function SessionDetails({ onClose }: { onClose: () => void }) {
         <div>
           <h3 className="text-sm font-medium mb-2">Session rules</h3>
           <div className="bg-[#0F1116] rounded-lg p-3 space-y-2">
-            {sessionRules.map((rule, idx) => (
+            {session.rules.map((rule, idx) => (
               <div
                 key={idx}
                 className="flex gap-2 text-[11px] text-gray-400"

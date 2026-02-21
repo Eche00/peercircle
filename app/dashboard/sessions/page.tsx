@@ -5,128 +5,11 @@ import CreateModal from '../CreateModal'
 import { AnimatePresence } from 'framer-motion'
 import JoinSessionModal from '../JoinSessionModal'
 import SessionDetails from '../SessionDetails'
+import { useSessionForm } from '@/utils/logics/sessions'
 
 function Page() {
-    const [search, setSearch] = useState<string>('')
-    const [createModal, setCreateModal] = useState<boolean>(false)
-    const [joinModal, setJoinModal] = useState<boolean>(false)
-    const [detailsModal, setDetailsModal] = useState<boolean>(false)
 
-
-    const joinableSessions = [
-        {
-            id: 'IG-1023',
-            title: 'Instagram Followers',
-            status: 'In Progress',
-            joined: 20,
-            max: 20,
-            service: 'Followers',
-            host: 'Bueze',
-        },
-        {
-            id: 'IG-0991',
-            title: 'X Likes ',
-            status: 'Finished',
-            joined: 15,
-            max: 20,
-            service: 'Likes',
-            host: 'Prince',
-        },
-        {
-            id: 'IG-0891',
-            title: 'TikTok Followers ',
-            status: 'Finished',
-            joined: 10,
-            max: 20,
-            service: 'Likes',
-            host: 'Grace',
-        },
-        {
-            id: 'IG-1033',
-            title: 'Instagram Likes',
-            status: 'In Progress',
-            joined: 20,
-            max: 20,
-            service: 'Likes',
-            host: 'Bueze',
-        },
-        {
-            id: 'IG-0981',
-            title: 'Tiktok Likes ',
-            status: 'Finished',
-            joined: 15,
-            max: 20,
-            service: 'Likes',
-            host: 'Prince',
-        },
-        {
-            id: 'IG-0890',
-            title: 'TikTok Comments ',
-            status: 'Finished',
-            joined: 10,
-            max: 20,
-            service: 'Comments',
-            host: 'Grace',
-        },
-        {
-            id: 'IG-1034',
-            title: 'Instagram Likes',
-            status: 'In Progress',
-            joined: 20,
-            max: 20,
-            service: 'Likes',
-            host: 'Bueze',
-        },
-        {
-            id: 'IG-0983',
-            title: 'Tiktok Likes ',
-            status: 'Finished',
-            joined: 15,
-            max: 20,
-            service: 'Likes',
-            host: 'Prince',
-        },
-        {
-            id: 'IG-0892',
-            title: 'TikTok Comments ',
-            status: 'Finished',
-            joined: 10,
-            max: 20,
-            service: 'Comments',
-            host: 'Grace',
-        },
-    ]
-
-
-    const mySessions = [
-        {
-            id: 'IG-2031',
-            title: 'Instagram Likes',
-            max: 20,
-            service: 'Likes',
-            status: 'Finished',
-            joined: 2,
-            host: 'Alex',
-        },
-        {
-            id: 'IG-2044',
-            title: 'X Followers',
-            max: 20,
-            service: 'Followers',
-            status: 'In Progress',
-            joined: 16,
-            host: 'Chris',
-        },
-        {
-            id: 'IG-2144',
-            title: 'Tiktok Comments',
-            max: 20,
-            service: 'Comments',
-            status: 'Finished',
-            joined: 6,
-            host: 'Mary',
-        },
-    ]
+    const { sessions, mySessions, search, setSearch, createModal, setCreateModal, detailsModal, setDetailsModal, setJoinModal, joinModal, selectedSession, setSelectedSession } = useSessionForm()
 
     return (
         <div className="min-h-screen text-white sm:p-6 space-y-10 relative">
@@ -160,7 +43,7 @@ function Page() {
                 {/* SESSION LIST */}
                 <div className="max-h-[65vh] overflow-y-auto  bg-[#0F1116] sm:p-6 p-4  rounded-2xl">
                     <div className=" grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {joinableSessions.map((session) => (
+                        {sessions.map((session) => (
                             <div
                                 key={session.id}
                                 className="bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-2xl p-5 shadow-lg flex flex-col justify-between"
@@ -176,7 +59,7 @@ function Page() {
 
                                 {/* SESSION META */}
                                 <p className="text-xs text-gray-400 mb-3">
-                                    Session ID: {session.id}
+                                    Session ID: {session.id.slice(0, 8)}...
                                 </p>
 
                                 {/* PROGRESS */}
@@ -186,14 +69,14 @@ function Page() {
                                             Joined
                                         </span>
                                         <span className="text-gray-300">
-                                            {session.joined}/{session.max}
+                                            {session.joined}/{session.maxParticipants}
                                         </span>
                                     </div>
 
                                     <div className="w-full h-2 bg-[#0F1116] rounded-full overflow-hidden">
                                         <div
                                             className="h-full bg-[#8F4AE3]"
-                                            style={{ width: `${(session.joined / session.max) * 100}%` }}
+                                            style={{ width: `${(session.joined / session.maxParticipants) * 100}%` }}
                                         />
                                     </div>
                                 </div>
@@ -201,18 +84,18 @@ function Page() {
                                 {/* FOOTER */}
                                 <div className="flex items-center justify-between mt-4">
                                     <p className="text-xs text-gray-500">
-                                        Host: <span className="text-gray-300">{session.host}</span>
+                                        Host: <span className="text-gray-300">{session.hostName}</span>
                                     </p>
 
                                     <button
-                                        disabled={session.joined >= session.max}
-                                        className={`px-4 py-2 rounded-lg text-sm ${session.joined >= session.max
+                                        disabled={session.joined >= session.maxParticipants}
+                                        className={`px-4 py-2 rounded-lg text-sm ${session.joined >= session.maxParticipants
                                             ? 'bg-gray-700 cursor-not-allowed text-gray-400'
                                             : 'bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 cursor-pointer'
                                             }`}
-                                        onClick={() => setJoinModal(true)}
+                                        onClick={() => { setSelectedSession(session); setJoinModal(true) }}
                                     >
-                                        {session.joined >= session.max ? 'Full' : 'Join'}
+                                        {session.joined >= session.maxParticipants ? 'Full' : 'Join'}
                                     </button>
                                 </div>
                             </div>
@@ -246,7 +129,7 @@ function Page() {
 
                             {/* SESSION META */}
                             <p className="text-xs text-gray-400 mb-3">
-                                Session ID: {session.id}
+                                Session ID: {session.id.slice(0, 8)}...
                             </p>
 
                             {/* STATUS */}
@@ -266,17 +149,17 @@ function Page() {
                             <div className="flex items-center justify-between mb-6">
                                 <span className="text-xs text-gray-400">Participants</span>
                                 <span className="text-sm font-medium text-gray-200">
-                                    {session.joined}/{session.max}
+                                    {session.joined}/{session.maxParticipants}
                                 </span>
                             </div>
 
                             {/* FOOTER */}
                             <div className="flex items-center justify-between mt-auto">
                                 <p className="text-xs text-gray-500">
-                                    Host: <span className="text-gray-300">{session.host}</span>
+                                    Host: <span className="text-gray-300">{session.hostName}</span>
                                 </p>
 
-                                <button className="px-4 py-2 rounded-lg text-sm bg-[#0F1116] hover:border hover:border-[#8F4AE3] cursor-pointer" onClick={() => setDetailsModal(true)}>
+                                <button className="px-4 py-2 rounded-lg text-sm bg-[#0F1116] hover:border hover:border-[#8F4AE3] cursor-pointer" onClick={() => { setSelectedSession(session); setDetailsModal(true) }}>
                                     View Details
                                 </button>
                             </div>
@@ -288,8 +171,8 @@ function Page() {
             {/* create modal  */}
             <AnimatePresence>
                 {createModal && <CreateModal onClose={() => setCreateModal(false)} />}
-                {joinModal && <JoinSessionModal onClose={() => setJoinModal(false)} />}
-                {detailsModal && <SessionDetails onClose={() => setDetailsModal(false)} />}
+                {joinModal && selectedSession && <JoinSessionModal onClose={() => setJoinModal(false)} session={selectedSession} />}
+                {detailsModal && selectedSession && <SessionDetails onClose={() => setDetailsModal(false)} session={selectedSession} />}
             </AnimatePresence>
         </div>
     )

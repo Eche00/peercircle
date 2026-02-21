@@ -1,33 +1,21 @@
 'use client'
+import { joinSession, Session, useSessionForm } from '@/utils/logics/sessions'
 import { Close, CheckCircleOutline, InfoOutlined } from '@mui/icons-material'
 import { motion } from 'framer-motion'
 import React, { useEffect, useState } from 'react'
 
-function JoinSessionModal({ onClose }: { onClose: () => void }) {
-    const [visibility] = useState<'public' | 'private'>('private')
-    const [password, setPassword] = useState('')
+function JoinSessionModal({ session, onClose }: { session: Session, onClose: () => void }) {
+    const { link, setLink, enteredPassword, setEnteredPassword } = useSessionForm()
 
-    useEffect(() => {
-        setPassword('')
-    }, [visibility])
 
-    // 👉 What this session contains
+
+    //  What this session contains
     const sessionIncludes = [
-        'Real Instagram followers',
-        'Gradual delivery (no sudden spikes)',
         'Mutual engagement system',
         'No bots or fake accounts',
         'Fair participation for all members',
     ]
 
-    // 👉 Session rules
-    const sessionRules = [
-        'You must follow all participants in the session',
-        'Unfollowing before completion may remove you from the session',
-        'Do not share the session password publicly',
-        'Only one account per participant is allowed',
-        'Session completes when maximum participants join',
-    ]
 
     return (
         <div
@@ -53,16 +41,9 @@ function JoinSessionModal({ onClose }: { onClose: () => void }) {
                 {/* SESSION INFO */}
                 <div className="space-y-4">
                     <div>
-                        <label className="text-xs text-gray-400">Session Title</label>
+                        <label className="text-xs text-gray-400">Service Type / Title</label>
                         <p className="mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm">
-                            Instagram Followers Boost
-                        </p>
-                    </div>
-
-                    <div>
-                        <label className="text-xs text-gray-400">Service Type</label>
-                        <p className="mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm">
-                            Followers
+                            {session.service} - {session.title}
                         </p>
                     </div>
 
@@ -70,6 +51,8 @@ function JoinSessionModal({ onClose }: { onClose: () => void }) {
                         <label className="text-xs text-gray-400">Target URL</label>
                         <input
                             type="text"
+                            value={link}
+                            onChange={(e) => setLink(e.target.value)}
                             placeholder="Paste your profile URL"
                             className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border border-[#8F4AE3]"
                         />
@@ -79,12 +62,12 @@ function JoinSessionModal({ onClose }: { onClose: () => void }) {
                     <div>
                         <div className="flex items-center justify-between text-xs mb-1">
                             <span className="text-gray-400">Joined</span>
-                            <span className="text-gray-300">10 / 30</span>
+                            <span className="text-gray-300">{session.joined} / {session.maxParticipants}</span>
                         </div>
                         <div className="w-full h-2 bg-[#0F1116] rounded-full overflow-hidden">
                             <div
                                 className="h-full bg-[#8F4AE3]"
-                                style={{ width: `${(10 / 30) * 100}%` }}
+                                style={{ width: `${(session.joined / session.maxParticipants) * 100}%` }}
                             />
                         </div>
                     </div>
@@ -109,7 +92,7 @@ function JoinSessionModal({ onClose }: { onClose: () => void }) {
                     <div className="mt-4">
                         <h3 className="text-sm font-medium mb-2">Session rules</h3>
                         <div className="bg-[#0F1116] rounded-lg p-3 space-y-2">
-                            {sessionRules.map((rule, idx) => (
+                            {session.rules.map((rule, idx) => (
                                 <div
                                     key={idx}
                                     className="flex gap-2 text-[11px] text-gray-400"
@@ -122,15 +105,32 @@ function JoinSessionModal({ onClose }: { onClose: () => void }) {
                     </div>
 
                     {/* PASSWORD NOTICE */}
-                    {visibility === 'private' && (
-                        <p className="text-[11px] text-gray-500">
-                            This is a private session. A password is required to join.
-                        </p>
+                    {session.visibility === 'private' && (
+                        <>
+                            <p className="text-[11px] text-gray-500">
+                                This is a private session. A password is required to join.
+                            </p>
+                            <div>
+                                <label className="text-xs text-gray-400">Password</label>
+                                <input
+                                    type="text"
+                                    value={enteredPassword}
+                                    onChange={(e) => setEnteredPassword(e.target.value)}
+                                    placeholder="Paste your profile URL"
+                                    className="w-full mt-1  bg-[#0F1116] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border border-[#8F4AE3]"
+                                />
+                            </div></>
                     )}
                 </div>
 
                 {/* ACTION */}
-                <button className="mt-8 w-full py-3 rounded-lg bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 text-sm font-medium cursor-pointer">
+                <button onClick={async () => {
+                    await joinSession({
+                        session,
+                        link,
+                        enteredPassword,
+                    })
+                }} className="mt-8 w-full py-3 rounded-lg bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 text-sm font-medium cursor-pointer">
                     Join Session
                 </button>
             </motion.aside>

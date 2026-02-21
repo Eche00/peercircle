@@ -19,12 +19,13 @@ function CreateModal({ onClose }: { onClose: () => void }) {
         ruleInput,
         rules,
         currentUser,
-
+        linkInput,
         // setters
         setTitle,
         setService,
         setMaxParticipants,
         setVisibility,
+        setLinkInput,
         setRuleInput,
 
         // actions
@@ -58,18 +59,6 @@ function CreateModal({ onClose }: { onClose: () => void }) {
 
                 {/* FORM */}
                 <div className="space-y-4">
-
-                    {/* SESSION TITLE */}
-                    <div>
-                        <label className="text-xs text-gray-400">Session Title</label>
-                        <input
-                            placeholder="e.g. Instagram Followers Boost"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border border-[#8F4AE3]"
-                        />
-                    </div>
-
                     {/* SERVICE TYPE */}
                     <div>
                         <label className="text-xs text-gray-400">Service Type</label>
@@ -84,17 +73,50 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                         </select>
                     </div>
 
-                    {/* MAX PARTICIPANTS */}
+                    {/* SESSION TITLE */}
                     <div>
-                        <label className="text-xs text-gray-400">Max Participants</label>
+                        <label className="text-xs text-gray-400">Session Title</label>
                         <input
-                            type="number"
-                            value={maxParticipants}
-                            readOnly
-                            onChange={(e) => setMaxParticipants(Number(e.target.value))}
+                            placeholder="e.g. Instagram Followers Boost"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
                             className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border border-[#8F4AE3]"
                         />
                     </div>
+
+                    {/* LINK */}
+                    <div>
+                        <label className="text-xs text-gray-400">Link</label>
+                        <input
+                            type="text"
+                            value={linkInput}
+                            onChange={(e) => setLinkInput(e.target.value)}
+                            className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border border-[#8F4AE3]"
+                            placeholder='Paste your engagement link here..'
+                        />
+                    </div>
+
+                    {/* MAX PARTICIPANTS */}
+                    <div>
+                        <label className="text-xs text-gray-400">
+                            Max Participants
+                        </label>
+
+                        <select
+                            value={maxParticipants}
+                            onChange={(e) => setMaxParticipants(Number(e.target.value))}
+                            className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm 
+               focus:outline-none border border-[#8F4AE3] 
+               text-white appearance-none cursor-pointer"
+                        >
+                            {[10, 15, 20].map((num) => (
+                                <option key={num} value={num} className="bg-[#0F1116]">
+                                    {num}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
 
                     {/* HOST */}
                     <div>
@@ -148,7 +170,7 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                                 />
                                 <button
                                     onClick={copyPassword}
-                                    className="p-2 bg-[#8F4AE3] rounded-lg"
+                                    className="p-2 bg-[#8F4AE3] rounded-lg cursor-pointer"
                                 >
                                     <ContentCopyIcon fontSize="small" />
                                 </button>

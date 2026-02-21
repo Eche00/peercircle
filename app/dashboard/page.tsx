@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   AssessmentOutlined,
   TaskAltOutlined,
@@ -16,12 +16,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { useSessionForm } from "@/utils/logics/sessions";
+import SessionDetails from "./SessionDetails";
 
 export default function DashboardPage() {
-  const [prevSessions, setPrevSessions] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState<string>("Creator");
   const router = useRouter();
+  const { sessions, selectedSession, setSelectedSession, detailsModal, setDetailsModal } = useSessionForm()
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -343,35 +345,58 @@ export default function DashboardPage() {
           </h2>
         </div>
 
-        {prevSessions ? (
+        {sessions.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { title: "Active — Following", status: "Funds Secured" },
-              {
-                title: "Active — Inspection Phase",
-                status: "Inspection Ongoing",
-              },
-              {
-                title: "Completed — Earned 50 Pts",
-                status: "Buyer & Seller Review",
-              },
-            ].map((sess, i) => (
+            {sessions.slice(0, 3).map((session, i) => (
               <div
-                key={i}
-                className="bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-3xl p-6 shadow-xl group transition-all"
+                key={session.id}
+                className="bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-2xl p-5 shadow-lg flex flex-col justify-between"
               >
-                <div className="h-40 bg-gray-800/50 rounded-2xl mb-4 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-linear-to-br from-[#8F4AE3]/10 to-transparent"></div>
+                {/* HEADER */}
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-sm font-medium">{session.title}</p>
+
+                  <span className="text-xs px-2 py-1 rounded-full bg-purple-500/10 text-purple-400">
+                    {session.service}
+                  </span>
                 </div>
-                <p className="text-md font-bold text-white mb-1 group-hover:text-[#8F4AE3] transition-colors">
-                  {sess.title}
+
+                {/* SESSION META */}
+                <p className="text-xs text-gray-400 mb-3">
+                  Session ID: {session.id.slice(0, 8)}...
                 </p>
-                <p className="text-xs text-gray-500 font-medium">
-                  Status: <span className="text-gray-300">{sess.status}</span>
-                </p>
-                <button className="mt-6 w-full py-3 rounded-xl bg-[#8F4AE3] hover:bg-[#7a3bc7] text-sm font-bold transition-all shadow-lg shadow-[#8F4AE3]/10">
-                  View Details
-                </button>
+
+                {/* STATUS */}
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-xs text-gray-400">Status</span>
+                  <span
+                    className={`text-xs px-2 py-1 rounded-full ${session.status === 'Finished'
+                      ? 'bg-green-500/20 text-green-400'
+                      : 'bg-yellow-500/20 text-yellow-400'
+                      }`}
+                  >
+                    {session.status}
+                  </span>
+                </div>
+
+                {/* PARTICIPANTS */}
+                <div className="flex items-center justify-between mb-6">
+                  <span className="text-xs text-gray-400">Participants</span>
+                  <span className="text-sm font-medium text-gray-200">
+                    {session.joined}/{session.maxParticipants}
+                  </span>
+                </div>
+
+                {/* FOOTER */}
+                <div className="flex items-center justify-between mt-auto">
+                  <p className="text-xs text-gray-500">
+                    Host: <span className="text-gray-300">{session.hostName}</span>
+                  </p>
+
+                  <button className="px-4 py-2 rounded-lg text-sm bg-[#0F1116] hover:border hover:border-[#8F4AE3] cursor-pointer" onClick={() => { setSelectedSession(session); setDetailsModal(true) }}>
+                    View Details
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -399,6 +424,11 @@ export default function DashboardPage() {
           </motion.div>
         )}
       </motion.div>
+
+      {/*  modal  */}
+      <AnimatePresence>
+        {detailsModal && selectedSession && <SessionDetails onClose={() => setDetailsModal(false)} session={selectedSession} />}
+      </AnimatePresence>
     </div>
   );
 }
