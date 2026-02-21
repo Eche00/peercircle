@@ -95,7 +95,11 @@ const createSessionDB = async ({
         })
 
         await batch.commit()
+<<<<<<< HEAD
         toast.success('Session created successfully', { id: loadingToast })
+=======
+        toast.success('Session created successfully ', { id: loadingToast })
+>>>>>>> e0c65b26a9031c9952ba27aec8d7f7b20475c684
         return createSessionRef.id
     } catch (error: any) {
         toast.error(error.message || 'Failed to create session.', { id: loadingToast })
