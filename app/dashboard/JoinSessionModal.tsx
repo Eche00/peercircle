@@ -125,11 +125,18 @@ function JoinSessionModal({ session, onClose }: { session: Session, onClose: () 
 
                 {/* ACTION */}
                 <button onClick={async () => {
-                    await joinSession({
-                        session,
-                        link,
-                        enteredPassword,
-                    })
+                    try {
+                        await joinSession({
+                            session,
+                            link,
+                            enteredPassword,
+                        })
+                        // Close the modal on success
+                        onClose()
+                    } catch (error) {
+                        // Optionally log error or handle failure
+                        console.error(error)
+                    }
                 }} className="mt-8 w-full py-3 rounded-lg bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 text-sm font-medium cursor-pointer">
                     Join Session
                 </button>

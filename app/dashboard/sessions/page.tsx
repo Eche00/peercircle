@@ -9,7 +9,7 @@ import { useSessionForm } from '@/utils/logics/sessions'
 
 function Page() {
 
-    const { sessions, mySessions, search, setSearch, createModal, setCreateModal, detailsModal, setDetailsModal, setJoinModal, joinModal, selectedSession, setSelectedSession } = useSessionForm()
+    const { sessions, mySessions, joinedSessions, search, setSearch, createModal, setCreateModal, detailsModal, setDetailsModal, setJoinModal, joinModal, selectedSession, setSelectedSession } = useSessionForm()
 
     return (
         <div className="min-h-screen text-white sm:p-6 space-y-10 relative">
@@ -113,7 +113,7 @@ function Page() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {mySessions.map((session) => (
+                    {joinedSessions.map((session) => (
                         <div
                             key={session.id}
                             className="bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-2xl p-5 shadow-lg flex flex-col justify-between"

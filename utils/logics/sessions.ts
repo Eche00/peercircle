@@ -95,11 +95,7 @@ const createSessionDB = async ({
         })
 
         await batch.commit()
-<<<<<<< HEAD
-        toast.success('Session created successfully', { id: loadingToast })
-=======
         toast.success('Session created successfully ', { id: loadingToast })
->>>>>>> e0c65b26a9031c9952ba27aec8d7f7b20475c684
         return createSessionRef.id
     } catch (error: any) {
         toast.error(error.message || 'Failed to create session.', { id: loadingToast })
@@ -118,7 +114,9 @@ export const joinSession = async ({
     enteredPassword?: string
 }) => {
     if (!link.trim()) {
-        return toast.error('Please provide your link.')
+        toast.error('Please provide your link.')
+        throw new Error('Please provide your link.')
+
     }
 
     const currentUser = auth.currentUser
@@ -189,6 +187,7 @@ export const joinSession = async ({
         toast.error(error.message || 'Failed to join session.', {
             id: loadingToast,
         })
+        throw error
     }
 }
 
@@ -205,6 +204,7 @@ export function useSessionForm() {
     const [rules, setRules] = useState<string[]>([])
     const [sessions, setSessions] = useState<Session[]>([])
     const [mySessions, setMySessions] = useState<Session[]>([])
+    const [joinedSessions, setJoinedSessions] = useState<Session[]>([])
     const [selectedSession, setSelectedSession] = useState<Session | null>(null)
     const [linkInput, setLinkInput] = useState("")
 
@@ -248,11 +248,30 @@ export function useSessionForm() {
                     (session) => session.hostId === currentUser?.uid
                 )
             )
+
+
         })
 
         return () => unsubscribe()
     }, [currentUser])
+    // joined sessions
+    useEffect(() => {
+        if (!currentUser) return
 
+        const participantsRef = collection(db, 'participants')
+        const q = query(participantsRef)
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const joinedIds = snapshot.docs
+                .filter(doc => doc.data().userId === currentUser.uid)
+                .map(doc => doc.data().sessionId)
+
+            const joined = sessions.filter(session => joinedIds.includes(session.id))
+            setJoinedSessions(joined)
+        })
+
+        return () => unsubscribe()
+    }, [currentUser, sessions])
     useEffect(() => {
         if (visibility === 'private') setPassword(generatePassword())
         else setPassword('')
@@ -293,18 +312,24 @@ export function useSessionForm() {
     const handleCreate = useCallback(async () => {
         if (!currentUser) throw new Error('User must be logged in')
 
-        return await createSessionDB({
-            title,
-            service,
-            maxParticipants,
-            visibility,
-            password,
-            rules,
-            link: linkInput,
-        }).then((id) => {
+        try {
+            const id = await createSessionDB({
+                title,
+                service,
+                maxParticipants,
+                visibility,
+                password,
+                rules,
+                link: linkInput,
+            })
+
             resetForm()
+
             return id
-        })
+        } catch (error) {
+            console.error(error)
+            throw error
+        }
     }, [title, service, maxParticipants, visibility, password, rules, linkInput, currentUser])
     return {
         // state
@@ -326,6 +351,7 @@ export function useSessionForm() {
         selectedSession,
         link,
         enteredPassword,
+        joinedSessions,
 
         // setters
         setTitle,
