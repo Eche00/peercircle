@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useSessionForm } from "@/utils/logics/sessions";
-import SessionDetails from "./SessionDetails";
+import SessionDetails from "./modals/SessionDetails";
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);

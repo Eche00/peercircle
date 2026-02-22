@@ -1,179 +1,80 @@
 'use client'
-import { Search } from '@mui/icons-material'
-import React, { useState } from 'react'
-import CreateModal from '../CreateModal'
-import { AnimatePresence } from 'framer-motion'
-import JoinSessionModal from '../JoinSessionModal'
-import SessionDetails from '../SessionDetails'
-import { useSessionForm } from '@/utils/logics/sessions'
+
+import { useState } from "react"
+import JoinSession from "./JoinSession"
+import HostedSessions from "./HostedSessions"
+import MySessions from "./MySessions"
 
 function Page() {
+    const [activeSection, setActiveSection] = useState<'joinable' | 'joined' | 'hosted'>('joinable')
 
-    const { sessions, mySessions, joinedSessions, search, setSearch, createModal, setCreateModal, detailsModal, setDetailsModal, setJoinModal, joinModal, selectedSession, setSelectedSession } = useSessionForm()
+    const scrollToSection = (section: 'joinable' | 'joined' | 'hosted') => {
+        setActiveSection(section)
 
+        const element = document.getElementById(section)
+        if (element) {
+            element.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+            })
+        }
+    }
     return (
         <div className="min-h-screen text-white sm:p-6 space-y-10 relative">
-            {/* JOIN SESSION SECTION */}
             <div>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-
-                    {/* LEFT — TITLE + SEARCH */}
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full">
-                        {/* SEARCH INPUT */}
-                        <div className="relative w-full sm:max-w-sm">
-                            <Search
-                                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
-                                fontSize="small"
-                            />
-                            <input
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                placeholder="Search by Session ID"
-                                className="w-full bg-[#0F1116] rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border border border-[#8F4AE3]"
-                            />
-                        </div>
-                    </div>
-
-                    {/* RIGHT — ACTION */}
-                    <button onClick={() => setCreateModal(true)} className="w-full sm:w-auto px-4 py-2 bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 rounded-lg text-sm whitespace-nowrap cursor-pointer">
-                        Create Session
-                    </button>
-                </div>
-
-                {/* SESSION LIST */}
-                <div className="max-h-[65vh] overflow-y-auto  bg-[#0F1116] sm:p-6 p-4  rounded-2xl">
-                    <div className=" grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {sessions.map((session) => (
-                            <div
-                                key={session.id}
-                                className="bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-2xl p-5 shadow-lg flex flex-col justify-between"
-                            >
-                                {/* HEADER */}
-                                <div className="flex items-center justify-between mb-3">
-                                    <p className="text-sm font-medium">{session.title}</p>
-
-                                    <span className="text-xs px-2 py-1 rounded-full bg-purple-500/10 text-purple-400">
-                                        {session.service}
-                                    </span>
-                                </div>
-
-                                {/* SESSION META */}
-                                <p className="text-xs text-gray-400 mb-3">
-                                    Session ID: {session.id.slice(0, 8)}...
-                                </p>
-
-                                {/* PROGRESS */}
-                                <div className="mb-4">
-                                    <div className="flex items-center justify-between text-xs mb-1">
-                                        <span className="text-gray-400">
-                                            Joined
-                                        </span>
-                                        <span className="text-gray-300">
-                                            {session.joined}/{session.maxParticipants}
-                                        </span>
-                                    </div>
-
-                                    <div className="w-full h-2 bg-[#0F1116] rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-[#8F4AE3]"
-                                            style={{ width: `${(session.joined / session.maxParticipants) * 100}%` }}
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* FOOTER */}
-                                <div className="flex items-center justify-between mt-4">
-                                    <p className="text-xs text-gray-500">
-                                        Host: <span className="text-gray-300">{session.hostName}</span>
-                                    </p>
-
-                                    <button
-                                        disabled={session.joined >= session.maxParticipants}
-                                        className={`px-4 py-2 rounded-lg text-sm ${session.joined >= session.maxParticipants
-                                            ? 'bg-gray-700 cursor-not-allowed text-gray-400'
-                                            : 'bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 cursor-pointer'
-                                            }`}
-                                        onClick={() => { setSelectedSession(session); setJoinModal(true) }}
-                                    >
-                                        {session.joined >= session.maxParticipants ? 'Full' : 'Join'}
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-            </div>
-
-            {/* CREATE / MY SESSIONS */}
-            <div >
-                <div className="flex items-center mb-4">
-                    <h2 className="text-lg font-medium">My Sessions</h2>
-
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {joinedSessions.map((session) => (
-                        <div
-                            key={session.id}
-                            className="bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-2xl p-5 shadow-lg flex flex-col justify-between"
+                <div>
+                    <h1 className="text-2xl font-bold mb-6">Sessions</h1>
+                    <div className="flex items-center mb-8 bg-[#212329] w-fit rounded-xl overflow-hidden">
+                        <button
+                            onClick={() => scrollToSection('joinable')}
+                            className={`px-4 py-2 rounded-md transition-all duration-200
+            ${activeSection === 'joinable'
+                                    ? 'bg-[#8F4AE3] text-white  '
+                                    : 'bg-transparent  text-white'}
+        `}
                         >
-                            {/* HEADER */}
-                            <div className="flex items-center justify-between mb-3">
-                                <p className="text-sm font-medium">{session.title}</p>
+                            Joinable
+                        </button>
 
-                                <span className="text-xs px-2 py-1 rounded-full bg-purple-500/10 text-purple-400">
-                                    {session.service}
-                                </span>
-                            </div>
+                        <button
+                            onClick={() => scrollToSection('joined')}
+                            className={`px-4 py-2 rounded-md transition-all duration-200
+            ${activeSection === 'joined'
+                                    ? 'bg-[#8F4AE3] text-white  '
+                                    : 'bg-transparent  text-white'}
+        `}
+                        >
+                            Joined
+                        </button>
 
-                            {/* SESSION META */}
-                            <p className="text-xs text-gray-400 mb-3">
-                                Session ID: {session.id.slice(0, 8)}...
-                            </p>
-
-                            {/* STATUS */}
-                            <div className="flex items-center justify-between mb-4">
-                                <span className="text-xs text-gray-400">Status</span>
-                                <span
-                                    className={`text-xs px-2 py-1 rounded-full ${session.status === 'Finished'
-                                        ? 'bg-green-500/20 text-green-400'
-                                        : 'bg-yellow-500/20 text-yellow-400'
-                                        }`}
-                                >
-                                    {session.status}
-                                </span>
-                            </div>
-
-                            {/* PARTICIPANTS */}
-                            <div className="flex items-center justify-between mb-6">
-                                <span className="text-xs text-gray-400">Participants</span>
-                                <span className="text-sm font-medium text-gray-200">
-                                    {session.joined}/{session.maxParticipants}
-                                </span>
-                            </div>
-
-                            {/* FOOTER */}
-                            <div className="flex items-center justify-between mt-auto">
-                                <p className="text-xs text-gray-500">
-                                    Host: <span className="text-gray-300">{session.hostName}</span>
-                                </p>
-
-                                <button className="px-4 py-2 rounded-lg text-sm bg-[#0F1116] hover:border hover:border-[#8F4AE3] cursor-pointer" onClick={() => { setSelectedSession(session); setDetailsModal(true) }}>
-                                    View Details
-                                </button>
-                            </div>
-                        </div>
-                    ))}
+                        <button
+                            onClick={() => scrollToSection('hosted')}
+                            className={`px-4 py-2 rounded-md transition-all duration-200
+            ${activeSection === 'hosted'
+                                    ? 'bg-[#8F4AE3] text-white  '
+                                    : 'bg-transparent  text-white'}
+        `}
+                        >
+                            Hosted
+                        </button>
+                    </div>
                 </div>
+                {/* SESSIONS  */}
 
+
+
+                <section id="joinable">
+                    {activeSection === 'joinable' && <JoinSession />}
+                </section>
+
+                <section id="joined">
+                    {activeSection === 'joined' && <MySessions />}
+                </section>
+
+                <section id="hosted">
+                    {activeSection === 'hosted' && <HostedSessions />}
+                </section>
             </div>
-            {/* create modal  */}
-            <AnimatePresence>
-                {createModal && <CreateModal onClose={() => setCreateModal(false)} />}
-                {joinModal && selectedSession && <JoinSessionModal onClose={() => setJoinModal(false)} session={selectedSession} />}
-                {detailsModal && selectedSession && <SessionDetails onClose={() => setDetailsModal(false)} session={selectedSession} />}
-            </AnimatePresence>
         </div>
     )
 }
