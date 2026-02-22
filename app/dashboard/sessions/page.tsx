@@ -30,7 +30,7 @@ function Page() {
                             className={`px-4 py-2 rounded-md transition-all duration-200
             ${activeSection === 'joinable'
                                     ? 'bg-[#8F4AE3] text-white  '
-                                    : 'bg-transparent  text-white'}
+                                    : 'bg-transparent  text-gray-400'}
         `}
                         >
                             Joinable
@@ -41,7 +41,7 @@ function Page() {
                             className={`px-4 py-2 rounded-md transition-all duration-200
             ${activeSection === 'joined'
                                     ? 'bg-[#8F4AE3] text-white  '
-                                    : 'bg-transparent  text-white'}
+                                    : 'bg-transparent  text-gray-400'}
         `}
                         >
                             Joined
@@ -52,7 +52,7 @@ function Page() {
                             className={`px-4 py-2 rounded-md transition-all duration-200
             ${activeSection === 'hosted'
                                     ? 'bg-[#8F4AE3] text-white  '
-                                    : 'bg-transparent  text-white'}
+                                    : 'bg-transparent  text-gray-400'}
         `}
                         >
                             Hosted
