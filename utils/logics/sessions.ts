@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { db, auth } from '@/lib/firebase'
-import { collection, doc, onSnapshot, orderBy, query, serverTimestamp, getDoc, increment, writeBatch, where } from 'firebase/firestore'
+import { collection, doc, onSnapshot, orderBy, query, serverTimestamp, getDoc, increment, writeBatch, where, updateDoc } from 'firebase/firestore'
 import toast from 'react-hot-toast'
 import { useUserInfo } from './userinfo'
 
@@ -21,6 +21,9 @@ export interface Session {
     joined: number
     status: string
     createdAt: any
+
+    countdownStartedAt?: any
+    countdownDuration?: number
 }
 
 export interface SessionFormState {
@@ -65,7 +68,7 @@ const createSessionDB = async ({
 
         const batch = writeBatch(db)
         const createSessionRef = doc(collection(db, 'sessions'))
-
+        const durationMs = 2 * 60 * 1000 // 2 minutes in milliseconds
         batch.set(createSessionRef, {
             title,
             service,
@@ -78,6 +81,10 @@ const createSessionDB = async ({
             joined: 1,
             status: 'waiting',
             createdAt: serverTimestamp(),
+
+            countdownDuration: durationMs,
+            countdownStartedAt: serverTimestamp(),
+
         })
 
         const participantRef = doc(
@@ -234,6 +241,8 @@ export function useSessionForm() {
         setSessionLoading(true)
         setHostedSessionLoading(true)
 
+        const COUNTDOWN_DURATION = 2 * 60 * 1000
+
         const q = query(
             collection(db, "sessions"),
             orderBy("createdAt", "desc")
@@ -241,28 +250,56 @@ export function useSessionForm() {
 
         const unsubscribe = onSnapshot(
             q,
-            (snapshot) => {
-                const sessionList: Session[] = snapshot.docs.map((docSnap) => {
+            async (snapshot) => {
+                const now = Date.now()
+
+                const sessionList: Session[] = []
+
+                for (const docSnap of snapshot.docs) {
                     const data = docSnap.data() as Omit<Session, "id">
-                    return {
+
+                    const session: Session = {
                         id: docSnap.id,
                         ...data,
                     }
-                })
+
+                    //  Handle countdown expiry safely
+                    if (
+                        session.status === "waiting" &&
+                        session.createdAt
+                    ) {
+                        const startedAt = session.createdAt.toMillis()
+                        const endsAt = startedAt + COUNTDOWN_DURATION
+
+                        if (now >= endsAt) {
+                            try {
+                                await updateDoc(
+                                    doc(db, "sessions", session.id),
+                                    { status: "In Progress" }
+                                )
+
+                                session.status = "In Progress"
+                            } catch (err) {
+                                console.error("Failed updating status:", err)
+                            }
+                        }
+                    }
+
+                    sessionList.push(session)
+                }
 
                 setSessions(sessionList)
 
                 if (currentUser) {
-                    const hosted = sessionList.filter(
-                        (session) => session.hostId === currentUser.uid
+                    setMySessions(
+                        sessionList.filter(
+                            (session) => session.hostId === currentUser.uid
+                        )
                     )
-
-                    setMySessions(hosted)
                 } else {
                     setMySessions([])
                 }
 
-                // loading done after first snapshot
                 setSessionLoading(false)
                 setHostedSessionLoading(false)
             },
@@ -282,10 +319,9 @@ export function useSessionForm() {
 
         setJoinedSessionLoading(true)
 
-        const participantsRef = collection(db, 'participants')
         const q = query(
-            participantsRef,
-            where('userId', '==', currentUser.uid)
+            collection(db, "participants"),
+            where("userId", "==", currentUser.uid)
         )
 
         const unsubscribe = onSnapshot(
