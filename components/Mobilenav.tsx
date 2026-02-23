@@ -1,5 +1,5 @@
 "use client";
-import { sideBarItems, sideBarItems2 } from "@/utils/routes";
+import { adminSideBarItems, sideBarItems, sideBarItems2 } from "@/utils/routes";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -38,6 +38,21 @@ function Mobilenav({ setOpenMenu }: mobileNavProps) {
       <section className="w-[90%] mx-auto flex flex-col gap-2 text-[10px]">
         {/* Link Section  */}
         {sideBarItems.map((item) => (
+          <Link
+            href={item.link}
+            key={item.name}
+            onClick={() => setOpenMenu(false)}
+            className={
+              pathname === item.link
+                ? "text-white font-bold bg-[#8F4AE3] py-3 px-4  rounded-lg flex items-center gap-2"
+                : "text-gray-400 py-3 px-4  rounded-lg hover:bg-[#8F4AE3]/10 flex items-center gap-2"
+            }
+          >
+            {item.icon} {item.name}
+          </Link>
+        ))}
+        <hr className=" w-full h-[0.1px] bg-gray-600 border-none" />
+        {adminSideBarItems.map((item) => (
           <Link
             href={item.link}
             key={item.name}

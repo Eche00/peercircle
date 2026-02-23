@@ -5,9 +5,11 @@ import { AnimatePresence } from 'framer-motion';
 import { Search } from '@mui/icons-material';
 import CreateModal from '../modals/CreateModal';
 import JoinSessionModal from '../modals/JoinSessionModal';
+import SessionLoader from '../ui/SessionLoader';
+import EmptySession from '../ui/EmptySession';
 
 function JoinSession() {
-    const { sessions, search, setSearch, createModal, setCreateModal, setJoinModal, joinModal, selectedSession, setSelectedSession } = useSessionForm()
+    const { sessions, search, setSearch, createModal, setCreateModal, setJoinModal, joinModal, selectedSession, setSelectedSession, sessionLoading } = useSessionForm()
 
 
     return (
@@ -40,9 +42,10 @@ function JoinSession() {
                 </div>
 
                 {/* SESSION LIST */}
-                <div className="max-h-[65vh] overflow-y-auto  bg-[#0F1116] sm:p-6 p-4  rounded-2xl">
-                    <div className=" grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {sessions.map((session) => (
+                <div className=" overflow-y-auto  bg-[#0F1116] sm:p-6 p-4  rounded-2xl">
+                    {sessionLoading ?
+                        <SessionLoader /> : <div className=" grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">{sessions.map((session) => (
+
                             <div
                                 key={session.id}
                                 className="bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-2xl p-5 shadow-lg flex flex-col justify-between"
@@ -97,9 +100,10 @@ function JoinSession() {
                                         {session.joined >= session.maxParticipants ? 'Full' : 'Join'}
                                     </button>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
+                            </div>))}
+                        </div>
+                    }
+
                 </div>
 
             </div>

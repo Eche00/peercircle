@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { db, auth } from '@/lib/firebase'
-import { collection, doc, onSnapshot, orderBy, query, serverTimestamp, getDoc, increment, writeBatch } from 'firebase/firestore'
+import { collection, doc, onSnapshot, orderBy, query, serverTimestamp, getDoc, increment, writeBatch, where } from 'firebase/firestore'
 import toast from 'react-hot-toast'
 import { useUserInfo } from './userinfo'
 
@@ -215,6 +215,10 @@ export function useSessionForm() {
 
     const [link, setLink] = useState('')
     const [enteredPassword, setEnteredPassword] = useState('')
+
+    const [sessionLoading, setSessionLoading] = useState(false)
+    const [joinedSessionLoading, setJoinedSessionLoading] = useState(false)
+    const [hostedSessionLoading, setHostedSessionLoading] = useState(false)
     // Password generation
     const generatePassword = (length = 20) => {
         const chars =
@@ -227,48 +231,82 @@ export function useSessionForm() {
     }
     // sessions 
     useEffect(() => {
+        setSessionLoading(true)
+        setHostedSessionLoading(true)
+
         const q = query(
             collection(db, "sessions"),
             orderBy("createdAt", "desc")
         )
 
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const sessionList: Session[] = snapshot.docs.map((docSnap) => {
-                const data = docSnap.data() as Omit<Session, "id">
-                return {
-                    id: docSnap.id,
-                    ...data,
+        const unsubscribe = onSnapshot(
+            q,
+            (snapshot) => {
+                const sessionList: Session[] = snapshot.docs.map((docSnap) => {
+                    const data = docSnap.data() as Omit<Session, "id">
+                    return {
+                        id: docSnap.id,
+                        ...data,
+                    }
+                })
+
+                setSessions(sessionList)
+
+                if (currentUser) {
+                    const hosted = sessionList.filter(
+                        (session) => session.hostId === currentUser.uid
+                    )
+
+                    setMySessions(hosted)
+                } else {
+                    setMySessions([])
                 }
-            })
 
-            setSessions(sessionList)
-
-            setMySessions(
-                sessionList.filter(
-                    (session) => session.hostId === currentUser?.uid
-                )
-            )
-
-
-        })
+                // loading done after first snapshot
+                setSessionLoading(false)
+                setHostedSessionLoading(false)
+            },
+            (error) => {
+                console.error(error)
+                setSessionLoading(false)
+                setHostedSessionLoading(false)
+            }
+        )
 
         return () => unsubscribe()
     }, [currentUser])
+
     // joined sessions
     useEffect(() => {
         if (!currentUser) return
 
+        setJoinedSessionLoading(true)
+
         const participantsRef = collection(db, 'participants')
-        const q = query(participantsRef)
+        const q = query(
+            participantsRef,
+            where('userId', '==', currentUser.uid)
+        )
 
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const joinedIds = snapshot.docs
-                .filter(doc => doc.data().userId === currentUser.uid)
-                .map(doc => doc.data().sessionId)
+        const unsubscribe = onSnapshot(
+            q,
+            (snapshot) => {
+                const joinedIds = snapshot.docs.map(
+                    doc => doc.data().sessionId
+                )
 
-            const joined = sessions.filter(session => joinedIds.includes(session.id))
-            setJoinedSessions(joined)
-        })
+                const joined = sessions.filter(session =>
+                    joinedIds.includes(session.id)
+                )
+
+                setJoinedSessions(joined)
+                setJoinedSessionLoading(false)
+            },
+            (error) => {
+                console.error(error)
+                setJoinedSessionLoading(false)
+            }
+        )
 
         return () => unsubscribe()
     }, [currentUser, sessions])
@@ -352,6 +390,9 @@ export function useSessionForm() {
         link,
         enteredPassword,
         joinedSessions,
+        sessionLoading,
+        hostedSessionLoading,
+        joinedSessionLoading,
 
         // setters
         setTitle,

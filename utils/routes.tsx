@@ -5,6 +5,7 @@ import AccessibilityIcon from "@mui/icons-material/Accessibility";
 import Groups3Icon from "@mui/icons-material/Groups3";
 import TaskIcon from "@mui/icons-material/Task";
 import React from "react";
+import { AddTaskSharp } from "@mui/icons-material";
 
 type SideBarItem = {
   name: string;
@@ -32,6 +33,9 @@ export const sideBarItems: SideBarItem[] = [
 export const sideBarItems2: SideBarItem[] = [
   { name: "History", link: "/dashboard/history", icon: <HistoryIcon /> },
   { name: "Profile", link: "/dashboard/profile", icon: <AccessibilityIcon /> },
+];
+export const adminSideBarItems: SideBarItem[] = [
+  { name: "Task Management", link: "/dashboard/taskmanagement", icon: <AddTaskSharp /> },
 ];
 
 export const publicItems: PublicRoutes[] = [
