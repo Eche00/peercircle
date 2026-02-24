@@ -15,29 +15,60 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { useSessionForm } from "@/utils/logics/sessions";
+import { fetchDailyTasks, Task } from "@/utils/taskActions";
 import SessionDetails from "./modals/SessionDetails";
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState<string>("Creator");
+  const [trustPoints, setTrustPoints] = useState<number>(0);
+  const [dailyTasks, setDailyTasks] = useState<Task[]>([]);
   const router = useRouter();
-  const { sessions, selectedSession, setSelectedSession, detailsModal, setDetailsModal } = useSessionForm()
+  const {
+    sessions,
+    selectedSession,
+    setSelectedSession,
+    detailsModal,
+    setDetailsModal,
+  } = useSessionForm();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    let unsubscribeUser: (() => void) | undefined;
+
+    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         router.push("/auth/sign-in");
       } else {
         if (user.displayName) {
-          setUserName(user.displayName.split(" ")[0]); // Use first name
+          setUserName(user.displayName.split(" ")[0]);
         }
+
+        // Live trust points listener
+        unsubscribeUser = onSnapshot(doc(db, "users", user.uid), (doc) => {
+          if (doc.exists()) {
+            setTrustPoints(doc.data().trustPoints || 0);
+          }
+        });
+
+        // Fetch real daily tasks
+        try {
+          const tasks = await fetchDailyTasks();
+          setDailyTasks(tasks.slice(0, 3));
+        } catch (error) {
+          console.error("Error fetching tasks for dashboard:", error);
+        }
+
         setLoading(false);
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeUser) unsubscribeUser();
+    };
   }, [router]);
 
   const stats = [
@@ -50,7 +81,7 @@ export default function DashboardPage() {
     },
     {
       label: "Tasks Pending",
-      value: "3",
+      value: dailyTasks.length.toString(),
       icon: <TaskAltOutlined />,
       color: "text-yellow-500",
       bg: "bg-yellow-500/10",
@@ -85,14 +116,16 @@ export default function DashboardPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-linear-to-r from-[#8F4AE3] to-[#a855f7] p-8 rounded-3xl text-white shadow-2xl relative overflow-hidden"
+        className="bg-gradient-to-r from-[#8F4AE3] to-[#a855f7] p-8 rounded-3xl text-white shadow-2xl relative overflow-hidden"
       >
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Welcome back, {userName}!</h1>
+            <h1 className="text-3xl font-bold mb-2">
+              Welcome back, {userName}!
+            </h1>
             <p className="text-white/80 max-w-md">
-              Your peer circle is growing. You have 3 tasks waiting for your
-              attention today.
+              Your peer circle is growing. You have {dailyTasks.length} tasks
+              waiting for your attention today.
             </p>
             <Link
               href="/dashboard/tasks"
@@ -120,13 +153,13 @@ export default function DashboardPage() {
 
       {/* Top Grid: Trust Points & Stats */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* TRUST POINTS CARD (Merged from remote) */}
+        {/* TRUST POINTS CARD */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-3xl p-8 shadow-xl flex flex-col items-center justify-center relative overflow-hidden group"
         >
-          <div className="absolute inset-0 bg-linear-to-br from-[#8F4AE3]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-[#8F4AE3]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
           <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mb-6 relative z-10">
             Trust Points
           </p>
@@ -150,12 +183,14 @@ export default function DashboardPage() {
                 stroke="#8F4AE3"
                 strokeWidth="8"
                 strokeDasharray="377"
-                strokeDashoffset="94"
+                strokeDashoffset={
+                  377 - (377 * Math.min(trustPoints, 1000)) / 1000
+                }
                 strokeLinecap="round"
               />
             </svg>
             <div className="text-center">
-              <p className="text-3xl font-black text-white">750</p>
+              <p className="text-3xl font-black text-white">{trustPoints}</p>
               <p className="text-[10px] text-gray-500 font-bold uppercase">
                 Points
               </p>
@@ -164,12 +199,15 @@ export default function DashboardPage() {
 
           <div className="mt-6 bg-[#8F4AE3]/10 px-4 py-1.5 rounded-full relative z-10 border border-[#8F4AE3]/20">
             <p className="text-xs text-[#8F4AE3] font-bold">
-              Tier: <span className="text-white">Platinum</span>
+              Tier:{" "}
+              <span className="text-white">
+                {trustPoints > 500 ? "Platinum" : "Newcomer"}
+              </span>
             </p>
           </div>
         </motion.div>
 
-        {/* ACTIVITY FEED (Merged from remote) */}
+        {/* ACTIVITY FEED */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -187,9 +225,9 @@ export default function DashboardPage() {
 
           <div className="space-y-4">
             {[
-              { event: "Earned Trust Points", date: "Feb 1, 2025" },
-              { event: "Withdrawal Approved", date: "Feb 3, 2025" },
-              { event: "Escrow Completed", date: "Jan 30, 2025" },
+              { event: "Trust Points Updated", date: "Just now" },
+              { event: "Daily Tasks Refreshed", date: "Today" },
+              { event: "Session Attendance Verified", date: "Yesterday" },
             ].map((item, i) => (
               <div
                 key={i}
@@ -252,52 +290,41 @@ export default function DashboardPage() {
             </Link>
           </div>
           <div className="p-2">
-            {[
-              {
-                title: "Follow @tech_daily on IG",
-                reward: "+50 XP",
-                time: "2h left",
-              },
-              {
-                title: "Share PeerCircle Discord link",
-                reward: "+30 XP",
-                time: "5h left",
-              },
-              {
-                title: "Comment on 2 community posts",
-                reward: "+40 XP",
-                time: "10h left",
-              },
-            ].map((task, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between p-4 hover:bg-white/5 rounded-2xl transition-colors group"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-2 h-2 rounded-full bg-[#8F4AE3] group-hover:scale-150 transition-transform"></div>
-                  <div>
-                    <p className="font-bold text-white group-hover:text-[#8F4AE3] transition-colors">
-                      {task.title}
-                    </p>
-                    <div className="flex items-center gap-3 mt-1">
-                      <span className="text-xs text-green-500 font-bold">
-                        {task.reward}
-                      </span>
-                      <span className="text-xs text-gray-500 flex items-center gap-1">
-                        <TrendingUpOutlined style={{ fontSize: "12px" }} />{" "}
-                        {task.time}
-                      </span>
+            {dailyTasks.length === 0 ? (
+              <div className="p-10 text-center text-gray-500 italic">
+                No tasks available
+              </div>
+            ) : (
+              dailyTasks.map((task, i) => (
+                <div
+                  key={task.id}
+                  className="flex items-center justify-between p-4 hover:bg-white/5 rounded-2xl transition-colors group"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-2 h-2 rounded-full bg-[#8F4AE3] group-hover:scale-150 transition-transform"></div>
+                    <div>
+                      <p className="font-bold text-white group-hover:text-[#8F4AE3] transition-colors">
+                        {task.title}
+                      </p>
+                      <div className="flex items-center gap-3 mt-1">
+                        <span className="text-xs text-green-500 font-bold">
+                          +{task.points} XP
+                        </span>
+                        <span className="text-xs text-gray-500 flex items-center gap-1 uppercase tracking-tighter">
+                          {task.platform}
+                        </span>
+                      </div>
                     </div>
                   </div>
+                  <Link
+                    href="/dashboard/tasks"
+                    className="text-gray-500 hover:text-white transition-colors"
+                  >
+                    <ArrowForwardIos style={{ fontSize: "14px" }} />
+                  </Link>
                 </div>
-                <Link
-                  href="/dashboard/tasks"
-                  className="text-gray-500 hover:text-white transition-colors"
-                >
-                  <ArrowForwardIos style={{ fontSize: "14px" }} />
-                </Link>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </motion.div>
 
@@ -332,7 +359,7 @@ export default function DashboardPage() {
         </motion.div>
       </div>
 
-      {/* SESSIONS JOINED SECTION (Merged from remote) */}
+      {/* SESSIONS JOINED SECTION */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -370,10 +397,11 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs text-gray-400">Status</span>
                   <span
-                    className={`text-xs px-2 py-1 rounded-full ${session.status === 'Finished'
-                      ? 'bg-green-500/20 text-green-400'
-                      : 'bg-yellow-500/20 text-yellow-400'
-                      }`}
+                    className={`text-xs px-2 py-1 rounded-full ${
+                      session.status === "Finished"
+                        ? "bg-green-500/20 text-green-400"
+                        : "bg-yellow-500/10 text-yellow-400"
+                    }`}
                   >
                     {session.status}
                   </span>
@@ -390,10 +418,17 @@ export default function DashboardPage() {
                 {/* FOOTER */}
                 <div className="flex items-center justify-between mt-auto">
                   <p className="text-xs text-gray-500">
-                    Host: <span className="text-gray-300">{session.hostName}</span>
+                    Host:{" "}
+                    <span className="text-gray-300">{session.hostName}</span>
                   </p>
 
-                  <button className="px-4 py-2 rounded-lg text-sm bg-[#0F1116] hover:border hover:border-[#8F4AE3] cursor-pointer" onClick={() => { setSelectedSession(session); setDetailsModal(true) }}>
+                  <button
+                    className="px-4 py-2 rounded-lg text-sm bg-[#0F1116] hover:border hover:border-[#8F4AE3] cursor-pointer"
+                    onClick={() => {
+                      setSelectedSession(session);
+                      setDetailsModal(true);
+                    }}
+                  >
                     View Details
                   </button>
                 </div>
@@ -427,7 +462,12 @@ export default function DashboardPage() {
 
       {/*  modal  */}
       <AnimatePresence>
-        {detailsModal && selectedSession && <SessionDetails onClose={() => setDetailsModal(false)} session={selectedSession} />}
+        {detailsModal && selectedSession && (
+          <SessionDetails
+            onClose={() => setDetailsModal(false)}
+            session={selectedSession}
+          />
+        )}
       </AnimatePresence>
     </div>
   );
