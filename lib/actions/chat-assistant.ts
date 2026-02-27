@@ -43,7 +43,7 @@ export async function chatWithAssistant(
     throw new Error("GEMINI_API_KEY is not defined");
   }
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyA38BAAqUvgnSgAbaSstQTZt4K_YJKJOKk`;
 
   const body = {
     system_instruction: {
