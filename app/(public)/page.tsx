@@ -1,19 +1,16 @@
-import React from 'react'
-import Hero from './homepage/Hero'
-import Aim from './homepage/Aim'
-import Faqs from './homepage/Faqs'
+import Hero from "./homepage/Hero";
+import Aim from "./homepage/Aim";
 
 function page() {
-    return (
-        <div>
-            {/* Homepage container */}
-            <main>
-                <Hero />
-                <Aim />
-                <Faqs />
-            </main>
-        </div>
-    )
+  return (
+    <div>
+      {/* Homepage container */}
+      <main>
+        <Hero />
+        <Aim />
+      </main>
+    </div>
+  );
 }
 
-export default page
+export default page;

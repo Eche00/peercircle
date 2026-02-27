@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+import ChatAssistant from "@/components/ChatAssistant";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,7 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "PeerCircle",
-  description: "Organic social growth, engagement groups, and session coordination for creators.",
+  description:
+    "Organic social growth, engagement groups, and session coordination for creators.",
   icons: {
     icon: "/logo.png",
   },
@@ -66,9 +68,8 @@ export default function RootLayout({
           }}
         />
         {children}
+        <ChatAssistant />
       </body>
     </html>
   );
 }
-
-
