@@ -1,11 +1,26 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { db, auth } from '@/lib/firebase'
-import { collection, doc, onSnapshot, orderBy, query, serverTimestamp, getDoc, increment, writeBatch, where, updateDoc } from 'firebase/firestore'
+import {
+    collection,
+    doc,
+    onSnapshot,
+    orderBy,
+    query,
+    serverTimestamp,
+    getDoc,
+    increment,
+    writeBatch,
+    where,
+    updateDoc,
+    arrayUnion // ✅ FIX ADDED
+} from 'firebase/firestore'
 import toast from 'react-hot-toast'
 import { useUserInfo } from './userinfo'
 
-// TYPES
+/* =====================================================
+TYPES
+===================================================== */
 export type Visibility = 'public' | 'private'
 
 export interface Session {
@@ -21,7 +36,6 @@ export interface Session {
     joined: number
     status: string
     createdAt: any
-
     countdownStartedAt?: any
     countdownDuration?: number
 }
@@ -46,7 +60,9 @@ interface CreateSessionParams {
     link: string
 }
 
-// CREATE SESSION FUNCTION
+/* =====================================================
+CREATE SESSION
+===================================================== */
 const createSessionDB = async ({
     title,
     service,
@@ -56,19 +72,26 @@ const createSessionDB = async ({
     rules,
     link,
 }: CreateSessionParams) => {
-    if (!title || !service || !maxParticipants || !visibility || !link) { return toast.error('Please fill in all required fields.') }
-    const loadingToast = toast.loading('Creating session...')
-    try {
 
+    if (!title || !service || !maxParticipants || !visibility || !link) {
+        return toast.error('Please fill in all required fields.')
+    }
+
+    const loadingToast = toast.loading('Creating session...')
+
+    try {
         const currentUser = auth.currentUser
-        if (!currentUser) throw new Error('User must be authenticated to create a session.')
+        if (!currentUser) throw new Error('User must be authenticated')
 
         const hostId = currentUser.uid
-        const hostName = currentUser.displayName?.split(' ')[0] || 'Creator'
+        const hostName =
+            currentUser.displayName?.split(' ')[0] || 'Creator'
 
         const batch = writeBatch(db)
         const createSessionRef = doc(collection(db, 'sessions'))
-        const durationMs = 2 * 60 * 1000 // 2 minutes in milliseconds
+
+        const durationMs = 2 * 60 * 1000
+
         batch.set(createSessionRef, {
             title,
             service,
@@ -81,10 +104,8 @@ const createSessionDB = async ({
             joined: 1,
             status: 'waiting',
             createdAt: serverTimestamp(),
-
             countdownDuration: durationMs,
             countdownStartedAt: serverTimestamp(),
-
         })
 
         const participantRef = doc(
@@ -97,20 +118,34 @@ const createSessionDB = async ({
             userId: hostId,
             userName: hostName,
             isHost: true,
-            link: link || null,
+            link,
             joinedAt: serverTimestamp(),
+
+            /* ✅ VISIT TRACKING */
+            visitedLinks: [],
+            completed: false,
+            approvedByHost: false,
         })
 
         await batch.commit()
-        toast.success('Session created successfully ', { id: loadingToast })
+
+        toast.success('Session created successfully', {
+            id: loadingToast,
+        })
+
         return createSessionRef.id
     } catch (error: any) {
-        toast.error(error.message || 'Failed to create session.', { id: loadingToast })
+        toast.error(
+            error.message || 'Failed to create session.',
+            { id: loadingToast }
+        )
         throw error
     }
 }
 
-
+/* =====================================================
+JOIN SESSION
+===================================================== */
 export const joinSession = async ({
     session,
     link,
@@ -120,16 +155,15 @@ export const joinSession = async ({
     link: string
     enteredPassword?: string
 }) => {
+
     if (!link.trim()) {
         toast.error('Please provide your link.')
-        throw new Error('Please provide your link.')
-
+        throw new Error()
     }
 
     const currentUser = auth.currentUser
-    if (!currentUser) {
+    if (!currentUser)
         return toast.error('You must be logged in.')
-    }
 
     const loadingToast = toast.loading('Joining session...')
 
@@ -137,18 +171,19 @@ export const joinSession = async ({
         const sessionRef = doc(db, 'sessions', session.id)
         const sessionSnap = await getDoc(sessionRef)
 
-        if (!sessionSnap.exists()) {
+        if (!sessionSnap.exists())
             throw new Error('Session does not exist.')
+
+        const sessionData =
+            sessionSnap.data() as Session
+
+        if (
+            sessionData.joined >=
+            sessionData.maxParticipants
+        ) {
+            throw new Error('Session is full.')
         }
 
-        const sessionData = sessionSnap.data() as Session
-
-        //  Check if full
-        if (sessionData.joined >= sessionData.maxParticipants) {
-            throw new Error('Session is already full.')
-        }
-
-        // Check password if private
         if (
             sessionData.visibility === 'private' &&
             sessionData.password !== enteredPassword
@@ -156,50 +191,114 @@ export const joinSession = async ({
             throw new Error('Invalid session password.')
         }
 
-        const participantId = `${session.id}_${currentUser.uid}`
-        const participantRef = doc(db, 'participants', participantId)
+        const participantId =
+            `${session.id}_${currentUser.uid}`
 
-        const participantSnap = await getDoc(participantRef)
+        const participantRef =
+            doc(db, 'participants', participantId)
 
-        // Prevent duplicate join
-        if (participantSnap.exists()) {
-            throw new Error('You already joined this session.')
-        }
+        const participantSnap =
+            await getDoc(participantRef)
+
+        if (participantSnap.exists())
+            throw new Error(
+                'You already joined this session.'
+            )
 
         const batch = writeBatch(db)
 
-        // Add participant
         batch.set(participantRef, {
             sessionId: session.id,
             userId: currentUser.uid,
-            userName: currentUser.displayName?.split(' ')[0] || 'User',
+            userName:
+                currentUser.displayName?.split(' ')[0] ||
+                'User',
             isHost: false,
             link,
             joinedAt: serverTimestamp(),
+
+            visitedLinks: [],
+            completed: false,
+            approvedByHost: false,
         })
 
-        // Increment joined count
         batch.update(sessionRef, {
             joined: increment(1),
             status:
-                sessionData.joined + 1 >= sessionData.maxParticipants
+                sessionData.joined + 1 >=
+                    sessionData.maxParticipants
                     ? 'In Progress'
                     : sessionData.status,
         })
 
         await batch.commit()
 
-        toast.success('Successfully joined session!', { id: loadingToast })
-    } catch (error: any) {
-        toast.error(error.message || 'Failed to join session.', {
+        toast.success('Successfully joined session!', {
             id: loadingToast,
         })
+    } catch (error: any) {
+        toast.error(
+            error.message ||
+            'Failed to join session.',
+            { id: loadingToast }
+        )
         throw error
     }
 }
 
-// HOOK
+/* =====================================================
+✅ MARK LINK VISITED (MAIN FIX)
+===================================================== */
+export const markLinkVisited = async (
+    participantId: string
+) => {
+    const currentUser = auth.currentUser
+    if (!currentUser) return
+
+    const participantRef =
+        doc(db, 'participants', participantId)
+
+    await updateDoc(participantRef, {
+        visitedLinks: arrayUnion(
+            currentUser.uid
+        ),
+    })
+}
+
+/* =====================================================
+HOST APPROVAL
+===================================================== */
+export const approveParticipant = async (
+    sessionId: string,
+    userId: string
+) => {
+
+    const batch = writeBatch(db)
+
+    const participantRef = doc(
+        db,
+        'participants',
+        `${sessionId}_${userId}`
+    )
+
+    const userRef = doc(db, 'users', userId)
+
+    batch.update(participantRef, {
+        approvedByHost: true,
+    })
+
+    batch.update(userRef, {
+        trustPoints: increment(1),
+    })
+
+    await batch.commit()
+}
+
+/* =====================================================
+HOOK
+===================================================== */
 export function useSessionForm() {
+
     const currentUser = useUserInfo()
 
     const [title, setTitle] = useState('')
@@ -213,30 +312,27 @@ export function useSessionForm() {
     const [mySessions, setMySessions] = useState<Session[]>([])
     const [joinedSessions, setJoinedSessions] = useState<Session[]>([])
     const [selectedSession, setSelectedSession] = useState<Session | null>(null)
-    const [linkInput, setLinkInput] = useState("")
+    const [linkInput, setLinkInput] = useState('')
 
-    const [search, setSearch] = useState<string>('')
-    const [createModal, setCreateModal] = useState<boolean>(false)
-    const [joinModal, setJoinModal] = useState<boolean>(false)
-    const [detailsModal, setDetailsModal] = useState<boolean>(false)
-
+    const [search, setSearch] = useState('')
+    const [createModal, setCreateModal] = useState(false)
+    const [joinModal, setJoinModal] = useState(false)
+    const [detailsModal, setDetailsModal] = useState(false)
     const [link, setLink] = useState('')
     const [enteredPassword, setEnteredPassword] = useState('')
 
     const [sessionLoading, setSessionLoading] = useState(false)
     const [joinedSessionLoading, setJoinedSessionLoading] = useState(false)
     const [hostedSessionLoading, setHostedSessionLoading] = useState(false)
-    // Password generation
+
     const generatePassword = (length = 20) => {
-        const chars =
-            'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
         let result = ''
-        for (let i = 0; i < length; i++) {
+        for (let i = 0; i < length; i++)
             result += chars.charAt(Math.floor(Math.random() * chars.length))
-        }
         return result
     }
-    // sessions 
+
     useEffect(() => {
         setSessionLoading(true)
         setHostedSessionLoading(true)
@@ -244,131 +340,102 @@ export function useSessionForm() {
         const COUNTDOWN_DURATION = 2 * 60 * 1000
 
         const q = query(
-            collection(db, "sessions"),
-            orderBy("createdAt", "desc")
+            collection(db, 'sessions'),
+            orderBy('createdAt', 'desc')
         )
 
-        const unsubscribe = onSnapshot(
-            q,
-            async (snapshot) => {
-                const now = Date.now()
+        const unsubscribe = onSnapshot(q, async (snapshot) => {
+            const now = Date.now()
+            const sessionList: Session[] = []
 
-                const sessionList: Session[] = []
-
-                for (const docSnap of snapshot.docs) {
-                    const data = docSnap.data() as Omit<Session, "id">
-
-                    const session: Session = {
-                        id: docSnap.id,
-                        ...data,
-                    }
-
-                    //  Handle countdown expiry safely
-                    if (
-                        session.status === "waiting" &&
-                        session.createdAt
-                    ) {
-                        const startedAt = session.createdAt.toMillis()
-                        const endsAt = startedAt + COUNTDOWN_DURATION
-
-                        if (now >= endsAt) {
-                            try {
-                                await updateDoc(
-                                    doc(db, "sessions", session.id),
-                                    { status: "In Progress" }
-                                )
-
-                                session.status = "In Progress"
-                            } catch (err) {
-                                console.error("Failed updating status:", err)
-                            }
-                        }
-                    }
-
-                    sessionList.push(session)
+            for (const docSnap of snapshot.docs) {
+                const data = docSnap.data() as Omit<Session, 'id'>
+                const session: Session = {
+                    id: docSnap.id,
+                    ...data
                 }
 
-                setSessions(sessionList)
+                if (
+                    session.status === 'waiting' &&
+                    session.createdAt
+                ) {
+                    const startedAt = session.createdAt.toMillis()
+                    const endsAt = startedAt + COUNTDOWN_DURATION
 
-                if (currentUser) {
-                    setMySessions(
-                        sessionList.filter(
-                            (session) => session.hostId === currentUser.uid
+                    if (now >= endsAt) {
+                        await updateDoc(
+                            doc(db, 'sessions', session.id),
+                            { status: 'In Progress' }
                         )
-                    )
-                } else {
-                    setMySessions([])
+                        session.status = 'In Progress'
+                    }
                 }
 
-                setSessionLoading(false)
-                setHostedSessionLoading(false)
-            },
-            (error) => {
-                console.error(error)
-                setSessionLoading(false)
-                setHostedSessionLoading(false)
+                sessionList.push(session)
             }
-        )
+
+            setSessions(sessionList)
+
+            if (currentUser)
+                setMySessions(
+                    sessionList.filter(
+                        s => s.hostId === currentUser.uid
+                    )
+                )
+
+            setSessionLoading(false)
+            setHostedSessionLoading(false)
+        })
 
         return () => unsubscribe()
     }, [currentUser])
 
-    // joined sessions
     useEffect(() => {
         if (!currentUser) return
 
         setJoinedSessionLoading(true)
 
         const q = query(
-            collection(db, "participants"),
-            where("userId", "==", currentUser.uid)
+            collection(db, 'participants'),
+            where('userId', '==', currentUser.uid)
         )
 
-        const unsubscribe = onSnapshot(
-            q,
-            (snapshot) => {
-                const joinedIds = snapshot.docs.map(
-                    doc => doc.data().sessionId
-                )
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const joinedIds = snapshot.docs.map(
+                d => d.data().sessionId
+            )
 
-                const joined = sessions.filter(session =>
-                    joinedIds.includes(session.id)
+            setJoinedSessions(
+                sessions.filter(
+                    s => joinedIds.includes(s.id)
                 )
+            )
 
-                setJoinedSessions(joined)
-                setJoinedSessionLoading(false)
-            },
-            (error) => {
-                console.error(error)
-                setJoinedSessionLoading(false)
-            }
-        )
+            setJoinedSessionLoading(false)
+        })
 
         return () => unsubscribe()
     }, [currentUser, sessions])
+
     useEffect(() => {
-        if (visibility === 'private') setPassword(generatePassword())
+        if (visibility === 'private')
+            setPassword(generatePassword())
         else setPassword('')
     }, [visibility])
 
-
-
-
-    // Rule actions
     const addRule = () => {
         if (!ruleInput.trim()) return
-        setRules((prev) => [...prev, ruleInput.trim()])
+        setRules(prev => [...prev, ruleInput.trim()])
         setRuleInput('')
     }
 
-    const removeRule = (index: number) => {
-        setRules((prev) => prev.filter((_, i) => i !== index))
-    }
+    const removeRule = (index: number) =>
+        setRules(prev => prev.filter((_, i) => i !== index))
 
     const copyPassword = async () => {
         if (!password) return
         await navigator.clipboard.writeText(password)
-        toast.success('Password copied to clipboard')
+        toast.success('Password copied')
     }
 
     const resetForm = () => {
@@ -381,77 +448,53 @@ export function useSessionForm() {
         setRules([])
     }
 
-
-    // Submit handler
     const handleCreate = useCallback(async () => {
-        if (!currentUser) throw new Error('User must be logged in')
+        if (!currentUser) throw new Error()
 
-        try {
-            const id = await createSessionDB({
-                title,
-                service,
-                maxParticipants,
-                visibility,
-                password,
-                rules,
-                link: linkInput,
-            })
+        const id = await createSessionDB({
+            title,
+            service,
+            maxParticipants,
+            visibility,
+            password,
+            rules,
+            link: linkInput
+        })
 
-            resetForm()
-
-            return id
-        } catch (error) {
-            console.error(error)
-            throw error
-        }
-    }, [title, service, maxParticipants, visibility, password, rules, linkInput, currentUser])
-    return {
-        // state
+        resetForm()
+        return id
+    }, [
         title,
         service,
         maxParticipants,
         visibility,
         password,
-        ruleInput,
         rules,
-        currentUser,
-        sessions,
         linkInput,
-        mySessions,
-        search,
-        createModal,
-        joinModal,
-        detailsModal,
-        selectedSession,
-        link,
-        enteredPassword,
+        currentUser
+    ])
+
+    return {
+        title, service, maxParticipants, visibility,
+        password, ruleInput, rules, currentUser,
+        sessions, linkInput, mySessions,
+        search, createModal, joinModal,
+        detailsModal, selectedSession,
+        link, enteredPassword,
         joinedSessions,
         sessionLoading,
         hostedSessionLoading,
         joinedSessionLoading,
 
-        // setters
-        setTitle,
-        setService,
-        setMaxParticipants,
-        setVisibility,
-        setPassword,
-        setRuleInput,
-        setRules,
-        setLinkInput,
-        setSearch,
-        setCreateModal,
-        setJoinModal,
-        setDetailsModal,
-        setSelectedSession,
-        setLink,
-        setEnteredPassword,
+        setTitle, setService, setMaxParticipants,
+        setVisibility, setPassword, setRuleInput,
+        setRules, setLinkInput, setSearch,
+        setCreateModal, setJoinModal,
+        setDetailsModal, setSelectedSession,
+        setLink, setEnteredPassword,
 
-        // actions
-        addRule,
-        removeRule,
-        copyPassword,
-        resetForm,
-        handleCreate,
+        addRule, removeRule,
+        copyPassword, resetForm,
+        handleCreate
     }
 }
