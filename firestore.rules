@@ -1,15 +1,38 @@
-// Sessions collection
-    match /sessions/{sessionId} {
-      allow create: if request.auth != null &&
-               request.auth.uid == request.resource.data.hostId;
-      allow read: if true;
-      allow update, delete: if request.auth != null &&
-                            request.auth.uid == resource.data.hostId;
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users: Owner has full access to their document and everything under it
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      match /{allSubcollections=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
     }
 
-    // Participants collection
-    match /participants/{participantId} {
-      allow create: if request.auth != null;
-      allow read: if request.auth != null;
-      allow delete: if request.auth != null;
+    // Daily Tasks: Authenticated users can read/list. 
+    // Management (write) is also allowed for authenticated users for now.
+    match /dailyTasks/{taskId} {
+      allow read, write: if request.auth != null;
     }
+
+    // Sessions, Participants, and Communities
+    match /sessions/{sessionId} {
+      allow read, write: if request.auth != null;
+    }
+    match /participants/{participantId} {
+      allow read, write: if request.auth != null;
+    }
+    match /communities/{communityId} {
+      allow read, write: if request.auth != null;
+    }
+    match /communityMembers/{memberId} {
+      allow read, write: if request.auth != null;
+    }
+    match /userActivity/{activityId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
+

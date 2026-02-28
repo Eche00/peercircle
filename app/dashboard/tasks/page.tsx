@@ -14,7 +14,16 @@ import {
   ArrowForwardIos,
   Celebration,
 } from "@mui/icons-material";
-import { fetchDailyTasks, toggleTaskStatus, Task } from "@/utils/taskActions";
+import Link from "next/link";
+import {
+  fetchDailyTasks,
+  completeUserTask,
+  fetchUserCompletions,
+  Task,
+} from "@/utils/taskActions";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { toast } from "react-hot-toast";
 
 const PLATFORM_ICONS: Record<string, React.ReactNode> = {
   Instagram: <Instagram className="text-pink-500" />,
@@ -27,44 +36,61 @@ const PLATFORM_ICONS: Record<string, React.ReactNode> = {
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
+  const [completions, setCompletions] = useState<string[]>([]);
 
   useEffect(() => {
-    const loadTasks = async () => {
-      try {
-        const data = await fetchDailyTasks();
-        setTasks(data);
-      } catch (error) {
-        console.error("Failed to fetch tasks:", error);
-      } finally {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        loadData(currentUser.uid);
+      } else {
         setLoading(false);
       }
-    };
-    loadTasks();
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  const completedCount = tasks.filter((t) => t.status === "completed").length;
+  const loadData = async (userId: string) => {
+    try {
+      const [allTasks, userCompletions] = await Promise.all([
+        fetchDailyTasks(),
+        fetchUserCompletions(userId),
+      ]);
+      setTasks(allTasks);
+      setCompletions(userCompletions);
+    } catch (error) {
+      console.error("Failed to fetch tasks:", error);
+      toast.error("Failed to load tasks");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const isCompleted = (taskId: string) => completions.includes(taskId);
+
+  const completedCount = tasks.filter((t) => isCompleted(t.id)).length;
   const totalPoints = tasks
-    .filter((t) => t.status === "completed")
+    .filter((t) => isCompleted(t.id))
     .reduce((sum, t) => sum + t.points, 0);
 
-  const toggleTask = async (
-    id: string,
-    currentStatus: "pending" | "completed",
-  ) => {
+  const handleComplete = async (task: Task) => {
+    if (!user) {
+      toast.error("Please sign in to complete tasks");
+      return;
+    }
+    if (isCompleted(task.id)) {
+      toast.error("Task already completed today");
+      return;
+    }
+
     try {
-      await toggleTaskStatus(id, currentStatus);
-      setTasks((prev) =>
-        prev.map((t) =>
-          t.id === id
-            ? {
-                ...t,
-                status: t.status === "completed" ? "pending" : "completed",
-              }
-            : t,
-        ),
-      );
-    } catch (error) {
-      console.error("Failed to toggle task:", error);
+      await completeUserTask(user.uid, task);
+      setCompletions((prev) => [...prev, task.id]);
+      toast.success(`Task completed! +${task.points} XP`);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to complete task");
     }
   };
 
@@ -98,7 +124,7 @@ export default function TasksPage() {
             </div>
             <div>
               <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">
-                Total Points
+                Total Earned Today
               </p>
               <p className="text-xl font-bold text-white">
                 {totalPoints}{" "}
@@ -129,19 +155,24 @@ export default function TasksPage() {
             Daily Progress
           </span>
           <span className="text-sm font-bold text-[#8F4AE3]">
-            {Math.round((completedCount / tasks.length) * 100)}%
+            {tasks.length > 0
+              ? Math.round((completedCount / tasks.length) * 100)
+              : 0}
+            %
           </span>
         </div>
         <div className="w-full h-3 bg-gray-800 rounded-full overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
-            animate={{ width: `${(completedCount / tasks.length) * 100}%` }}
+            animate={{
+              width: `${tasks.length > 0 ? (completedCount / tasks.length) * 100 : 0}%`,
+            }}
             className="h-full bg-gradient-to-r from-[#8F4AE3] to-[#a855f7] rounded-full"
           />
         </div>
         <div className="flex items-center gap-2 mt-4 text-xs text-gray-500">
           <TimerOutlined fontSize="small" />
-          <span>Next tasks refresh in 14 hours 22 minutes</span>
+          <span>Earn points to increase your trust score!</span>
         </div>
       </div>
 
@@ -154,7 +185,7 @@ export default function TasksPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.1 }}
             className={`group relative bg-[#212329] p-6 rounded-2xl border transition-all duration-300 flex items-center gap-4 ${
-              task.status === "completed"
+              isCompleted(task.id)
                 ? "border-green-500/30 opacity-80"
                 : "border-gray-800 hover:border-[#8F4AE3]/50 hover:shadow-xl hover:shadow-[#8F4AE3]/5"
             }`}
@@ -162,12 +193,10 @@ export default function TasksPage() {
             {/* Task Icon */}
             <div
               className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 text-2xl shadow-inner ${
-                task.status === "completed"
-                  ? "bg-green-500/10"
-                  : "bg-gray-800/50"
+                isCompleted(task.id) ? "bg-green-500/10" : "bg-gray-800/50"
               }`}
             >
-              {PLATFORM_ICONS[task.platform] || PLATFORM_ICONS.General}
+              {PLATFORM_ICONS[task.platform as any] || PLATFORM_ICONS.General}
             </div>
 
             {/* Task Details */}
@@ -178,16 +207,16 @@ export default function TasksPage() {
                 </span>
                 <span
                   className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md ${
-                    task.status === "completed"
+                    isCompleted(task.id)
                       ? "bg-green-500/10 text-green-500"
                       : "bg-yellow-500/10 text-yellow-500"
                   }`}
                 >
-                  {task.status === "completed" ? "Done" : "XP " + task.points}
+                  {isCompleted(task.id) ? "Done" : "XP " + task.points}
                 </span>
               </div>
               <h3
-                className={`text-lg font-bold truncate ${task.status === "completed" ? "text-gray-500 line-through" : "text-white"}`}
+                className={`text-lg font-bold truncate ${isCompleted(task.id) ? "text-gray-500 line-through" : "text-white"}`}
               >
                 {task.title}
               </h3>
@@ -198,14 +227,14 @@ export default function TasksPage() {
 
             {/* Action Button */}
             <button
-              onClick={() => toggleTask(task.id, task.status)}
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
-                task.status === "completed"
+              onClick={() => handleComplete(task)}
+              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer ${
+                isCompleted(task.id)
                   ? "bg-green-500 text-white"
                   : "bg-[#8F4AE3]/10 text-[#8F4AE3] group-hover:bg-[#8F4AE3] group-hover:text-white"
               }`}
             >
-              {task.status === "completed" ? (
+              {isCompleted(task.id) ? (
                 <CheckCircleOutline />
               ) : (
                 <ArrowForwardIos fontSize="small" />
@@ -213,7 +242,7 @@ export default function TasksPage() {
             </button>
 
             {/* Completed Overlay Hint */}
-            {task.status === "completed" && (
+            {isCompleted(task.id) && (
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
@@ -226,7 +255,7 @@ export default function TasksPage() {
         ))}
       </div>
 
-      {/* "Better things" - Extra Stuffs */}
+      {/* Extra Stuffs */}
       <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -243,25 +272,20 @@ export default function TasksPage() {
 
         <div className="flex-1 text-center md:text-start relative z-10">
           <h2 className="text-2xl font-bold text-white mb-2">
-            Streaks & Milestones
+            Points & Trust Score
           </h2>
           <p className="text-gray-400 mb-4 max-w-lg">
-            You've completed tasks for 3 consecutive days! Reach a 7-day streak
-            to unlock a bonus multiplier for all shared XP.
+            Earn points every day to increase your trust score. High trust
+            scores unlock exclusive privileges and higher engagement priority
+            within your circle.
           </p>
           <div className="flex flex-wrap justify-center md:justify-start gap-4">
-            {[1, 2, 3, 4, 5, 6, 7].map((day) => (
-              <div
-                key={day}
-                className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold border ${
-                  day <= 3
-                    ? "bg-[#8F4AE3] border-[#8F4AE3] text-white"
-                    : "bg-[#191A1E] border-gray-800 text-gray-600"
-                }`}
-              >
-                {day}
-              </div>
-            ))}
+            <Link
+              href="/dashboard/profile"
+              className="px-6 py-2 bg-[#8F4AE3] hover:bg-[#7a3bc7] text-white rounded-xl text-sm font-bold transition-all"
+            >
+              View My Profile
+            </Link>
           </div>
         </div>
       </motion.section>

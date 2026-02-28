@@ -3,30 +3,42 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signOut, onAuthStateChanged, User } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { auth, db } from "@/lib/firebase";
+import { doc, onSnapshot } from "firebase/firestore";
 import { Twitter, LinkedIn, GitHub, Lock, Security } from "@mui/icons-material";
 import { handleSignOut } from "@/utils/logics/userinfo";
 
 function ProfilePage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
+  const [trustPoints, setTrustPoints] = useState<number>(0);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    let unsubscribeUser: (() => void) | undefined;
+
+    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      if (currentUser) {
+        // Listen for live trust points updates
+        unsubscribeUser = onSnapshot(
+          doc(db, "users", currentUser.uid),
+          (doc) => {
+            if (doc.exists()) {
+              setTrustPoints(doc.data().trustPoints || 0);
+            }
+          },
+        );
+      }
     });
-    return () => unsubscribe();
+
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeUser) unsubscribeUser();
+    };
   }, []);
 
-  // const handleSignOut = async () => {
-  //   try {
-  //     await signOut(auth);
-  //     router.push("/auth/sign-in");
-  //   } catch (error) {
-  //     console.error("Error signing out:", error);
-  //   }
-  // };
+  const tier = trustPoints > 500 ? "Platinum" : "Newcomer";
 
   return (
     <div className="min-h-screen text-white sm:p-6">
@@ -35,7 +47,7 @@ function ProfilePage() {
         <aside className="col-span-12 lg:col-span-5 bg-[#212329] rounded-2xl p-5 border border-[#8F4AE3]">
           <div className="flex items-center gap-3 mb-8">
             <div className="h-12 w-12 rounded-full bg-[#8F4AE3] flex items-center justify-center text-xl font-bold">
-              C
+              {user?.displayName?.[0] || "C"}
             </div>
             <div>
               <p className="font-semibold">Profile Settings</p>
@@ -46,9 +58,9 @@ function ProfilePage() {
           <div className="bg-[#16181B] rounded-2xl p-6 shadow-lg flex flex-col items-center justify-center mb-4">
             <p className="text-sm text-gray-400 mb-4"> Trust Points </p>
             {/* CIRCLE BADGE */}
-            <div className="h-28 w-28 rounded-full border-4 border-purple-500 flex items-center justify-center">
+            <div className="h-28 w-28 rounded-full border-4 border-[#8F4AE3] flex items-center justify-center">
               <div className="text-center">
-                <p className="text-2xl font-bold">750</p>
+                <p className="text-2xl font-bold">{trustPoints}</p>
                 <p className="text-xs text-gray-400">Points</p>
               </div>
             </div>
@@ -56,13 +68,13 @@ function ProfilePage() {
           <div className="w-full flex items-center justify-between">
             <Link
               href="/dashboard/tasks"
-              className="w-fit px-5 py-2 bg-[#8F4AE3] hover:bg-[#7A3ED1] rounded-lg text-sm cursor-pointer"
+              className="w-fit px-5 py-2 bg-[#8F4AE3] hover:bg-[#7A3ED1] rounded-lg text-sm cursor-pointer transition-colors"
             >
               Earn Points
             </Link>
             <button
               onClick={handleSignOut}
-              className="w-fit px-5 py-2 bg-red-600 hover:bg-red-600/90 rounded-lg text-sm cursor-pointer"
+              className="w-fit px-5 py-2 bg-red-600 hover:bg-red-600/90 rounded-lg text-sm cursor-pointer transition-colors"
             >
               Sign out
             </button>
@@ -72,23 +84,23 @@ function ProfilePage() {
         {/* MAIN CONTENT */}
         <main className="col-span-12 lg:col-span-7 space-y-6">
           {/* HEADER */}
-          <div className="bg-[#212329] rounded-2xl p-6 hover:border hover:border-[#8F4AE3] flex flex-wrap items-center justify-between gap-2">
+          <div className="bg-[#212329] rounded-2xl p-6 border border-gray-800 hover:border-[#8F4AE3] transition-all flex flex-wrap items-center justify-between gap-2">
             <div>
               <h1 className="text-xl font-semibold">
                 Welcome, {user?.displayName || "Creator"}
               </h1>
               <p className="text-sm text-gray-400">
-                Member since Feb 2 · Platinum
+                Member since Feb 2026 · {tier}
               </p>
             </div>
 
-            <span className="px-4 py-1 rounded-full text-xs bg-[#8F4AE3]/20 hover:border hover:border-[#8F4AE3] text-[#C9A9FF]">
-              Trusted Tier: Platinum
+            <span className="px-4 py-1 rounded-full text-xs bg-[#8F4AE3]/20 border border-[#8F4AE3]/30 text-[#C9A9FF]">
+              Trusted Tier: {tier}
             </span>
           </div>
 
           {/* ACCOUNT DETAILS */}
-          <div className="bg-[#212329] rounded-2xl p-6 hover:border hover:border-[#8F4AE3]">
+          <div className="bg-[#212329] rounded-2xl p-6 border border-gray-800 hover:border-[#8F4AE3] transition-all">
             <h2 className="text-sm font-semibold mb-4">Account Details</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -122,8 +134,8 @@ function ProfilePage() {
             </div>
           </div>
 
-          {/* CONNECT SOCIAL MEDIA (replaced SMS section) */}
-          <div className="bg-[#212329] rounded-2xl p-6 hover:border hover:border-[#8F4AE3]">
+          {/* CONNECT SOCIAL MEDIA */}
+          <div className="bg-[#212329] rounded-2xl p-6 border border-gray-800 hover:border-[#8F4AE3] transition-all">
             <h2 className="text-sm font-semibold mb-4">Connect Social Media</h2>
 
             <div className="space-y-4">
@@ -145,7 +157,7 @@ function SocialRow({ icon, name }: { icon: React.ReactNode; name: string }) {
         <span className="text-[#8F4AE3]">{icon}</span>
         {name}
       </div>
-      <button className="px-4 py-1 text-xs rounded-lg hover:border hover:border-[#8F4AE3] text-[#C9A9FF] bg-[#8F4AE3]/20 cursor-pointer">
+      <button className="px-4 py-1 text-xs rounded-lg hover:border hover:border-[#8F4AE3] text-[#C9A9FF] bg-[#8F4AE3]/20 cursor-pointer transition-all">
         Connect
       </button>
     </div>

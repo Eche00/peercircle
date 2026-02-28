@@ -29,7 +29,7 @@ const PLATFORMS = [
   "General",
 ] as const;
 
-export default function TaskManagementPage() {
+export default function TasksUpdatePage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
@@ -97,18 +97,16 @@ export default function TaskManagementPage() {
           >
             <ArrowBack />
           </Link>
-          <h1 className="text-2xl font-bold text-white uppercase flex items-center gap-2">
-            Task Management
-          </h1>
+          <h1 className="text-3xl font-bold text-white">Manage Daily Tasks</h1>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Creation Form */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="lg:col-span-12 xl:col-span-5 bg-[#212329] p-8 rounded-3xl border border-white/5 shadow-2xl h-fit"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="lg:col-span-5 bg-[#212329] p-8 rounded-3xl border border-white/5 shadow-2xl h-fit"
         >
           <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
             <Add className="text-[#8F4AE3]" /> Create New Task
@@ -196,10 +194,9 @@ export default function TaskManagementPage() {
 
         {/* Existing Tasks List */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="lg:col-span-12 xl:col-span-7 bg-[#212329] p-8 rounded-3xl border border-white/5 shadow-2xl"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="lg:col-span-7 bg-[#212329] p-8 rounded-3xl border border-white/5 shadow-2xl"
         >
           <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
             <AssignmentOutlined className="text-[#8F4AE3]" /> Active Daily Tasks
