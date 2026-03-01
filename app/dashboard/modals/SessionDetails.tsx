@@ -16,6 +16,8 @@ import {
   onSnapshot,
   doc,
   updateDoc,
+  increment,
+  writeBatch,
 } from 'firebase/firestore'
 import { db, auth } from '@/lib/firebase'
 
@@ -147,7 +149,44 @@ function SessionDetails({
       statusDisplay = 'In Progress'
     }
   }
+  const awardParticipantPoints = async (
+    participantId: string,
+    userId: string,
+    points: number
+  ) => {
+    try {
+      const batch = writeBatch(db)
 
+      /* participant document */
+      const participantRef = doc(
+        db,
+        'participants',
+        participantId
+      )
+
+      /* actual user document */
+      const userRef = doc(
+        db,
+        'users',
+        userId
+      )
+
+      /* ✅ update participant approval */
+      batch.update(participantRef, {
+        approvedByHost: points > 0,
+        pointsAwarded: points,
+      })
+
+      /* ✅ update user's trust points */
+      batch.update(userRef, {
+        trustPoints: increment(points),
+      })
+
+      await batch.commit()
+    } catch (error) {
+      console.error('Failed to award points:', error)
+    }
+  }
   return (
     <div
       className="fixed inset-0 top-16.5 bg-black/60 z-50 flex justify-end"
@@ -251,23 +290,21 @@ function SessionDetails({
                 })}
               </div>
 
-              {/* COMPLETE BUTTON FOR NORMAL USERS */}
-              {!myParticipant?.completed && session.hostId !== currentUser?.uid && completedAll && (
-                <button
-                  onClick={markCompleted}
-                  className="w-full mt-4 bg-[#8F4AE3] hover:bg-[#7A3ED1] text-sm py-3 rounded-lg font-medium cursor-pointer"
-                >
-                  Mark Tasks As Completed
-                </button>
-              )}
+
             </div>
           )}
         {/* COMPLETED MESSAGE FOR NORMAL USERS */}
-        {myParticipant?.completed && (
+        {myParticipant?.completed ? (
+
           <p className="text-green-400 text-xs mt-3 text-center">
             You have completed this session
           </p>
-        )}
+        ) : <button
+          onClick={markCompleted}
+          className="w-full mt-4 bg-[#8F4AE3] hover:bg-[#7A3ED1] text-sm py-3 rounded-lg font-medium cursor-pointer"
+        >
+          Mark Tasks As Completed
+        </button>}
         {/* HOST VIEW */}
         {session.hostId === currentUser?.uid && (
           <div>
@@ -302,14 +339,13 @@ function SessionDetails({
                   {p.completed && (
                     <div className="flex gap-2 pt-1">
                       <button
-                        onClick={async () => {
-                          const ref = doc(db, 'participants', p.id)
-
-                          await updateDoc(ref, {
-                            pointsAwarded: 5,
-                            approvedByHost: true,
-                          })
-                        }}
+                        onClick={() =>
+                          awardParticipantPoints(
+                            p.id,
+                            p.userId,
+                            5
+                          )
+                        }
                         disabled={p.approvedByHost}
                         className="flex-1 text-[11px] bg-green-500/20 text-green-400 py-1.5 rounded-md hover:bg-green-500/30 disabled:opacity-40 cursor-pointer"
                       >
@@ -317,14 +353,13 @@ function SessionDetails({
                       </button>
 
                       <button
-                        onClick={async () => {
-                          const ref = doc(db, 'participants', p.id)
-
-                          await updateDoc(ref, {
-                            pointsAwarded: -5,
-                            approvedByHost: false,
-                          })
-                        }}
+                        onClick={() =>
+                          awardParticipantPoints(
+                            p.id,
+                            p.userId,
+                            -5
+                          )
+                        }
                         disabled={p.approvedByHost}
                         className="flex-1 text-[11px] bg-red-500/20 text-red-400 py-1.5 rounded-md hover:bg-red-500/30 disabled:opacity-40 cursor-pointer"
                       >
