@@ -7,10 +7,12 @@ import DragHandleIcon from "@mui/icons-material/DragHandle";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Close } from "@mui/icons-material";
+import { useUserInfo } from "@/utils/logics/userinfo";
 
 function Header() {
   const pathname = usePathname();
   const [openMenu, setOpenMenu] = useState<boolean>(false);
+  const userInfo = useUserInfo()
 
   return (
     <div className="bg-[#16181B] text-white md:py-3 py-2  fixed top-0 left-0 w-full z-50">
@@ -49,14 +51,46 @@ function Header() {
         </div>
 
         {/* Auth Button  */}
-        <div className="md:flex hidden flex-1 items-center justify-end gap-5  ">
-          <Link
-            href="/auth/sign-in"
-            className=" text-white bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 font-bold  md:py-2 py-1.5 md:px-7 px-3 rounded-lg cursor-pointer w-fit"
-          >
-            Get Started
-          </Link>
-        </div>
+        
+     <div className="md:flex hidden flex-1 items-center justify-end gap-5">
+  {userInfo?.displayName ? (
+    <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 shadow-sm">
+      
+      {/* Avatar */}
+      <div className="w-9 h-9 rounded-full bg-[#8F4AE3] flex items-center justify-center text-white font-bold">
+        {userInfo?.displayName?.charAt(0) || "C"}
+      </div>
+
+      {/* Text */}
+      <div className="flex flex-col leading-tight">
+        <span className="text-xs text-gray-400">Welcome back</span>
+        <span className="text-xs font-semibold text-white">
+          {userInfo?.displayName || "Creator"}
+        </span>
+      </div>
+
+      {/* Divider */}
+      <div className="h-6 w-px bg-white/10 mx-2" />
+
+      {/* CTA */}
+      <Link
+        href="/dashboard"
+        className="text-xs font-semibold text-[#8F4AE3] hover:text-[#8F4AE3]/80 transition"
+      >
+        Dashboard →
+      </Link>
+    </div>
+  ) : (
+    <Link
+      href="/auth/sign-in"
+      className="text-white bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 font-bold md:py-2 py-1.5 md:px-7 px-3 rounded-lg cursor-pointer w-fit"
+    >
+      Get Started
+    </Link>
+  )}
+</div>
+       
+        
         {/* mobile menu button  */}
         <div className="flex md:hidden  items-center justify-end gap-5 ">
           <button
@@ -97,14 +131,37 @@ function Header() {
                 </Link>
               ))}
               <hr className=" w-full h-[0.1px] bg-gray-600 border-none" />
-              <div className="flex items-center justify-end gap-5  ">
-                <Link
-                  href="/auth/sign-in"
-                  className=" text-white bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 font-bold  md:py-2 py-1.5 md:px-7 px-3 rounded-lg cursor-pointer w-fit"
-                >
-                  Get Started
-                </Link>
-              </div>
+           <div className="px-3 py-2">
+  {userInfo?.displayName ? (
+    <div className="flex flex-col justify-between bg-white/5 backdrop-blur-md px-3 py-2 rounded-xl border border-white/10 gap-2">
+      
+      {/* Left: Avatar + Name */}
+      <div className="flex items-center gap-2">
+        <div className="w-8 h-8 rounded-full bg-[#8F4AE3] flex items-center justify-center text-white text-sm font-bold">
+          {userInfo.displayName.charAt(0)}
+        </div>
+        <span className="text-sm font-medium text-white">
+          {userInfo.displayName}
+        </span>
+      </div>
+
+      {/* Right: Dashboard */}
+      <Link
+        href="/dashboard"
+        className="text-sm font-semibold text-[#8F4AE3] active:scale-95 transition"
+      >
+        Dashboard →
+      </Link>
+    </div>
+  ) : (
+    <Link
+      href="/auth/sign-in"
+      className="flex items-center justify-center w-full text-white bg-[#8F4AE3] active:scale-95 transition font-semibold py-3 rounded-xl shadow-sm"
+    >
+      Get Started →
+    </Link>
+  )}
+</div>
             </motion.aside>
           </section>
         )}

@@ -46,7 +46,7 @@ function ProfilePage() {
               Earn Points
             </Link>
             <button
-              // onClick={() => handleSignOut()}
+              onClick={() => handleSignOut()}
               className="w-fit px-5 py-2 bg-red-600 hover:bg-red-600/90 rounded-lg text-sm cursor-pointer transition-colors"
             >
               Sign out
