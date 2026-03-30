@@ -3,15 +3,12 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { auth, db } from "@/lib/firebase";
-import { doc, onSnapshot } from "firebase/firestore";
-import { Twitter, LinkedIn, GitHub, Lock, Security } from "@mui/icons-material";
+import { Twitter, LinkedIn, GitHub, Lock } from "@mui/icons-material";
 import { handleSignOut, useUserInfo } from "@/utils/logics/userinfo";
 
 function ProfilePage() {
   const userInfo = useUserInfo()
-
+  const router = useRouter()
 
   return (
     <div className="min-h-screen text-white sm:p-6">
@@ -46,7 +43,7 @@ function ProfilePage() {
               Earn Points
             </Link>
             <button
-              onClick={() => handleSignOut()}
+              onClick={() => handleSignOut(router)}
               className="w-fit px-5 py-2 bg-red-600 hover:bg-red-600/90 rounded-lg text-sm cursor-pointer transition-colors"
             >
               Sign out
