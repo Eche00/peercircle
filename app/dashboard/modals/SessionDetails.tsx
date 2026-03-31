@@ -44,17 +44,13 @@ function SessionDetails({
 
   const currentUser = auth.currentUser
 
-  /* ===============================
-     LIVE CLOCK
-  =============================== */
+  /* LIVE CLOCK */
   useEffect(() => {
     const interval = setInterval(() => setNow(Date.now()), 1000)
     return () => clearInterval(interval)
   }, [])
 
-  /* ===============================
-     FETCH PARTICIPANTS
-  =============================== */
+  /* FETCH PARTICIPANTS */
   useEffect(() => {
     if (!session?.id) return
 
@@ -83,9 +79,7 @@ function SessionDetails({
     return () => unsubscribe()
   }, [session.id])
 
-  /* ===============================
-     VISIT LINK ✅ FIXED
-  =============================== */
+  /* VISIT LINK */
   const handleVisit = async (participant: typeof participants[0]) => {
     if (!currentUser) return
 
@@ -96,9 +90,7 @@ function SessionDetails({
     }
   }
 
-  /* ===============================
-     COMPLETION LOGIC
-  =============================== */
+  /* COMPLETION LOGIC */
 
   const myParticipant = participants.find(
     (p) => p.userId === currentUser?.uid
@@ -134,9 +126,7 @@ function SessionDetails({
     'Fair participation for all members',
   ]
 
-  /* ===============================
-     STATUS COMPUTATION
-  =============================== */
+  /* STATUS COMPUTATION */
 
   let statusDisplay = session.status
 
@@ -171,7 +161,7 @@ function SessionDetails({
         userId
       )
 
-      /* ✅ update participant approval */
+      /* update participant approval */
       batch.update(participantRef, {
         approvedByHost: points > 0,
         pointsAwarded: points,

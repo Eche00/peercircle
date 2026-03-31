@@ -13,14 +13,14 @@ import {
     writeBatch,
     where,
     updateDoc,
-    arrayUnion // ✅ FIX ADDED
+    arrayUnion // FIX ADDED
 } from 'firebase/firestore'
 import toast from 'react-hot-toast'
 import { useUserInfo } from './userinfo'
 
-/* =====================================================
+/* 
 TYPES
-===================================================== */
+ */
 export type Visibility = 'public' | 'private'
 
 export interface Session {
@@ -60,9 +60,9 @@ interface CreateSessionParams {
     link: string
 }
 
-/* =====================================================
+/* 
 CREATE SESSION
-===================================================== */
+ */
 const createSessionDB = async ({
     title,
     service,
@@ -121,7 +121,7 @@ const createSessionDB = async ({
             link,
             joinedAt: serverTimestamp(),
 
-            /* ✅ VISIT TRACKING */
+            /*  VISIT TRACKING */
             visitedLinks: [],
             completed: false,
             approvedByHost: false,
@@ -143,9 +143,9 @@ const createSessionDB = async ({
     }
 }
 
-/* =====================================================
+/* 
 JOIN SESSION
-===================================================== */
+ */
 export const joinSession = async ({
     session,
     link,
@@ -246,9 +246,9 @@ export const joinSession = async ({
     }
 }
 
-/* =====================================================
-✅ MARK LINK VISITED (MAIN FIX)
-===================================================== */
+/* 
+ MARK LINK VISITED (MAIN FIX)
+ */
 export const markLinkVisited = async (
     participantId: string
 ) => {
@@ -265,9 +265,9 @@ export const markLinkVisited = async (
     })
 }
 
-/* =====================================================
+/* 
 HOST APPROVAL
-===================================================== */
+ */
 export const approveParticipant = async (
     sessionId: string,
     userId: string
@@ -294,9 +294,9 @@ export const approveParticipant = async (
     await batch.commit()
 }
 
-/* =====================================================
+/* 
 HOOK
-===================================================== */
+ */
 export function useSessionForm() {
 
     const currentUser = useUserInfo()
@@ -309,6 +309,7 @@ export function useSessionForm() {
     const [ruleInput, setRuleInput] = useState('')
     const [rules, setRules] = useState<string[]>([])
     const [sessions, setSessions] = useState<Session[]>([])
+    const [joinSessions, setJoinSessions] = useState<Session[]>([])
     const [mySessions, setMySessions] = useState<Session[]>([])
     const [joinedSessions, setJoinedSessions] = useState<Session[]>([])
     const [selectedSession, setSelectedSession] = useState<Session | null>(null)
@@ -373,8 +374,10 @@ export function useSessionForm() {
 
                 sessionList.push(session)
             }
+            const sessionJoinable = sessionList.filter(s => s.status === 'waiting')
 
             setSessions(sessionList)
+            setJoinSessions(sessionJoinable)
 
             if (currentUser)
                 setMySessions(
@@ -480,7 +483,7 @@ export function useSessionForm() {
         sessions, linkInput, mySessions,
         search, createModal, joinModal,
         detailsModal, selectedSession,
-        link, enteredPassword,
+        link, enteredPassword, joinSessions,
         joinedSessions,
         sessionLoading,
         hostedSessionLoading,
