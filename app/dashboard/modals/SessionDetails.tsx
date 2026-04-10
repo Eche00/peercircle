@@ -18,6 +18,8 @@ import {
   updateDoc,
   increment,
   writeBatch,
+  addDoc,
+  serverTimestamp,
 } from 'firebase/firestore'
 import { db, auth } from '@/lib/firebase'
 
@@ -167,12 +169,26 @@ function SessionDetails({
         pointsAwarded: points,
       })
 
-      /* ✅ update user's trust points */
+      /* update user's trust points */
       batch.update(userRef, {
         trustPoints: increment(points),
       })
 
       await batch.commit()
+
+      /*  ADD HISTORY RECORD */
+      await addDoc(collection(db, 'history'), {
+        userId,
+        type: 'points',
+        title: points > 0 ? 'Points Earned' : 'Points Deducted',
+        description:
+          points > 0
+            ? 'You were rewarded for completing a session'
+            : 'Points deducted due to incomplete engagement',
+        value: `${points > 0 ? '+' : ''}${points} XP`,
+        createdAt: serverTimestamp(),
+      })
+
     } catch (error) {
       console.error('Failed to award points:', error)
     }

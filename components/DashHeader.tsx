@@ -1,5 +1,5 @@
 'use client'
-import { Accessibility, Close, Search } from '@mui/icons-material'
+import { Accessibility, Close, Notifications, Search } from '@mui/icons-material'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -27,11 +27,11 @@ function DashHeader() {
 
                     <div className='hidden sm:flex items-center justify-center gap-2'>
                         <p>User Dashboard </p>
-                        <hr className=' h-5 w-[0.1px] bg-gray-600 border-none' /> <Accessibility />
+                        <hr className=' h-5 w-[0.1px] bg-gray-600 border-none mx-1' />
+                        <button><Notifications /></button>
                     </div>
                 </div>
                 {/* Mobile Nav Button  */}
-
                 <div className='relative md:hidden flex flex-none items-end justify-end w-fit'>
                     <AnimatePresence initial={false} mode="wait">
                         {openMenu ?
@@ -47,17 +47,24 @@ function DashHeader() {
                                 <Close />
                             </motion.button>
                             :
-                            <motion.button
-                                key="title"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ x: 50, opacity: 0 }}
-                                transition={{ duration: 0.3 }}
-                                className='border-[0.1px] border-gray-700 rounded-lg py-2 px-6 flex items-center gap-2 transition-all duration-300 uppercase font-extrabold'
-                                onClick={() => setOpenMenu(true)}
-                            >
-                                {pathname.split('/').pop()?.replace('-', ' ') || 'Dashboard'}
-                            </motion.button>
+                            <div className='border-[0.1px] border-gray-700 rounded-lg py-2 px-6 flex items-center gap-2 transition-all duration-300'>
+                                <motion.button
+                                    key="title"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ x: 50, opacity: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                    className='  text-sm uppercase font-extrabold'
+                                    onClick={() => setOpenMenu(true)}
+                                >
+                                    {pathname.split('/').pop()?.replace('-', ' ') || 'Dashboard'}
+
+                                </motion.button>
+                                <div className='sm:hidden flex items-center justify-center gap-2'>
+                                    <hr className=' h-5 w-[0.1px] bg-gray-600 border-none mx-1' />
+                                    <span><Notifications /></span>
+                                </div>
+                            </div>
                         }
 
                         {/* Mobile Menu rendered */}

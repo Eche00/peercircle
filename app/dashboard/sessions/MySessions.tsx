@@ -57,7 +57,7 @@ function MySessions() {
                 >
                   {/* HEADER */}
                   <div className="flex items-center justify-between mb-3">
-                    <p className="text-sm font-medium">{session.title}</p>
+                    <p className="text-sm font-medium line-clamp-1">{session.title}..</p>
                     <span className="text-xs px-2 py-1 rounded-full bg-purple-500/10 text-purple-400">
                       {session.service}
                     </span>
@@ -73,8 +73,8 @@ function MySessions() {
                     <span className="text-xs text-gray-400">Status</span>
                     <span
                       className={`text-xs px-2 py-1 rounded-full ${session.status === 'Finished' || session.status === 'In Progress'
-                          ? 'bg-green-500/20 text-green-400'
-                          : 'bg-yellow-500/20 text-yellow-400'
+                        ? 'bg-green-500/20 text-green-400'
+                        : 'bg-yellow-500/20 text-yellow-400'
                         }`}
                     >
                       {countdownText || session.status}

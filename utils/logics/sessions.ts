@@ -13,7 +13,7 @@ import {
     writeBatch,
     where,
     updateDoc,
-    arrayUnion // FIX ADDED
+    arrayUnion
 } from 'firebase/firestore'
 import toast from 'react-hot-toast'
 import { useUserInfo } from './userinfo'
@@ -27,6 +27,7 @@ export interface Session {
     id: string
     title: string
     service: string
+    timer: number
     maxParticipants: number
     visibility: Visibility
     password: string | null
@@ -43,6 +44,7 @@ export interface Session {
 export interface SessionFormState {
     title: string
     service: string
+    timer: number
     maxParticipants: number
     visibility: Visibility
     password: string
@@ -53,6 +55,7 @@ export interface SessionFormState {
 interface CreateSessionParams {
     title: string
     service: string
+    timer: number
     maxParticipants: number
     visibility: Visibility
     password?: string
@@ -66,6 +69,7 @@ CREATE SESSION
 const createSessionDB = async ({
     title,
     service,
+    timer,
     maxParticipants,
     visibility,
     password,
@@ -73,7 +77,7 @@ const createSessionDB = async ({
     link,
 }: CreateSessionParams) => {
 
-    if (!title || !service || !maxParticipants || !visibility || !link) {
+    if (!title || !service || !timer || !maxParticipants || !visibility || !link) {
         return toast.error('Please fill in all required fields.')
     }
 
@@ -90,11 +94,12 @@ const createSessionDB = async ({
         const batch = writeBatch(db)
         const createSessionRef = doc(collection(db, 'sessions'))
 
-        const durationMs = 2 * 60 * 1000
+        const durationMs = timer * 60 * 1000
 
         batch.set(createSessionRef, {
             title,
             service,
+            timer,
             maxParticipants,
             visibility,
             password: visibility === 'private' ? password : null,
@@ -304,6 +309,7 @@ export function useSessionForm() {
     const [title, setTitle] = useState('')
     const [service, setService] = useState('Followers')
     const [maxParticipants, setMaxParticipants] = useState(20)
+    const [timer, setTimer] = useState(5)
     const [visibility, setVisibility] = useState<Visibility>('public')
     const [password, setPassword] = useState('')
     const [ruleInput, setRuleInput] = useState('')
@@ -338,8 +344,6 @@ export function useSessionForm() {
         setSessionLoading(true)
         setHostedSessionLoading(true)
 
-        const COUNTDOWN_DURATION = 2 * 60 * 1000
-
         const q = query(
             collection(db, 'sessions'),
             orderBy('createdAt', 'desc')
@@ -361,7 +365,7 @@ export function useSessionForm() {
                     session.createdAt
                 ) {
                     const startedAt = session.createdAt.toMillis()
-                    const endsAt = startedAt + COUNTDOWN_DURATION
+                    const endsAt = startedAt + session?.countdownDuration
 
                     if (now >= endsAt) {
                         await updateDoc(
@@ -444,6 +448,7 @@ export function useSessionForm() {
     const resetForm = () => {
         setTitle('')
         setService('Followers')
+        setTimer(5)
         setMaxParticipants(20)
         setVisibility('public')
         setPassword('')
@@ -457,6 +462,7 @@ export function useSessionForm() {
         const id = await createSessionDB({
             title,
             service,
+            timer,
             maxParticipants,
             visibility,
             password,
@@ -469,6 +475,7 @@ export function useSessionForm() {
     }, [
         title,
         service,
+        timer,
         maxParticipants,
         visibility,
         password,
@@ -478,7 +485,7 @@ export function useSessionForm() {
     ])
 
     return {
-        title, service, maxParticipants, visibility,
+        title, service, maxParticipants, timer, visibility,
         password, ruleInput, rules, currentUser,
         sessions, linkInput, mySessions,
         search, createModal, joinModal,
@@ -489,7 +496,7 @@ export function useSessionForm() {
         hostedSessionLoading,
         joinedSessionLoading,
 
-        setTitle, setService, setMaxParticipants,
+        setTitle, setService, setMaxParticipants, setTimer,
         setVisibility, setPassword, setRuleInput,
         setRules, setLinkInput, setSearch,
         setCreateModal, setJoinModal,

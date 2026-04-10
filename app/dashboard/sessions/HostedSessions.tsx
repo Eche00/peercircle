@@ -65,7 +65,7 @@ function HostedSessions() {
                                     >
                                         {/* HEADER */}
                                         <div className="flex items-center justify-between mb-3">
-                                            <p className="text-sm font-medium">{session.title}</p>
+                                            <p className="text-sm font-medium line-clamp-1">{session.title}..</p>
 
                                             <span className="text-xs px-2 py-1 rounded-full bg-purple-500/10 text-purple-400">
                                                 {session.service}

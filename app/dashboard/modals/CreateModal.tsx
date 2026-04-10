@@ -14,6 +14,7 @@ function CreateModal({ onClose }: { onClose: () => void }) {
         title,
         service,
         maxParticipants,
+        timer,
         visibility,
         password,
         ruleInput,
@@ -24,6 +25,7 @@ function CreateModal({ onClose }: { onClose: () => void }) {
         setTitle,
         setService,
         setMaxParticipants,
+        setTimer,
         setVisibility,
         setLinkInput,
         setRuleInput,
@@ -96,29 +98,47 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                         />
                     </div>
 
-                    {/* MAX PARTICIPANTS */}
-                    <div>
-                        <label className="text-xs text-gray-400">
-                            Max Participants
-                        </label>
 
-                        <select
-                            value={maxParticipants}
-                            onChange={(e) => setMaxParticipants(Number(e.target.value))}
-                            className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm 
+
+
+                    {/* MAX PARTICIPANTS / TIMER */}
+                    <section className=' flex items-center justify-between gap-2'>
+                        <div className='flex-1'>
+                            <label className="text-xs text-gray-400">
+                                Max Participants
+                            </label>
+
+                            <select
+                                value={maxParticipants}
+                                onChange={(e) => setMaxParticipants(Number(e.target.value))}
+                                className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm 
                focus:outline-none border border-[#8F4AE3] 
                text-white appearance-none cursor-pointer"
-                        >
-                            {[10, 15, 20].map((num) => (
-                                <option key={num} value={num} className="bg-[#0F1116]">
-                                    {num}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-
-                    {/* HOST */}
+                            >
+                                {[10, 15, 20].map((num) => (
+                                    <option key={num} value={num} className="bg-[#0F1116]">
+                                        {num}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className='flex-1'>
+                            <label className="text-xs text-gray-400">Timer</label>
+                            <select
+                                value={timer}
+                                onChange={(e) => setTimer(Number(e.target.value))}
+                                className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm 
+               focus:outline-none border border-[#8F4AE3] 
+               text-white appearance-none cursor-pointer"
+                            >
+                                {[2, 5, 10, 15, 20].map((num) => (
+                                    <option key={num} value={num} className="bg-[#0F1116]">
+                                        {num}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </section>
                     <div>
                         <label className="text-xs text-gray-400">Host</label>
                         <input
@@ -127,7 +147,6 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                             className="w-full mt-1 bg-[#0F1116] text-gray-400 cursor-not-allowed rounded-lg px-4 py-2 text-sm"
                         />
                     </div>
-
                     {/* VISIBILITY TOGGLE */}
                     <div>
                         <label className="text-xs text-gray-400 mb-2 block">
