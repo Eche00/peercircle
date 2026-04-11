@@ -1,11 +1,13 @@
 'use client'
 
 import { useEffect, useState, useMemo } from 'react'
+
 import {
     collection,
     query,
     where,
     onSnapshot,
+    doc,
 } from 'firebase/firestore'
 import { db, auth } from '@/lib/firebase'
 import {
@@ -73,8 +75,25 @@ export function useSessionDetails(session: Session) {
         const total = participants.length - 1
         return total > 0 && myVisitedCount >= total
     }, [participants, myVisitedCount])
+    const [liveSession, setLiveSession] = useState(session)
+    useEffect(() => {
+        if (!session?.id) return
 
+        const ref = doc(db, 'sessions', session.id)
+
+        const unsub = onSnapshot(ref, (snap) => {
+            if (snap.exists()) {
+                setLiveSession({
+                    id: snap.id,
+                    ...snap.data(),
+                } as Session)
+            }
+        })
+
+        return () => unsub()
+    }, [session.id])
     return {
+        session: liveSession,
         participants,
         now,
         currentUser,

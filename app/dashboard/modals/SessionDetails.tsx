@@ -21,6 +21,7 @@ function SessionDetails({
   onClose: () => void
 }) {
   const {
+    session: liveSession,
     participants,
     now,
     currentUser,
@@ -32,11 +33,11 @@ function SessionDetails({
   } = useSessionDetails(session)
 
   /* STATUS COMPUTATION (kept UI-side because it depends on now) */
-  let statusDisplay = session.status
+  let statusDisplay = liveSession.status
 
-  if (session.countdownStartedAt && session.countdownDuration) {
-    const startedAt = session.countdownStartedAt.toMillis()
-    const endsAt = startedAt + session.countdownDuration
+  if (liveSession.countdownStartedAt && liveSession.countdownDuration) {
+    const startedAt = liveSession.countdownStartedAt.toMillis()
+    const endsAt = startedAt + liveSession.countdownDuration
     const remaining = endsAt - now
 
     if (remaining <= 0 && statusDisplay === 'waiting') {
@@ -68,9 +69,9 @@ function SessionDetails({
         <div className="w-full flex flex-col justify-between">
           <div className="flex items-start justify-between gap-2">
             <div>
-              <h1 className="text-sm bg-[#0F1116] rounded-lg border-2 border-[#8F4AE3] max-h-20 overflow-scroll p-2 mb-2"><span className=' font-bold'>Title: </span>{session.title}</h1>
+              <h1 className="text-sm bg-[#0F1116] rounded-lg border-2 border-[#8F4AE3] max-h-20 overflow-scroll p-2 mb-2"><span className=' font-bold'>Title: </span>{liveSession.title}</h1>
               <p className="text-xs text-gray-400">
-                Session ID: {session.id}
+                Session ID: {liveSession.id}
               </p>
             </div>
             <button onClick={onClose}>
@@ -81,10 +82,10 @@ function SessionDetails({
           <div className="flex items-center justify-between gap-2 pt-2">
             <span
               className={`text-xs px-3 py-1 rounded-full ${statusDisplay === 'Finished'
-                  ? 'bg-green-500/20 text-green-400'
-                  : statusDisplay === 'In Progress'
-                    ? 'bg-yellow-500/20 text-yellow-400'
-                    : 'bg-gray-500/20 text-gray-400'
+                ? 'bg-green-500/20 text-green-400'
+                : statusDisplay === 'In Progress'
+                  ? 'bg-yellow-500/20 text-yellow-400'
+                  : 'bg-gray-500/20 text-gray-400'
                 }`}
             >
               {statusDisplay}
@@ -96,23 +97,23 @@ function SessionDetails({
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <p className="text-xs text-gray-400">Service</p>
-            <p>{session.service}</p>
+            <p>{liveSession.service}</p>
           </div>
           <div>
             <p className="text-xs text-gray-400">Host</p>
-            <p>{session.hostName}</p>
+            <p>{liveSession.hostName}</p>
           </div>
           <div>
             <p className="text-xs text-gray-400">Participants</p>
             <p>
-              {session.joined}/{session.maxParticipants}
+              {liveSession.joined}/{liveSession.maxParticipants}
             </p>
           </div>
         </div>
 
         {/* PARTICIPANTS */}
         {(statusDisplay === 'In Progress' &&
-          (session.hostId === currentUser?.uid ||
+          (liveSession.hostId === currentUser?.uid ||
             !myParticipant?.completed)) && (
             <div>
               <h3 className="text-sm font-medium mb-3">
@@ -175,7 +176,7 @@ function SessionDetails({
         )}
 
         {/* HOST VIEW */}
-        {session.hostId === currentUser?.uid && (
+        {liveSession.hostId === currentUser?.uid && (
           <div>
             <h3 className="text-sm font-medium mb-2">
               Participant Progress
@@ -251,22 +252,24 @@ function SessionDetails({
           </div>
         )}
         {/* COMPLETE SESSION */}
-        {session.hostId === currentUser?.uid && (
+        {liveSession.hostId === currentUser?.uid && (
           <div className="mt-4">
-            {session.status === 'Finished' ? (
+            {statusDisplay === 'Finished' ? (
               <div className="w-full text-center text-xs py-3 rounded-lg bg-green-500/10 text-green-400 border border-green-500/20">
                 Session Completed
               </div>
-            ) : allAwarded ? (
+            ) : statusDisplay === 'In Progress' && allAwarded ? (
               <button
-                onClick={() => completeSession(session.id)}
+                onClick={() => completeSession(liveSession.id)}
                 className="w-full bg-[#8F4AE3] hover:bg-[#7A3ED1] text-sm py-3 rounded-lg font-medium cursor-pointer"
               >
                 Complete Session
               </button>
             ) : (
               <div className="w-full text-center text-xs py-3 rounded-lg bg-gray-800 text-gray-400 border border-gray-700">
-                Waiting for all participants to be awarded...
+                {statusDisplay === 'waiting'
+                  ? 'Session has not started yet...'
+                  : 'Waiting for all participants to be awarded...'}
               </div>
             )}
           </div>
@@ -300,8 +303,8 @@ function SessionDetails({
           </h3>
 
           <div className="bg-[#0F1116] rounded-lg p-3 space-y-2">
-            {session.rules?.length ? (
-              session.rules.map((rule, idx) => (
+            {liveSession.rules?.length ? (
+              liveSession.rules.map((rule, idx) => (
                 <div
                   key={idx}
                   className="flex gap-2 text-[11px] text-gray-400"
