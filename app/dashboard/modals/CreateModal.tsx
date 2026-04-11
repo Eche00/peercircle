@@ -70,9 +70,9 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                             onChange={(e) => setService(e.target.value)}
                             className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border border-[#8F4AE3]"
                         >
-                            <option>Followers</option>
-                            <option>Likes</option>
-                            <option>Comments</option>
+                            <option value="Followers">Followers</option>
+                            <option value="Likes">Likes</option>
+                            <option value="Comments">Comments</option>
                         </select>
                     </div>
 
@@ -244,7 +244,7 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                 </div>
 
                 {/* ACTION */}
-                <button onClick={handleCreate} disabled={loading} className="mt-8 w-full py-3 rounded-lg bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 text-sm font-medium cursor-pointer disabled:bg-[#8F4AE3]/80 disabled:cursor-not-allowed ">
+                <button onClick={handleCreate} disabled={loading || !title || !linkInput} className="mt-8 w-full py-3 rounded-lg bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 text-sm font-medium cursor-pointer disabled:bg-[#8F4AE3]/70 disabled:cursor-not-allowed ">
                     {loading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mx-auto"></div> : 'Create Session'}
                 </button>
             </motion.aside>

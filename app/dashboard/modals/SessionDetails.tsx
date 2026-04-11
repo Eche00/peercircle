@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import {
   CheckCircleOutline,
   Close,
@@ -8,20 +8,10 @@ import {
   OpenInNew,
 } from '@mui/icons-material'
 import { motion } from 'framer-motion'
-import { Session, markLinkVisited } from '@/utils/logics/sessions'
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  doc,
-  updateDoc,
-  increment,
-  writeBatch,
-  addDoc,
-  serverTimestamp,
-} from 'firebase/firestore'
-import { db, auth } from '@/lib/firebase'
+
+import { Session } from '@/utils/logics/sessions'
+import { useSessionDetails } from '@/utils/logics/useSessionDetails'
+import { awardingState } from '@/utils/logics/sessionActions'
 
 function SessionDetails({
   session,
@@ -30,106 +20,18 @@ function SessionDetails({
   session: Session
   onClose: () => void
 }) {
-  const [participants, setParticipants] = useState<
-    {
-      id: string
-      link: string
-      userId: string
-      displayName: string
-      visitedLinks: string[]
-      completed: boolean
-      approvedByHost: boolean
-    }[]
-  >([])
+  const {
+    participants,
+    now,
+    currentUser,
+    myParticipant,
+    visitLink,
+    markParticipantCompleted,
+    awardParticipantPoints,
+    completeSession, allAwarded
+  } = useSessionDetails(session)
 
-  const [now, setNow] = useState(Date.now())
-
-  const currentUser = auth.currentUser
-
-  /* LIVE CLOCK */
-  useEffect(() => {
-    const interval = setInterval(() => setNow(Date.now()), 1000)
-    return () => clearInterval(interval)
-  }, [])
-
-  /* FETCH PARTICIPANTS */
-  useEffect(() => {
-    if (!session?.id) return
-
-    const q = query(
-      collection(db, 'participants'),
-      where('sessionId', '==', session.id)
-    )
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const list = snapshot.docs.map((doc) => {
-        const data = doc.data()
-        return {
-          id: doc.id,
-          link: data.link || '',
-          userId: data.userId,
-          displayName: data.userName || 'Anonymous',
-          visitedLinks: data.visitedLinks || [],
-          completed: data.completed || false,
-          approvedByHost: data.approvedByHost || false,
-        }
-      })
-
-      setParticipants(list)
-    })
-
-    return () => unsubscribe()
-  }, [session.id])
-
-  /* VISIT LINK */
-  const handleVisit = async (participant: typeof participants[0]) => {
-    if (!currentUser) return
-
-    try {
-      await markLinkVisited(participant.id)
-    } catch (err) {
-      console.error('Failed to update visitedLinks:', err)
-    }
-  }
-
-  /* COMPLETION LOGIC */
-
-  const myParticipant = participants.find(
-    (p) => p.userId === currentUser?.uid
-  )
-
-  const totalParticipants = participants.length - 1
-
-  const myVisitedCount = participants.filter((p) =>
-    p.visitedLinks?.includes(currentUser?.uid || '')
-  ).length
-
-  const completedAll =
-    totalParticipants > 0 &&
-    myVisitedCount >= totalParticipants
-
-  const markCompleted = async () => {
-    if (!myParticipant) return
-
-    try {
-      const ref = doc(db, 'participants', myParticipant.id)
-
-      await updateDoc(ref, {
-        completed: true,
-      })
-    } catch (err) {
-      console.error('Completion failed:', err)
-    }
-  }
-
-  const sessionIncludes = [
-    'Mutual engagement system',
-    'No bots or fake accounts',
-    'Fair participation for all members',
-  ]
-
-  /* STATUS COMPUTATION */
-
+  /* STATUS COMPUTATION (kept UI-side because it depends on now) */
   let statusDisplay = session.status
 
   if (session.countdownStartedAt && session.countdownDuration) {
@@ -141,58 +43,13 @@ function SessionDetails({
       statusDisplay = 'In Progress'
     }
   }
-  const awardParticipantPoints = async (
-    participantId: string,
-    userId: string,
-    points: number
-  ) => {
-    try {
-      const batch = writeBatch(db)
 
-      /* participant document */
-      const participantRef = doc(
-        db,
-        'participants',
-        participantId
-      )
+  const sessionIncludes = [
+    'Mutual engagement system',
+    'No bots or fake accounts',
+    'Fair participation for all members',
+  ]
 
-      /* actual user document */
-      const userRef = doc(
-        db,
-        'users',
-        userId
-      )
-
-      /* update participant approval */
-      batch.update(participantRef, {
-        approvedByHost: points > 0,
-        pointsAwarded: points,
-      })
-
-      /* update user's trust points */
-      batch.update(userRef, {
-        trustPoints: increment(points),
-      })
-
-      await batch.commit()
-
-      /*  ADD HISTORY RECORD */
-      await addDoc(collection(db, 'history'), {
-        userId,
-        type: 'points',
-        title: points > 0 ? 'Points Earned' : 'Points Deducted',
-        description:
-          points > 0
-            ? 'You were rewarded for completing a session'
-            : 'Points deducted due to incomplete engagement',
-        value: `${points > 0 ? '+' : ''}${points} XP`,
-        createdAt: serverTimestamp(),
-      })
-
-    } catch (error) {
-      console.error('Failed to award points:', error)
-    }
-  }
   return (
     <div
       className="fixed inset-0 top-16.5 bg-black/60 z-50 flex justify-end"
@@ -206,11 +63,12 @@ function SessionDetails({
         onClick={(e) => e.stopPropagation()}
         className="lg:max-w-xl w-full max-w-100 bg-[#16181B] sm:rounded-tl-2xl border border-gray-800 p-6 space-y-6 overflow-scroll"
       >
+
         {/* HEADER */}
         <div className="w-full flex flex-col justify-between">
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex items-start justify-between gap-2">
             <div>
-              <h1 className="text-lg font-semibold">{session.title}</h1>
+              <h1 className="text-sm bg-[#0F1116] rounded-lg border-2 border-[#8F4AE3] max-h-20 overflow-scroll p-2 mb-2"><span className=' font-bold'>Title: </span>{session.title}</h1>
               <p className="text-xs text-gray-400">
                 Session ID: {session.id}
               </p>
@@ -222,10 +80,11 @@ function SessionDetails({
 
           <div className="flex items-center justify-between gap-2 pt-2">
             <span
-              className={`text-xs px-3 py-1 rounded-full ${statusDisplay === 'Finished' ||
-                statusDisplay === 'In Progress'
-                ? 'bg-green-500/20 text-green-400'
-                : 'bg-yellow-500/20 text-yellow-400'
+              className={`text-xs px-3 py-1 rounded-full ${statusDisplay === 'Finished'
+                  ? 'bg-green-500/20 text-green-400'
+                  : statusDisplay === 'In Progress'
+                    ? 'bg-yellow-500/20 text-yellow-400'
+                    : 'bg-gray-500/20 text-gray-400'
                 }`}
             >
               {statusDisplay}
@@ -253,7 +112,8 @@ function SessionDetails({
 
         {/* PARTICIPANTS */}
         {(statusDisplay === 'In Progress' &&
-          (session.hostId === currentUser?.uid || !myParticipant?.completed)) && (
+          (session.hostId === currentUser?.uid ||
+            !myParticipant?.completed)) && (
             <div>
               <h3 className="text-sm font-medium mb-3">
                 Participants to engage with
@@ -271,7 +131,7 @@ function SessionDetails({
                       href={p.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={() => handleVisit(p)}
+                      onClick={() => visitLink(p.id)}
                       className="flex items-center justify-between bg-[#0F1116] px-4 py-3 rounded-lg border border-gray-800 hover:border-[#8F4AE3]"
                     >
                       <span className="text-xs text-gray-300 truncate">
@@ -295,22 +155,25 @@ function SessionDetails({
                   )
                 })}
               </div>
-
-
             </div>
           )}
-        {/* COMPLETED MESSAGE FOR NORMAL USERS */}
-        {myParticipant?.completed ? (
 
+        {/* COMPLETION */}
+        {myParticipant?.completed ? (
           <p className="text-green-400 text-xs mt-3 text-center">
             You have completed this session
           </p>
-        ) : <button
-          onClick={markCompleted}
-          className="w-full mt-4 bg-[#8F4AE3] hover:bg-[#7A3ED1] text-sm py-3 rounded-lg font-medium cursor-pointer"
-        >
-          Mark Tasks As Completed
-        </button>}
+        ) : (
+          <button
+            onClick={() =>
+              markParticipantCompleted(myParticipant.id)
+            }
+            className="w-full mt-4 bg-[#8F4AE3] hover:bg-[#7A3ED1] text-sm py-3 rounded-lg font-medium cursor-pointer"
+          >
+            Mark Tasks As Completed
+          </button>
+        )}
+
         {/* HOST VIEW */}
         {session.hostId === currentUser?.uid && (
           <div>
@@ -324,10 +187,9 @@ function SessionDetails({
                   key={p.id}
                   className="bg-[#0F1116] px-4 py-3 rounded-lg border border-gray-800 space-y-2"
                 >
-                  {/* TOP ROW */}
                   <div className="flex justify-between items-center text-xs">
                     <span className="font-medium text-gray-300">
-                      {p.displayName}
+                      {p.userName}
                     </span>
 
                     {p.completed ? (
@@ -341,36 +203,46 @@ function SessionDetails({
                     )}
                   </div>
 
-                  {/* HOST ACTION BUTTONS */}
                   {p.completed && (
-                    <div className="flex gap-2 pt-1">
-                      <button
-                        onClick={() =>
-                          awardParticipantPoints(
-                            p.id,
-                            p.userId,
-                            5
-                          )
-                        }
-                        disabled={p.approvedByHost}
-                        className="flex-1 text-[11px] bg-green-500/20 text-green-400 py-1.5 rounded-md hover:bg-green-500/30 disabled:opacity-40 cursor-pointer"
-                      >
-                        +5 Points
-                      </button>
+                    <div className="pt-1">
+                      {!p.approvedByHost ? (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() =>
+                              awardParticipantPoints(p.id, p.userId, 5)
+                            }
+                            disabled={awardingState.loadingId === p.id}
+                            className="flex-1 text-[11px] bg-green-500/20 text-green-400 py-1.5 rounded-md cursor-pointer"
+                          >
+                            {awardingState.loadingId === p.id
+                              ? 'Processing...'
+                              : '+5 Points'}
+                          </button>
 
-                      <button
-                        onClick={() =>
-                          awardParticipantPoints(
-                            p.id,
-                            p.userId,
-                            -5
-                          )
-                        }
-                        disabled={p.approvedByHost}
-                        className="flex-1 text-[11px] bg-red-500/20 text-red-400 py-1.5 rounded-md hover:bg-red-500/30 disabled:opacity-40 cursor-pointer"
-                      >
-                        −5 Points
-                      </button>
+                          <button
+                            onClick={() =>
+                              awardParticipantPoints(p.id, p.userId, -5)
+                            }
+                            disabled={awardingState.loadingId === p.id}
+                            className="flex-1 text-[11px] bg-red-500/20 text-red-400 py-1.5 rounded-md cursor-pointer"
+                          >
+                            {awardingState.loadingId === p.id
+                              ? 'Processing...'
+                              : '−5 Points'}
+                          </button>
+                        </div>
+                      ) : (
+                        <div
+                          className={`text-[11px] px-3 py-1.5 rounded-md w-full text-center ${p.awardStatus === 'awarded'
+                            ? 'bg-green-500/10 text-green-400 opacity-70'
+                            : 'bg-red-500/10 text-red-400 opacity-70'
+                            }`}
+                        >
+                          {p.awardStatus === 'awarded'
+                            ? `Awarded +${p.pointsAwarded} Points`
+                            : `Deducted ${p.pointsAwarded} Points`}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -378,7 +250,27 @@ function SessionDetails({
             </div>
           </div>
         )}
-
+        {/* COMPLETE SESSION */}
+        {session.hostId === currentUser?.uid && (
+          <div className="mt-4">
+            {session.status === 'Finished' ? (
+              <div className="w-full text-center text-xs py-3 rounded-lg bg-green-500/10 text-green-400 border border-green-500/20">
+                Session Completed
+              </div>
+            ) : allAwarded ? (
+              <button
+                onClick={() => completeSession(session.id)}
+                className="w-full bg-[#8F4AE3] hover:bg-[#7A3ED1] text-sm py-3 rounded-lg font-medium cursor-pointer"
+              >
+                Complete Session
+              </button>
+            ) : (
+              <div className="w-full text-center text-xs py-3 rounded-lg bg-gray-800 text-gray-400 border border-gray-700">
+                Waiting for all participants to be awarded...
+              </div>
+            )}
+          </div>
+        )}
         {/* INCLUDED */}
         <div>
           <h3 className="text-sm font-medium mb-2">
@@ -408,23 +300,28 @@ function SessionDetails({
           </h3>
 
           <div className="bg-[#0F1116] rounded-lg p-3 space-y-2">
-            {session.rules.map((rule, idx) => (
-              <div
-                key={idx}
-                className="flex gap-2 text-[11px] text-gray-400"
-              >
-                <InfoOutlined fontSize="inherit" />
-                <span>{rule}</span>
-              </div>
-            ))}
+            {session.rules?.length ? (
+              session.rules.map((rule, idx) => (
+                <div
+                  key={idx}
+                  className="flex gap-2 text-[11px] text-gray-400"
+                >
+                  <InfoOutlined fontSize="inherit" />
+                  <span>{rule}</span>
+                </div>
+              ))
+            ) : (
+              <p className="text-[11px] text-gray-500">
+                No specific rules added for this session.
+              </p>
+            )}
           </div>
         </div>
 
         {/* FOOTER */}
         {statusDisplay === 'Finished' && (
           <p className="text-xs text-gray-500 text-center">
-            This session has been completed.
-            Participation is closed.
+            This session has been completed. Participation is closed.
           </p>
         )}
       </motion.aside>

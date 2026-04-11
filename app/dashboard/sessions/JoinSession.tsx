@@ -8,10 +8,12 @@ import JoinSessionModal from '../modals/JoinSessionModal';
 import SessionLoader from '../ui/SessionLoader';
 import { useEffect, useState } from 'react';
 import EmptySession from '../ui/EmptySession';
+import JoinSessionSkeleton from '../ui/JoinSessionSkeleton';
 
 function JoinSession() {
     const { joinSessions, search, setSearch, createModal, setCreateModal, setJoinModal, joinModal, selectedSession, setSelectedSession, sessionLoading } = useSessionForm()
     const [now, setNow] = useState(Date.now())
+    const [skeleton, setSkeleton] = useState(true)
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -21,10 +23,24 @@ function JoinSession() {
         return () => clearInterval(interval)
     }, [])
 
+    useEffect(() => {
+        let timeout: NodeJS.Timeout
+
+        if (sessionLoading) {
+            setSkeleton(true)
+        } else {
+            timeout = setTimeout(() => {
+                setSkeleton(false)
+            }, 600) // smoother UX delay
+        }
+
+        return () => clearTimeout(timeout)
+    }, [sessionLoading])
+
     return (
         <div>
             {/* JOIN SESSION SECTION */}
-            <div>
+            {skeleton ? <JoinSessionSkeleton /> : <div>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
 
                     {/* LEFT — TITLE + SEARCH */}
@@ -163,7 +179,7 @@ function JoinSession() {
 
                 </div>
 
-            </div>
+            </div>}
             {/* CREATE / JOIN MODAL  */}
             <AnimatePresence>
                 {createModal && <CreateModal onClose={() => setCreateModal(false)} />}

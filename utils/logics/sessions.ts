@@ -19,9 +19,7 @@ import {
 import toast from 'react-hot-toast'
 import { useUserInfo } from './userinfo'
 
-/* 
-TYPES
- */
+// TYPES
 export type Visibility = 'public' | 'private'
 
 export interface Session {
@@ -100,8 +98,14 @@ const createSessionDB = async ({
 }: CreateSessionParams & { setLoading: (val: boolean) => void }) => {
     setLoading(true)
     if (!title || !service || !timer || !maxParticipants || !visibility || !link) {
+        if (!title) toast.error("Title is required.")
+        if (!service) toast.error("Service is required.")
+        if (!timer) toast.error("Timer is required.")
+        if (!maxParticipants) toast.error("Max participants is required.")
+        if (!visibility) toast.error("Visibility is required.")
+        if (!link) toast.error("Link is required.")
 
-        return toast.error('Please fill in all required fields.')
+        return
     }
 
     const loadingToast = toast.loading('Creating session...')
@@ -339,8 +343,9 @@ export const approveParticipant = async (
 // HOOK
 
 export function useSessionForm() {
-
     const currentUser = useUserInfo()
+
+    // FORM STATE (CREATE SESSION)
 
     const [title, setTitle] = useState('')
     const [service, setService] = useState('Followers')
@@ -350,22 +355,30 @@ export function useSessionForm() {
     const [password, setPassword] = useState('')
     const [ruleInput, setRuleInput] = useState('')
     const [rules, setRules] = useState<string[]>([])
-    const [sessions, setSessions] = useState<Session[]>([])
-    const [joinSessions, setJoinSessions] = useState<Session[]>([])
-    const [mySessions, setMySessions] = useState<Session[]>([])
-    const [joinedSessions, setJoinedSessions] = useState<Session[]>([])
-    const [selectedSession, setSelectedSession] = useState<Session | null>(null)
     const [linkInput, setLinkInput] = useState('')
 
+    // SESSIONS DATA
+
+    const [sessions, setSessions] = useState<Session[]>([])
+    const [selectedSession, setSelectedSession] = useState<Session | null>(null)
+    const [joinedIds, setJoinedIds] = useState<string[]>([])
+
+    // FILTERS / SEARCH
+
     const [search, setSearch] = useState('')
+    const [status, setStatus] = useState<string>('')
+
+    // UI STATE (MODALS)
+
     const [createModal, setCreateModal] = useState(false)
     const [joinModal, setJoinModal] = useState(false)
     const [detailsModal, setDetailsModal] = useState(false)
     const [link, setLink] = useState('')
     const [enteredPassword, setEnteredPassword] = useState('')
 
-    const [loading, setLoading] = useState(false)
+    // LOADING STATES
 
+    const [loading, setLoading] = useState(false)
     const [sessionLoading, setSessionLoading] = useState(false)
     const [joinedSessionLoading, setJoinedSessionLoading] = useState(false)
     const [hostedSessionLoading, setHostedSessionLoading] = useState(false)
@@ -378,62 +391,81 @@ export function useSessionForm() {
         return result
     }
 
+
+    // Fetch all sessions
+
     useEffect(() => {
+        // Start loading states
         setSessionLoading(true)
         setHostedSessionLoading(true)
 
+        // Query sessions ordered by newest first
         const q = query(
             collection(db, 'sessions'),
             orderBy('createdAt', 'desc')
         )
 
+        // Real-time listener
         const unsubscribe = onSnapshot(q, async (snapshot) => {
             const now = Date.now()
             const sessionList: Session[] = []
 
+            // Loop through all session documents
             for (const docSnap of snapshot.docs) {
                 const data = docSnap.data() as Omit<Session, 'id'>
+
+                // Construct session object
                 const session: Session = {
                     id: docSnap.id,
                     ...data
                 }
 
+
+                // Auto-update session status
+
                 if (
                     session.status === 'waiting' &&
-                    session.createdAt
+                    session.countdownStartedAt &&
+                    session.countdownDuration
                 ) {
-                    const startedAt = session.createdAt.toMillis()
-                    const endsAt = startedAt + session?.countdownDuration
+                    const startedAt = session.countdownStartedAt.toMillis()
+                    const endsAt = startedAt + session.countdownDuration
 
                     if (now >= endsAt) {
                         await updateDoc(
                             doc(db, 'sessions', session.id),
                             { status: 'In Progress' }
                         )
+
                         session.status = 'In Progress'
                     }
                 }
 
                 sessionList.push(session)
             }
-            const sessionJoinable = sessionList.filter(s => s.status === 'waiting')
 
+
+            // Filter joinable sessions
+
+            const sessionJoinable = sessionList.filter(
+                (s) => s.status === 'waiting'
+            )
+
+            // Update states
             setSessions(sessionList)
-            setJoinSessions(sessionJoinable)
 
-            if (currentUser)
-                setMySessions(
-                    sessionList.filter(
-                        s => s.hostId === currentUser.uid
-                    )
-                )
-
+            // Stop loading states
             setSessionLoading(false)
             setHostedSessionLoading(false)
         })
 
+        // Cleanup listener on unmount
         return () => unsubscribe()
     }, [currentUser])
+
+
+
+    // Fetch sessions user joined
 
     useEffect(() => {
         if (!currentUser) return
@@ -447,26 +479,29 @@ export function useSessionForm() {
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const joinedIds = snapshot.docs.map(
-                d => d.data().sessionId
+                (d) => d.data().sessionId
             )
-
-            setJoinedSessions(
-                sessions.filter(
-                    s => joinedIds.includes(s.id)
-                )
-            )
-
+            setJoinedIds(joinedIds)
+            // store only IDs (no session state duplication)
             setJoinedSessionLoading(false)
         })
 
         return () => unsubscribe()
-    }, [currentUser, sessions])
+    }, [currentUser])
+
+
+    // Handle private session password
 
     useEffect(() => {
-        if (visibility === 'private')
+        if (visibility === 'private') {
+            // Generate password for private sessions
             setPassword(generatePassword())
-        else setPassword('')
+        } else {
+            // Clear password for public sessions
+            setPassword('')
+        }
     }, [visibility])
+
 
     const addRule = () => {
         if (!ruleInput.trim()) return
@@ -522,6 +557,45 @@ export function useSessionForm() {
         linkInput,
         currentUser
     ])
+    const statusOptions = [
+        { label: "All Status", value: "" },
+        { label: "Waiting", value: "waiting" },
+        { label: "In Progress", value: "In Progress" },
+        { label: "Finished", value: "Finished" },
+    ];
+
+    const serviceOptions = [
+        { label: "All Services", value: "" },
+        { label: "Followers", value: "Followers" },
+        { label: "Likes", value: "Likes" },
+        { label: "Comments", value: "Comments" },
+    ];
+
+    const applyFilters = (list: Session[]) => {
+        return list.filter((s) => {
+            const matchesSearch =
+                s.title.toLowerCase().includes(search.toLowerCase()) ||
+                s.id.toLowerCase().includes(search.toLowerCase()) ||
+                s.hostName.toLowerCase().includes(search.toLowerCase())
+
+            const matchesStatus = status ? s.status === status : true
+            const matchesService = service ? s.service === service : true
+
+            return matchesSearch && matchesStatus && matchesService
+        })
+    }
+    const joinSessions = applyFilters(
+        sessions.filter(s => s.status === "waiting")
+    )
+
+    const mySessions = applyFilters(
+        sessions.filter(s => s.hostId === currentUser?.uid)
+    )
+
+    const joinedSessions = applyFilters(
+        sessions.filter(s => joinedIds.includes(s.id))
+    )
+
     const filteredJoinSessions = joinSessions.filter(s =>
         s.title.toLowerCase().includes(search.toLowerCase()) ||
         s.id.toLowerCase().includes(search.toLowerCase()) ||
@@ -537,17 +611,21 @@ export function useSessionForm() {
         joinedSessions, loading,
         sessionLoading,
         hostedSessionLoading,
-        joinedSessionLoading,
+        joinedSessionLoading, status,
 
         setTitle, setService, setMaxParticipants, setTimer,
         setVisibility, setPassword, setRuleInput,
         setRules, setLinkInput, setSearch,
         setCreateModal, setJoinModal,
         setDetailsModal, setSelectedSession,
-        setLink, setEnteredPassword, setLoading,
+        setLink, setEnteredPassword, setLoading, setStatus,
 
         addRule, removeRule,
         copyPassword, resetForm,
-        handleCreate
+        handleCreate,
+
+        statusOptions,
+        serviceOptions
+
     }
 }
