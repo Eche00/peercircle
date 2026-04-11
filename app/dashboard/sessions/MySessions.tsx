@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react'
 import SessionDetails from '../modals/SessionDetails';
 import SessionLoader from '../ui/SessionLoader';
 import EmptySession from '../ui/EmptySession';
-import { Search } from '@mui/icons-material';
+import { PestControlRodent, Search } from '@mui/icons-material';
 import SessionsSkeleton from '../ui/SessionsSkeleton';
 
 function MySessions() {
@@ -94,24 +94,30 @@ function MySessions() {
           </div>
 
           {joinedSessionLoading ?
-            <SessionsSkeleton /> : joinedSessions.length <= 0 ?
-              <EmptySession /> :
-              <div className="bg-[#212329] border border-gray-800 rounded-2xl p-4 md:p-6 shadow-lg overflow-x-auto">
-                {/* HEADER */}
-                <h2 className="text-lg font-semibold mb-6">All Sessions</h2>
+            <SessionsSkeleton /> :
+            <div className="bg-[#212329] border border-gray-800 rounded-2xl p-4 md:p-6 shadow-lg overflow-x-auto">
+              {/* HEADER */}
+              <h2 className="text-lg font-semibold mb-6">All Sessions</h2>
 
-                {/* TABLE HEADER (hidden on small screens) */}
-                <div className="hidden md:grid grid-cols-5 text-sm text-gray-400 pb-3 border-b border-gray-700">
-                  <span>Session</span>
-                  <span>Service</span>
-                  <span>Status</span>
-                  <span>Participants</span>
-                  <span className="text-right">Actions</span>
-                </div>
+              {/* TABLE HEADER (hidden on small screens) */}
+              <div className="hidden md:grid grid-cols-5 text-sm text-gray-400 pb-3 border-b border-gray-700">
+                <span>Session</span>
+                <span>Service</span>
+                <span>Status</span>
+                <span>Participants</span>
+                <span className="text-right">Actions</span>
+              </div>
 
-                {/* TABLE BODY */}
-                <div className="divide-y divide-gray-700">
-                  {joinedSessions.map((session) => {
+              {/* TABLE BODY */}
+              <div className="divide-y divide-gray-700">
+                {joinedSessions.length <= 0 ? <section className='flex flex-col items-center justify-center my-6'>
+                  <div className="w-20 h-20 bg-[#8F4AE3]/10 rounded-full flex items-center justify-center text-[#8F4AE3] group-hover:rotate-12 transition-transform">
+                    <PestControlRodent fontSize="large" />
+                  </div>
+                  <p className="text-sm text-gray-400 text-center max-w-xs mb-8">
+                    You have no joined session. Join a peer circle to start growing and
+                    earn Trust Points.
+                  </p></section> : joinedSessions.map((session) => {
                     const COUNTDOWN_DURATION =
                       session.countdownDuration || 2 * 60 * 1000
 
@@ -229,8 +235,8 @@ function MySessions() {
                       </div>
                     )
                   })}
-                </div>
               </div>
+            </div>
           }
 
           {/* SESSION DETAILS MODAL  */}

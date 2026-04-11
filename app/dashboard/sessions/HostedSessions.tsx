@@ -6,7 +6,7 @@ import SessionDetails from '../modals/SessionDetails';
 import EmptySession from '../ui/EmptySession';
 import SessionLoader from '../ui/SessionLoader';
 import { useEffect, useState } from 'react';
-import { Search } from '@mui/icons-material';
+import { PestControlRodent, Search } from '@mui/icons-material';
 import SessionsSkeleton from '../ui/SessionsSkeleton';
 
 function HostedSessions() {
@@ -106,8 +106,6 @@ function HostedSessions() {
 
                     {hostedSessionLoading ? (
                         <SessionLoader />
-                    ) : mySessions.length <= 0 ? (
-                        <EmptySession />
                     ) : (
                         <div className="bg-[#212329] border border-gray-800 rounded-2xl p-4 md:p-6 shadow-lg overflow-x-auto">
                             <h2 className="text-lg font-semibold mb-6">My Sessions</h2>
@@ -121,53 +119,98 @@ function HostedSessions() {
                             </div>
 
                             <div className="divide-y divide-gray-800">
-                                {mySessions.map((session) => {
-                                    const COUNTDOWN_DURATION =
-                                        session.countdownDuration || 2 * 60 * 1000
+                                {mySessions.length <= 0 ? <section className='flex flex-col items-center justify-center my-6'>
+                                    <div className="w-20 h-20 bg-[#8F4AE3]/10 rounded-full flex items-center justify-center text-[#8F4AE3] group-hover:rotate-12 transition-transform">
+                                        <PestControlRodent fontSize="large" />
+                                    </div>
+                                    <p className="text-sm text-gray-400 text-center max-w-xs mb-8">
+                                        You have no created session. Create a peer circle to start growing and
+                                        earn Trust Points.
+                                    </p></section> : mySessions.map((session) => {
+                                        const COUNTDOWN_DURATION =
+                                            session.countdownDuration || 2 * 60 * 1000
 
-                                    let countdownText = ''
-                                    let displayStatus = session.status
+                                        let countdownText = ''
+                                        let displayStatus = session.status
 
-                                    if (session.countdownStartedAt) {
-                                        const startedAt =
-                                            session.countdownStartedAt.toMillis()
-                                        const endsAt = startedAt + COUNTDOWN_DURATION
-                                        const remaining = endsAt - now
+                                        if (session.countdownStartedAt) {
+                                            const startedAt =
+                                                session.countdownStartedAt.toMillis()
+                                            const endsAt = startedAt + COUNTDOWN_DURATION
+                                            const remaining = endsAt - now
 
-                                        if (remaining <= 0) {
-                                            if (session.status !== 'Finished') {
-                                                displayStatus = 'In Progress'
-                                                countdownText = 'In Progress'
+                                            if (remaining <= 0) {
+                                                if (session.status !== 'Finished') {
+                                                    displayStatus = 'In Progress'
+                                                    countdownText = 'In Progress'
+                                                } else {
+                                                    countdownText = 'Finished'
+                                                }
                                             } else {
-                                                countdownText = 'Finished'
+                                                const minutes = Math.floor(remaining / 60000)
+                                                const seconds = Math.floor((remaining % 60000) / 1000)
+
+                                                countdownText = `Starts in ${minutes}:${seconds
+                                                    .toString()
+                                                    .padStart(2, '0')}`
+
+                                                displayStatus = 'waiting'
                                             }
-                                        } else {
-                                            const minutes = Math.floor(remaining / 60000)
-                                            const seconds = Math.floor((remaining % 60000) / 1000)
-
-                                            countdownText = `Starts in ${minutes}:${seconds
-                                                .toString()
-                                                .padStart(2, '0')}`
-
-                                            displayStatus = 'waiting'
                                         }
-                                    }
 
-                                    const statusColor =
-                                        displayStatus === 'Finished'
-                                            ? 'bg-green-500/20 text-green-400'
-                                            : displayStatus === 'In Progress'
-                                                ? 'bg-yellow-500/20 text-yellow-400'
-                                                : 'bg-gray-500/20 text-gray-400'
+                                        const statusColor =
+                                            displayStatus === 'Finished'
+                                                ? 'bg-green-500/20 text-green-400'
+                                                : displayStatus === 'In Progress'
+                                                    ? 'bg-yellow-500/20 text-yellow-400'
+                                                    : 'bg-gray-500/20 text-gray-400'
 
-                                    return (
-                                        <div
-                                            key={session.id}
-                                            className="py-4 text-sm md:grid md:grid-cols-5 md:items-center"
-                                        >
-                                            {/* MOBILE */}
-                                            <div className="md:hidden flex flex-col gap-3">
-                                                <div className="flex justify-between items-start">
+                                        return (
+                                            <div
+                                                key={session.id}
+                                                className="py-4 text-sm md:grid md:grid-cols-5 md:items-center"
+                                            >
+                                                {/* MOBILE */}
+                                                <div className="md:hidden flex flex-col gap-3">
+                                                    <div className="flex justify-between items-start">
+                                                        <div>
+                                                            <p className="font-medium line-clamp-1">
+                                                                {session.title}
+                                                            </p>
+                                                            <p className="text-xs text-gray-400">
+                                                                ID: {session.id.slice(0, 8)}...
+                                                            </p>
+                                                        </div>
+
+                                                        <span className={`px-2 py-1 rounded-full text-xs ${statusColor}`}>
+                                                            {countdownText || displayStatus}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="flex justify-between text-xs text-gray-400">
+                                                        <span>{session.service}</span>
+                                                        <span>
+                                                            {session.joined}/{session.maxParticipants}
+                                                        </span>
+                                                    </div>
+
+                                                    <p className="text-xs text-gray-500">
+                                                        Host: <span className="text-gray-300">{session.hostName}</span>
+                                                    </p>
+
+                                                    <button
+                                                        className="w-full px-4 py-2 rounded-lg text-sm bg-[#0F1116] hover:border hover:border-[#8F4AE3]"
+                                                        onClick={() => {
+                                                            setSelectedSession(session)
+                                                            setDetailsModal(true)
+                                                        }}
+                                                    >
+                                                        View Details
+                                                    </button>
+                                                </div>
+
+                                                {/* DESKTOP */}
+                                                <div className="hidden md:contents">
                                                     <div>
                                                         <p className="font-medium line-clamp-1">
                                                             {session.title}
@@ -177,71 +220,33 @@ function HostedSessions() {
                                                         </p>
                                                     </div>
 
-                                                    <span className={`px-2 py-1 rounded-full text-xs ${statusColor}`}>
+                                                    <span className="text-gray-300">
+                                                        {session.service}
+                                                    </span>
+
+                                                    <span className={`w-fit px-3 py-1 rounded-full text-xs ${statusColor}`}>
                                                         {countdownText || displayStatus}
                                                     </span>
-                                                </div>
 
-                                                <div className="flex justify-between text-xs text-gray-400">
-                                                    <span>{session.service}</span>
-                                                    <span>
+                                                    <span className="text-gray-300">
                                                         {session.joined}/{session.maxParticipants}
                                                     </span>
-                                                </div>
 
-                                                <p className="text-xs text-gray-500">
-                                                    Host: <span className="text-gray-300">{session.hostName}</span>
-                                                </p>
-
-                                                <button
-                                                    className="w-full px-4 py-2 rounded-lg text-sm bg-[#0F1116] hover:border hover:border-[#8F4AE3]"
-                                                    onClick={() => {
-                                                        setSelectedSession(session)
-                                                        setDetailsModal(true)
-                                                    }}
-                                                >
-                                                    View Details
-                                                </button>
-                                            </div>
-
-                                            {/* DESKTOP */}
-                                            <div className="hidden md:contents">
-                                                <div>
-                                                    <p className="font-medium line-clamp-1">
-                                                        {session.title}
-                                                    </p>
-                                                    <p className="text-xs text-gray-400">
-                                                        ID: {session.id.slice(0, 8)}...
-                                                    </p>
-                                                </div>
-
-                                                <span className="text-gray-300">
-                                                    {session.service}
-                                                </span>
-
-                                                <span className={`w-fit px-3 py-1 rounded-full text-xs ${statusColor}`}>
-                                                    {countdownText || displayStatus}
-                                                </span>
-
-                                                <span className="text-gray-300">
-                                                    {session.joined}/{session.maxParticipants}
-                                                </span>
-
-                                                <div className="flex justify-end">
-                                                    <button
-                                                        className="px-4 py-2 rounded-lg text-sm bg-[#0F1116] hover:border hover:border-[#8F4AE3]"
-                                                        onClick={() => {
-                                                            setSelectedSession(session)
-                                                            setDetailsModal(true)
-                                                        }}
-                                                    >
-                                                        View
-                                                    </button>
+                                                    <div className="flex justify-end">
+                                                        <button
+                                                            className="px-4 py-2 rounded-lg text-sm bg-[#0F1116] hover:border hover:border-[#8F4AE3]"
+                                                            onClick={() => {
+                                                                setSelectedSession(session)
+                                                                setDetailsModal(true)
+                                                            }}
+                                                        >
+                                                            View
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    )
-                                })}
+                                        )
+                                    })}
                             </div>
                         </div>
                     )}
