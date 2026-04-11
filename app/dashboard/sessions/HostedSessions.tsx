@@ -105,7 +105,7 @@ function HostedSessions() {
                     </div>
 
                     {hostedSessionLoading ? (
-                        <SessionLoader />
+                        <SessionsSkeleton />
                     ) : (
                         <div className="bg-[#212329] border border-gray-800 rounded-2xl p-4 md:p-6 shadow-lg overflow-x-auto">
                             <h2 className="text-lg font-semibold mb-6">My Sessions</h2>
