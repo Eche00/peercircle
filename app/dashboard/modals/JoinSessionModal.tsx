@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import React, { useEffect, useState } from 'react'
 
 function JoinSessionModal({ session, onClose }: { session: Session, onClose: () => void }) {
-    const { link, setLink, enteredPassword, setEnteredPassword } = useSessionForm()
+    const { link, setLink, enteredPassword, setEnteredPassword, loading, setLoading } = useSessionForm()
 
 
 
@@ -129,7 +129,7 @@ function JoinSessionModal({ session, onClose }: { session: Session, onClose: () 
                         await joinSession({
                             session,
                             link,
-                            enteredPassword,
+                            enteredPassword, setLoading
                         })
                         // Close the modal on success
                         onClose()
@@ -137,8 +137,9 @@ function JoinSessionModal({ session, onClose }: { session: Session, onClose: () 
                         // Optionally log error or handle failure
                         console.error(error)
                     }
-                }} className="mt-8 w-full py-3 rounded-lg bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 text-sm font-medium cursor-pointer">
-                    Join Session
+                }} disabled={loading} className="mt-8 w-full py-3 rounded-lg bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 text-sm font-medium cursor-pointer disabled:bg-[#8F4AE3]/80 disabled:cursor-not-allowed ">
+                    {loading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mx-auto"></div> : 'Join Session'}
+
                 </button>
             </motion.aside>
         </div>

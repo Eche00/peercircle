@@ -13,7 +13,8 @@ import {
     writeBatch,
     where,
     updateDoc,
-    arrayUnion
+    arrayUnion,
+    addDoc
 } from 'firebase/firestore'
 import toast from 'react-hot-toast'
 import { useUserInfo } from './userinfo'
@@ -63,9 +64,29 @@ interface CreateSessionParams {
     link: string
 }
 
-/* 
-CREATE SESSION
- */
+
+// HELPER FUNCTION TO ADD HISTORY
+
+const addHistory = async ({
+    userId,
+    title,
+    description,
+}: {
+    userId: string
+    title: string
+    description: string
+}) => {
+    await addDoc(collection(db, 'history'), {
+        userId,
+        type: 'activity',
+        title,
+        description,
+        createdAt: serverTimestamp(),
+    })
+}
+
+//  CREATE SESSION 
+
 const createSessionDB = async ({
     title,
     service,
@@ -75,9 +96,11 @@ const createSessionDB = async ({
     password,
     rules,
     link,
-}: CreateSessionParams) => {
-
+    setLoading,
+}: CreateSessionParams & { setLoading: (val: boolean) => void }) => {
+    setLoading(true)
     if (!title || !service || !timer || !maxParticipants || !visibility || !link) {
+
         return toast.error('Please fill in all required fields.')
     }
 
@@ -137,7 +160,11 @@ const createSessionDB = async ({
         toast.success('Session created successfully', {
             id: loadingToast,
         })
-
+        await addHistory({
+            userId: hostId,
+            title: 'Session Created',
+            description: `You created "${title}" session`,
+        })
         return createSessionRef.id
     } catch (error: any) {
         toast.error(
@@ -145,22 +172,25 @@ const createSessionDB = async ({
             { id: loadingToast }
         )
         throw error
+    } finally {
+        setLoading(false)
     }
 }
 
-/* 
-JOIN SESSION
- */
+// JOIN SESSION
+
 export const joinSession = async ({
     session,
     link,
     enteredPassword,
+    setLoading
 }: {
     session: Session
     link: string
     enteredPassword?: string
+    setLoading: (val: boolean) => void
 }) => {
-
+    setLoading(true)
     if (!link.trim()) {
         toast.error('Please provide your link.')
         throw new Error()
@@ -237,7 +267,11 @@ export const joinSession = async ({
         })
 
         await batch.commit()
-
+        await addHistory({
+            userId: currentUser.uid,
+            title: 'Joined Session',
+            description: `You joined "${sessionData.title}"`,
+        })
         toast.success('Successfully joined session!', {
             id: loadingToast,
         })
@@ -248,12 +282,14 @@ export const joinSession = async ({
             { id: loadingToast }
         )
         throw error
+    } finally {
+        setLoading(false)
     }
 }
 
-/* 
- MARK LINK VISITED (MAIN FIX)
- */
+
+//  MARK LINK VISITED 
+
 export const markLinkVisited = async (
     participantId: string
 ) => {
@@ -270,9 +306,9 @@ export const markLinkVisited = async (
     })
 }
 
-/* 
-HOST APPROVAL
- */
+
+// HOST APPROVAL
+
 export const approveParticipant = async (
     sessionId: string,
     userId: string
@@ -299,9 +335,9 @@ export const approveParticipant = async (
     await batch.commit()
 }
 
-/* 
-HOOK
- */
+
+// HOOK
+
 export function useSessionForm() {
 
     const currentUser = useUserInfo()
@@ -327,6 +363,8 @@ export function useSessionForm() {
     const [detailsModal, setDetailsModal] = useState(false)
     const [link, setLink] = useState('')
     const [enteredPassword, setEnteredPassword] = useState('')
+
+    const [loading, setLoading] = useState(false)
 
     const [sessionLoading, setSessionLoading] = useState(false)
     const [joinedSessionLoading, setJoinedSessionLoading] = useState(false)
@@ -467,7 +505,8 @@ export function useSessionForm() {
             visibility,
             password,
             rules,
-            link: linkInput
+            link: linkInput,
+            setLoading
         })
 
         resetForm()
@@ -483,15 +522,19 @@ export function useSessionForm() {
         linkInput,
         currentUser
     ])
-
+    const filteredJoinSessions = joinSessions.filter(s =>
+        s.title.toLowerCase().includes(search.toLowerCase()) ||
+        s.id.toLowerCase().includes(search.toLowerCase()) ||
+        s.hostName.toLowerCase().includes(search.toLowerCase())
+    )
     return {
         title, service, maxParticipants, timer, visibility,
         password, ruleInput, rules, currentUser,
         sessions, linkInput, mySessions,
         search, createModal, joinModal,
         detailsModal, selectedSession,
-        link, enteredPassword, joinSessions,
-        joinedSessions,
+        link, enteredPassword, joinSessions: filteredJoinSessions,
+        joinedSessions, loading,
         sessionLoading,
         hostedSessionLoading,
         joinedSessionLoading,
@@ -501,7 +544,7 @@ export function useSessionForm() {
         setRules, setLinkInput, setSearch,
         setCreateModal, setJoinModal,
         setDetailsModal, setSelectedSession,
-        setLink, setEnteredPassword,
+        setLink, setEnteredPassword, setLoading,
 
         addRule, removeRule,
         copyPassword, resetForm,

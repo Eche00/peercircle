@@ -21,6 +21,7 @@ function CreateModal({ onClose }: { onClose: () => void }) {
         rules,
         currentUser,
         linkInput,
+        loading,
         // setters
         setTitle,
         setService,
@@ -243,8 +244,8 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                 </div>
 
                 {/* ACTION */}
-                <button onClick={handleCreate} className="mt-8 w-full py-3 rounded-lg bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 text-sm font-medium cursor-pointer">
-                    Create Session
+                <button onClick={handleCreate} disabled={loading} className="mt-8 w-full py-3 rounded-lg bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 text-sm font-medium cursor-pointer disabled:bg-[#8F4AE3]/80 disabled:cursor-not-allowed ">
+                    {loading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mx-auto"></div> : 'Create Session'}
                 </button>
             </motion.aside>
         </div>

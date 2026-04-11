@@ -38,7 +38,7 @@ function JoinSession() {
                             <input
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                placeholder="Search by Session ID"
+                                placeholder="Search by Title, Session ID or Host Name"
                                 className="w-full bg-[#0F1116] rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border border border-[#8F4AE3]"
                             />
                         </div>
