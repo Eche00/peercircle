@@ -21,6 +21,7 @@ import { useSessionForm } from "@/utils/logics/sessions";
 import { fetchDailyTasks, Task } from "@/utils/taskActions";
 import SessionDetails from "./modals/SessionDetails";
 import SessionsSkeleton from "./ui/SessionsSkeleton";
+import DashboardSkeleton from "./ui/DashboardSkeleton";
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
@@ -29,9 +30,7 @@ export default function DashboardPage() {
   const [dailyTasks, setDailyTasks] = useState<Task[]>([]);
   const router = useRouter();
   const {
-    sessions,
     selectedSession,
-    setSelectedSession,
     detailsModal,
     setDetailsModal, mySessions,
     hostedSessionLoading
@@ -114,9 +113,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#8F4AE3]"></div>
-      </div>
+      <DashboardSkeleton />
     );
   }
 
