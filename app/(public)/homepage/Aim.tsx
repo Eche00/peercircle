@@ -10,7 +10,7 @@ export const benefits = [
         icon: <Discover />,
         title: ' Discover',
         img: '/aim1.jpg',
-        col: 'col-span-1', row: 'row-span-2 sm:h-full h-[300px]'
+        col: 'col-span-1', row: 'row-span-2 sm:h-[614px] h-[300px]'
     },
     {
         icon: <Join />,
