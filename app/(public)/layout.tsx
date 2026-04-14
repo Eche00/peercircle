@@ -6,7 +6,7 @@ function Publiclayout({ children }: { children: React.ReactNode; }) {
     return (
         <>
             <Header />
-            <main className="bg-[#191A1E] text-white min-h-screen pt-20">{children}</main>
+            <main className="bg-[#0B0B0B] text-white min-h-screen pt-18">{children}</main>
             <Footer />
         </>
     )

@@ -94,10 +94,10 @@ export default function ChatAssistant() {
             }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
-            className="bg-[#191A1E] border border-[#8F4AE3]/30 w-[350px] sm:w-[400px] h-[550px] rounded-2xl shadow-2xl flex flex-col overflow-hidden mb-4"
+            className="bg-[#191A1E] border border-[#5E13FD]/30 w-[350px] sm:w-[400px] h-[550px] rounded-2xl shadow-2xl flex flex-col overflow-hidden mb-4"
           >
             {/* Header */}
-            <div className="bg-[#8F4AE3] p-4 flex items-center justify-between text-white">
+            <div className="bg-[#5E13FD] p-4 flex items-center justify-between text-white">
               <div className="flex items-center gap-2">
                 <AutoAwesome fontSize="small" />
                 <span className="font-semibold soraFont tracking-wide text-sm uppercase">
@@ -120,11 +120,10 @@ export default function ChatAssistant() {
                   className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`max-w-[85%] p-3 rounded-2xl text-[14px] leading-relaxed ${
-                      m.role === "user"
-                        ? "bg-[#8F4AE3] text-white rounded-tr-none"
+                    className={`max-w-[85%] p-3 rounded-2xl text-[14px] leading-relaxed ${m.role === "user"
+                        ? "bg-[#5E13FD] text-white rounded-tr-none"
                         : "bg-[#212329] text-gray-200 border border-gray-800 rounded-tl-none shadow-sm"
-                    }`}
+                      }`}
                   >
                     {m.text}
                   </div>
@@ -165,7 +164,7 @@ export default function ChatAssistant() {
                       <button
                         key={q}
                         onClick={() => handleSend(q)}
-                        className="text-[11px] sm:text-[12px] bg-[#212329] text-[#8F4AE3] px-3 py-1.5 rounded-full border border-[#8F4AE3]/30 hover:bg-[#8F4AE3] hover:text-white transition-all text-left shadow-sm"
+                        className="text-[11px] sm:text-[12px] bg-[#212329] text-[#5E13FD] px-3 py-1.5 rounded-full border border-[#5E13FD]/30 hover:bg-[#5E13FD] hover:text-white transition-all text-left shadow-sm"
                       >
                         {q}
                       </button>
@@ -181,7 +180,7 @@ export default function ChatAssistant() {
                   e.preventDefault();
                   handleSend();
                 }}
-                className="flex items-center gap-2 bg-[#16181B] rounded-xl px-3 py-2 border border-gray-800 focus-within:border-[#8F4AE3]/50 transition-colors"
+                className="flex items-center gap-2 bg-[#16181B] rounded-xl px-3 py-2 border border-gray-800 focus-within:border-[#5E13FD]/50 transition-colors"
               >
                 <input
                   type="text"
@@ -193,7 +192,7 @@ export default function ChatAssistant() {
                 <button
                   type="submit"
                   disabled={!input.trim() || isLoading}
-                  className="text-[#8F4AE3] disabled:text-gray-600 hover:scale-110 active:scale-95 transition-all"
+                  className="text-[#5E13FD] disabled:text-gray-600 hover:scale-110 active:scale-95 transition-all"
                 >
                   <Send fontSize="small" />
                 </button>
@@ -214,7 +213,7 @@ export default function ChatAssistant() {
               initial={{ opacity: 0, x: 20, scale: 0.9 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 20, scale: 0.9 }}
-              className="bg-[#8F4AE3] text-white px-4 py-2 rounded-full text-sm font-semibold shadow-xl soraFont border border-white/20 hidden sm:flex items-center gap-2"
+              className="bg-[#5E13FD] text-white px-4 py-2 rounded-full text-sm font-semibold shadow-xl soraFont border border-white/20 hidden sm:flex items-center gap-2"
             >
               <AutoAwesome sx={{ fontSize: 16 }} />
               Ask PeerCircle AI
@@ -226,7 +225,7 @@ export default function ChatAssistant() {
           onClick={() => setIsOpen(!isOpen)}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="w-16 h-16 bg-[#8F4AE3] rounded-full flex items-center justify-center text-white shadow-[0_8px_30px_rgb(143,74,227,0.4)] hover:shadow-[0_8px_30px_rgb(143,74,227,0.6)] transition-all relative border border-white/10"
+          className="w-16 h-16 bg-[#5E13FD] rounded-full flex items-center justify-center text-white shadow-[0_8px_30px_rgb(143,74,227,0.4)] hover:shadow-[0_8px_30px_rgb(143,74,227,0.6)] transition-all relative border border-white/10"
         >
           {isOpen ? <Close /> : <AutoAwesome fontSize="large" />}
 
@@ -247,11 +246,11 @@ export default function ChatAssistant() {
           background: transparent;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #8f4ae340;
+          background: #5E13FD40;
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #8f4ae380;
+          background: #5E13FD80;
         }
       `}</style>
     </div>
