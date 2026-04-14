@@ -43,10 +43,8 @@ export const benefits = [
 function Aim() {
     return (
         <div className=' min-h-screen relative'>
-            <div className="absolute inset-0 pointer-events-none opacity-15 bg-[url('/bgoverlay.png')] bg-cover min-h-screen" />
+            <div className="absolute inset-0 pointer-events-none opacity-15 bg-[url('/bgoverlay.png')] bg-cover min-h-screen z-10" />
 
-            <div className='circleBlur absolute top-5 -right-30 z-0'></div>
-            <div className='circleBlur absolute top-1/2 -translate-y-1/2 -left-30 z-0'></div>
             {/* container  */}
             <main className=' sm:max-w-[80%] max-w-[90%] mx-auto text-center  flex flex-col sm:gap-16 gap-8 sm:py-16.5 py-5 z-10'>
 
@@ -56,7 +54,7 @@ function Aim() {
                     <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} viewport={{ once: true }} className=' text-[16px]  text-[#FFFFFFB2] p-2.5  leading-[100%] pb-10'>Discover how simple steps and strong peer connections help you stay consistent and <br /> grow together.</motion.p>
 
                     {/* benefits  */}
-                    <div className="grid grid-cols-1  lg:grid-cols-3 gap-4 auto-rows-auto sm:h-[614px]">
+                    <div className="grid grid-cols-1  lg:grid-cols-3 gap-4 sm:auto-rows-[1fr] auto-rows-auto sm:h-[614px]">
                         {benefits.map(b => (<motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} viewport={{ once: true }} key={b.title}
                             className={`relative rounded-xl overflow-hidden ${b.col} ${b.row}`}>
                             {/* Gradient overlay */}

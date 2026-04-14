@@ -11,7 +11,9 @@ function Footer() {
 
             {/* container  */}
             <footer className="">
-                <h1 className='sm:text-[240px] text-[70px] font-bold text-[#FFFFFF] text-center animate-pulse transition-all duration-1000'>Peer.<span className=' text-[#5E13FD]'>Circle</span></h1>
+                <h1 className='sm:text-[240px] text-[70px] font-bold text-[#FFFFFF] text-center animate-pulse transition-all duration-1000 relative'>
+                    <div className='bg-black w-full h-[50%] absolute top-0 left-0'></div>
+                    eer.<span className=' text-[#5E13FD]'>Circle</span></h1>
                 {/* top section  */}
                 <div className=" flex flex-col gap-8 items-center justify-center  w-[90%] mx-auto py-16 ">
 

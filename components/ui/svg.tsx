@@ -654,7 +654,7 @@ export const Features2 = () => (
 
 )
 export const Features3 = () => (
-    <svg width="392" height="137" viewBox="0 0 392 137" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="292" height="137" viewBox="0 0 392 137" fill="none" xmlns="http://www.w3.org/2000/svg">
         <foreignObject x="24.6492" y="34.7035" width="342.703" height="101.563"><div style={{ background: "backdrop-filter:blur(4.21px);clip-path:url(#bgblur_0_1975_35188_clip_path);height:100%;width:100%" }}></div></foreignObject><g filter="url(#filter0_d_1975_35188)" data-figma-bg-blur-radius="8.42148">
             <rect x="41.4922" y="43.125" width="309.017" height="67.8766" rx="6.73718" fill="white" shape-rendering="crispEdges" />
             <rect x="51.5977" y="53.2308" width="47.1603" height="47.1603" rx="6.73718" fill="#262626" />
@@ -750,7 +750,7 @@ export const Features3 = () => (
 
 )
 export const Features4 = () => (
-    <svg width="392" height="267" viewBox="0 0 392 267" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+    <svg width="292" height="267" viewBox="0 0 392 267" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
         <mask id="mask0_1975_35110" style={{ background: "mask-type:alpha" }} maskUnits="userSpaceOnUse" x="20" y="17" width="355" height="253">
             <path d="M373 268.001H21L20.6084 265.054L70.8467 251.458C160.624 227.163 240.985 176.349 301.424 105.656L370.36 25.0254L373 21.9375V268.001Z" fill="url(#paint0_linear_1975_35110)" stroke="white" stroke-width="3" stroke-linecap="round" />
         </mask>
@@ -892,7 +892,7 @@ export const Features5 = () => (
 
 )
 export const Features6 = () => (
-    <svg width="384" height="279" viewBox="0 0 384 279" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+    <svg width="284" height="279" viewBox="0 0 384 279" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
         <path d="M223.9 200.432C221.415 202.705 220 205.919 220 209.287V273C220 275.186 220.588 277.235 221.609 279H162.391C163.412 277.235 164 275.186 164 273V209.287C164 205.919 162.584 202.705 160.099 200.432L0 54H384L223.9 200.432Z" fill="url(#paint0_linear_1975_35241)" />
         <rect x="88" width="218" height="218" fill="url(#pattern0_1975_35241)" />
         <defs>

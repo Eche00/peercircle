@@ -13,10 +13,12 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
 };
+
 export const metadata: Metadata = {
   title: "PeerCircle",
   description:
@@ -38,14 +40,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable}`}
+    >
+      <body className={`${geistSans.className} antialiased`}>
         <Toaster
           position="top-right"
           reverseOrder={false}

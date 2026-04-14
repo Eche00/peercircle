@@ -49,14 +49,13 @@ export const benefits = [
 function Features() {
     return (
         <div className=' min-h-screen relative'>
-            <div className="absolute inset-0 pointer-events-none opacity-15 bg-[url('/bgoverlay.png')] bg-cover min-h-screen" />
+            <div className="absolute inset-0 pointer-events-none opacity-15 bg-[url('/bgoverlay.png')] bg-cover min-h-screen z-10" />
+            <div className='w-full h-full bg-linear-to-b from-transparent to-[#0B0B0B] absolute top-0 left-0 z-20'></div>
 
-            <div className='circleBlur absolute top-5 -right-30 z-0'></div>
-            <div className='circleBlur absolute top-1/2 -translate-y-1/2 -left-30 z-0'></div>
             {/* container  */}
-            <main className=' sm:max-w-[80%] md:max-w-[90%] max-w-[95%] mx-auto text-center  flex flex-col sm:gap-16 gap-8 sm:py-16.5 py-5 z-10'>
+            <main className=' sm:max-w-[80%] max-w-[90%]  mx-auto text-center  flex flex-col sm:gap-16 gap-8 sm:py-16.5 py-5 z-10'>
 
-                <section className="w-full  sm:px-10 z-20">
+                <section className="w-full  sm:px-10 z-30">
                     {/* header  */}
                     <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} viewport={{ once: true }} className='soraFont sm:text-[48px] text-[18px] font-semibold text-[#F0F0F0] p-2.5  leading-[100%] pb-'>Unique <span className='text-[#5E13FD]'> Features</span></motion.h2>
                     <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} viewport={{ once: true }} className=' text-[16px]  text-[#FFFFFFB2] p-2.5  leading-[100%] pb-10'>Discover what makes us unique and how we bring people together to grow, <br /> share, and succeed.</motion.p>
@@ -65,14 +64,14 @@ function Features() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-auto">
                         {benefits.map(b => (
                             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} viewport={{ once: true }} key={b.title}
-                                className={`bg-[#1A1A1A] py-[32px] px-[24px] rounded-xl flex flex-col gap-[28px]`}>
+                                className={`bg-[#1A1A1A] py-[32px] px-[24px] rounded-xl flex flex-col justify-between gap-[28px]`}>
                                 <div className='flex flex-col items-start gap-2'>
                                     <span className='w-10 h-10 bg-[#5E13FD] flex items-center justify-center rounded-xl'>{b.icon}</span>
                                     <span className='sm:text-[20px] text-[17.03px] font-semibold text-[#FFFFFF]pb-2'>{b.title}</span>
                                     <span className='sm:text-[16px] text-[12px] text-start font-normal text-[#FFFFFFB2]'>{b.desc}</span>
 
                                 </div>
-                                <div className='w-[348px] sm:mx-auto h-[316px] relative overflow-hidden'>
+                                <div className='max-w-[348px] h-[316px] relative overflow-hidden'>
                                     <span className=' absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'>{b.img}</span>
                                 </div>
 
