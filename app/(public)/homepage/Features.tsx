@@ -72,7 +72,7 @@ function Features() {
                                     <span className='sm:text-[16px] text-[12px] text-start font-normal text-[#FFFFFFB2]'>{b.desc}</span>
 
                                 </div>
-                                <div className='w-full max-w-[348px] h-[316px] relative'>
+                                <div className='w-[348px] sm:mx-auto h-[316px] relative overflow-hidden'>
                                     <span className=' absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'>{b.img}</span>
                                 </div>
 
