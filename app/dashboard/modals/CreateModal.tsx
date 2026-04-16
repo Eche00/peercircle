@@ -68,7 +68,7 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                         <select
                             value={service}
                             onChange={(e) => setService(e.target.value)}
-                            className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border border-[#8F4AE3]"
+                            className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border border-[#5E13FD]"
                         >
                             <option value="Followers">Followers</option>
                             <option value="Likes">Likes</option>
@@ -83,7 +83,7 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                             placeholder="e.g. Instagram Followers Boost"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border border-[#8F4AE3]"
+                            className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border border-[#5E13FD]"
                         />
                     </div>
 
@@ -94,7 +94,7 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                             type="text"
                             value={linkInput}
                             onChange={(e) => setLinkInput(e.target.value)}
-                            className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border border-[#8F4AE3]"
+                            className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border border-[#5E13FD]"
                             placeholder='Paste your engagement link here..'
                         />
                     </div>
@@ -113,7 +113,7 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                                 value={maxParticipants}
                                 onChange={(e) => setMaxParticipants(Number(e.target.value))}
                                 className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm 
-               focus:outline-none border border-[#8F4AE3] 
+               focus:outline-none border border-[#5E13FD] 
                text-white appearance-none cursor-pointer"
                             >
                                 {[10, 15, 20].map((num) => (
@@ -129,7 +129,7 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                                 value={timer}
                                 onChange={(e) => setTimer(Number(e.target.value))}
                                 className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm 
-               focus:outline-none border border-[#8F4AE3] 
+               focus:outline-none border border-[#5E13FD] 
                text-white appearance-none cursor-pointer"
                             >
                                 {[2, 5, 10, 15, 20].map((num) => (
@@ -156,7 +156,7 @@ function CreateModal({ onClose }: { onClose: () => void }) {
 
                         <div className="relative w-full bg-[#0F1116] rounded-lg overflow-hidden ">
                             <div
-                                className="absolute top-0 left-0 h-full w-1/2 bg-[#8F4AE3] rounded-lg transition-all duration-300 "
+                                className="absolute top-0 left-0 h-full w-1/2 bg-[#5E13FD] rounded-lg transition-all duration-300 "
                                 style={{
                                     transform:
                                         visibility === 'private'
@@ -190,7 +190,7 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                                 />
                                 <button
                                     onClick={copyPassword}
-                                    className="p-2 bg-[#8F4AE3] rounded-lg cursor-pointer"
+                                    className="p-2 bg-[#5E13FD] rounded-lg cursor-pointer"
                                 >
                                     <ContentCopyIcon fontSize="small" />
                                 </button>
@@ -216,7 +216,7 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                             />
                             <button
                                 onClick={addRule}
-                                className="px-4 rounded-lg bg-[#8F4AE3] text-sm cursor-pointer"
+                                className="px-4 rounded-lg bg-[#5E13FD] text-sm cursor-pointer"
                             >
                                 Add
                             </button>
@@ -244,7 +244,7 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                 </div>
 
                 {/* ACTION */}
-                <button onClick={handleCreate} disabled={loading || !title || !linkInput} className="mt-8 w-full py-3 rounded-lg bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 text-sm font-medium cursor-pointer disabled:bg-[#8F4AE3]/70 disabled:cursor-not-allowed ">
+                <button onClick={handleCreate} disabled={loading || !title || !linkInput} className="mt-8 w-full py-3 rounded-lg bg-[#5E13FD] hover:bg-[#5E13FD]/90 text-sm font-medium cursor-pointer disabled:bg-[#5E13FD]/70 disabled:cursor-not-allowed ">
                     {loading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mx-auto"></div> : 'Create Session'}
                 </button>
             </motion.aside>

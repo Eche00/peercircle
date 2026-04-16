@@ -109,7 +109,7 @@ export default function TasksUpdatePage() {
           className="lg:col-span-5 bg-[#212329] p-8 rounded-3xl border border-white/5 shadow-2xl h-fit"
         >
           <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-            <Add className="text-[#8F4AE3]" /> Create New Task
+            <Add className="text-[#5E13FD]" /> Create New Task
           </h2>
           <form onSubmit={handleAddTask} className="flex flex-col gap-5">
             <div className="flex flex-col gap-2">
@@ -120,7 +120,7 @@ export default function TasksUpdatePage() {
                 required
                 type="text"
                 placeholder="e.g., Like recent post"
-                className="bg-[#16181B] border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#8F4AE3] transition-colors"
+                className="bg-[#16181B] border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#5E13FD] transition-colors"
                 value={newTask.title}
                 onChange={(e) =>
                   setNewTask({ ...newTask, title: e.target.value })
@@ -133,7 +133,7 @@ export default function TasksUpdatePage() {
                 Platform
               </label>
               <select
-                className="bg-[#16181B] border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#8F4AE3] transition-colors appearance-none"
+                className="bg-[#16181B] border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#5E13FD] transition-colors appearance-none"
                 value={newTask.platform}
                 onChange={(e) =>
                   setNewTask({ ...newTask, platform: e.target.value as any })
@@ -155,7 +155,7 @@ export default function TasksUpdatePage() {
                 required
                 type="number"
                 min="1"
-                className="bg-[#16181B] border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#8F4AE3] transition-colors"
+                className="bg-[#16181B] border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#5E13FD] transition-colors"
                 value={newTask.points}
                 onChange={(e) =>
                   setNewTask({
@@ -174,7 +174,7 @@ export default function TasksUpdatePage() {
                 required
                 placeholder="Briefly describe what needs to be done..."
                 rows={3}
-                className="bg-[#16181B] border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#8F4AE3] transition-colors resize-none"
+                className="bg-[#16181B] border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#5E13FD] transition-colors resize-none"
                 value={newTask.description}
                 onChange={(e) =>
                   setNewTask({ ...newTask, description: e.target.value })
@@ -185,7 +185,7 @@ export default function TasksUpdatePage() {
             <button
               disabled={isAdding}
               type="submit"
-              className="mt-4 bg-[#8F4AE3] hover:bg-[#7a3bc7] text-white py-4 rounded-xl font-bold transition-all shadow-xl shadow-[#8F4AE3]/20 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+              className="mt-4 bg-[#5E13FD] hover:bg-[#7a3bc7] text-white py-4 rounded-xl font-bold transition-all shadow-xl shadow-[#5E13FD]/20 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
             >
               {isAdding ? "Saving..." : "Create Task"} <Add fontSize="small" />
             </button>
@@ -199,13 +199,13 @@ export default function TasksUpdatePage() {
           className="lg:col-span-7 bg-[#212329] p-8 rounded-3xl border border-white/5 shadow-2xl"
         >
           <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-            <AssignmentOutlined className="text-[#8F4AE3]" /> Active Daily Tasks
+            <AssignmentOutlined className="text-[#5E13FD]" /> Active Daily Tasks
           </h2>
 
           <div className="flex flex-col gap-4">
             {loading ? (
               <div className="flex justify-center py-10">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-[#8F4AE3]"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-[#5E13FD]"></div>
               </div>
             ) : tasks.length === 0 ? (
               <div className="text-center py-10 text-gray-500 italic">
@@ -215,7 +215,7 @@ export default function TasksUpdatePage() {
               tasks.map((task) => (
                 <div
                   key={task.id}
-                  className="bg-[#16181B] p-5 rounded-2xl border border-gray-800 flex items-center justify-between group hover:border-[#8F4AE3]/30 transition-colors"
+                  className="bg-[#16181B] p-5 rounded-2xl border border-gray-800 flex items-center justify-between group hover:border-[#5E13FD]/30 transition-colors"
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-xl">
@@ -232,12 +232,12 @@ export default function TasksUpdatePage() {
                         <LinkedIn className="text-blue-700" />
                       )}
                       {task.platform === "General" && (
-                        <AssignmentOutlined className="text-[#8F4AE3]" />
+                        <AssignmentOutlined className="text-[#5E13FD]" />
                       )}
                     </div>
                     <div>
                       <h4 className="font-bold text-white">{task.title}</h4>
-                      <p className="text-xs text-[#8F4AE3]/80 font-semibold">
+                      <p className="text-xs text-[#5E13FD]/80 font-semibold">
                         {task.points} Points • {task.platform}
                       </p>
                     </div>

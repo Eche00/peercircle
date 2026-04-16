@@ -26,7 +26,7 @@ export default function SeedPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 text-white text-center">
-      <div className="w-20 h-20 bg-[#8F4AE3]/10 rounded-3xl flex items-center justify-center text-[#8F4AE3] mb-4">
+      <div className="w-20 h-20 bg-[#5E13FD]/10 rounded-3xl flex items-center justify-center text-[#5E13FD] mb-4">
         <StorageOutlined sx={{ fontSize: 40 }} />
       </div>
 
@@ -49,7 +49,7 @@ export default function SeedPage() {
           )
         }
         sx={{
-          backgroundColor: "#8F4AE3",
+          backgroundColor: "#5E13FD",
           padding: "12px 32px",
           borderRadius: "12px",
           textTransform: "none",

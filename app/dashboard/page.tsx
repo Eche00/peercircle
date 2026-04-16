@@ -99,8 +99,8 @@ export default function DashboardPage() {
       label: "Communities",
       value: "8",
       icon: <GroupsOutlined />,
-      color: "text-[#8F4AE3]",
-      bg: "bg-[#8F4AE3]/10",
+      color: "text-[#5E13FD]",
+      bg: "bg-[#5E13FD]/10",
     },
     {
       label: "Growth Score",
@@ -123,7 +123,7 @@ export default function DashboardPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-[#8F4AE3] to-[#a855f7] p-8 rounded-3xl text-white shadow-2xl relative overflow-hidden"
+        className="bg-gradient-to-r from-[#5E13FD] to-[#a855f7] p-8 rounded-3xl text-white shadow-2xl relative overflow-hidden"
       >
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
@@ -136,7 +136,7 @@ export default function DashboardPage() {
             </p>
             <Link
               href="/dashboard/tasks"
-              className="mt-6 inline-flex items-center gap-2 bg-white text-[#8F4AE3] px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition-all shadow-lg"
+              className="mt-6 inline-flex items-center gap-2 bg-white text-[#5E13FD] px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition-all shadow-lg"
             >
               <Bolt fontSize="small" /> View Daily Tasks
             </Link>
@@ -164,9 +164,9 @@ export default function DashboardPage() {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-3xl p-8 shadow-xl flex flex-col items-center justify-center relative overflow-hidden group"
+          className="bg-[#212329] border border-gray-800 hover:border-[#5E13FD] rounded-3xl p-8 shadow-xl flex flex-col items-center justify-center relative overflow-hidden group"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-[#8F4AE3]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-[#5E13FD]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
           <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mb-6 relative z-10">
             Trust Points
           </p>
@@ -187,7 +187,7 @@ export default function DashboardPage() {
                 cy="64"
                 r="60"
                 fill="transparent"
-                stroke="#8F4AE3"
+                stroke="#5E13FD"
                 strokeWidth="8"
                 strokeDasharray="377"
                 strokeDashoffset={
@@ -204,8 +204,8 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="mt-6 bg-[#8F4AE3]/10 px-4 py-1.5 rounded-full relative z-10 border border-[#8F4AE3]/20">
-            <p className="text-xs text-[#8F4AE3] font-bold">
+          <div className="mt-6 bg-[#5E13FD]/10 px-4 py-1.5 rounded-full relative z-10 border border-[#5E13FD]/20">
+            <p className="text-xs text-[#5E13FD] font-bold">
               Tier:{" "}
               <span className="text-white">
                 {trustPoints > 500 ? "Platinum" : "Newcomer"}
@@ -218,11 +218,11 @@ export default function DashboardPage() {
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="lg:col-span-3 bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-3xl px-8 py-6 shadow-xl flex flex-col"
+          className="lg:col-span-3 bg-[#212329] border border-gray-800 hover:border-[#5E13FD] rounded-3xl px-8 py-6 shadow-xl flex flex-col"
         >
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-bold text-white flex items-center gap-2 uppercase tracking-wide">
-              <div className="w-2 h-2 rounded-full bg-[#8F4AE3] animate-pulse"></div>
+              <div className="w-2 h-2 rounded-full bg-[#5E13FD] animate-pulse"></div>
               Activity Feed
             </h2>
             <span className="text-xs text-gray-500 font-medium">
@@ -241,10 +241,10 @@ export default function DashboardPage() {
                 className="flex items-center justify-between group cursor-pointer hover:translate-x-1 transition-transform"
               >
                 <span className="text-gray-300 group-hover:text-white transition-colors flex items-center gap-3 font-medium">
-                  <div className="w-1.5 h-1.5 rounded-full bg-gray-700 group-hover:bg-[#8F4AE3]"></div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-gray-700 group-hover:bg-[#5E13FD]"></div>
                   {item.event}
                 </span>
-                <span className="text-[#8F4AE3] text-xs font-bold bg-[#8F4AE3]/5 px-3 py-1 rounded-lg border border-[#8F4AE3]/10">
+                <span className="text-[#5E13FD] text-xs font-bold bg-[#5E13FD]/5 px-3 py-1 rounded-lg border border-[#5E13FD]/10">
                   {item.date}
                 </span>
               </div>
@@ -265,7 +265,7 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="bg-[#212329] p-6 rounded-2xl border border-gray-800 hover:border-[#8F4AE3]/50 transition-all duration-300"
+            className="bg-[#212329] p-6 rounded-2xl border border-gray-800 hover:border-[#5E13FD]/50 transition-all duration-300"
           >
             <div
               className={`w-12 h-12 ${stat.bg} ${stat.color} rounded-xl flex items-center justify-center mb-4`}
@@ -287,11 +287,11 @@ export default function DashboardPage() {
         >
           <div className="p-6 border-b border-gray-800 flex justify-between items-center bg-gray-800/10">
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <TaskAltOutlined className="text-[#8F4AE3]" /> Quick Tasks
+              <TaskAltOutlined className="text-[#5E13FD]" /> Quick Tasks
             </h2>
             <Link
               href="/dashboard/tasks"
-              className="text-sm text-[#8F4AE3] hover:underline font-medium"
+              className="text-sm text-[#5E13FD] hover:underline font-medium"
             >
               See all
             </Link>
@@ -308,9 +308,9 @@ export default function DashboardPage() {
                   className="flex items-center justify-between p-4 hover:bg-white/5 rounded-2xl transition-colors group"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-2 h-2 rounded-full bg-[#8F4AE3] group-hover:scale-150 transition-transform"></div>
+                    <div className="w-2 h-2 rounded-full bg-[#5E13FD] group-hover:scale-150 transition-transform"></div>
                     <div>
-                      <p className="font-bold text-white group-hover:text-[#8F4AE3] transition-colors">
+                      <p className="font-bold text-white group-hover:text-[#5E13FD] transition-colors">
                         {task.title}
                       </p>
                       <div className="flex items-center gap-3 mt-1">
@@ -388,7 +388,7 @@ export default function DashboardPage() {
 
               <div className="divide-y divide-gray-800">
                 {mySessions.length <= 0 ? <section className='flex flex-col items-center justify-center my-6'>
-                  <div className="w-20 h-20 bg-[#8F4AE3]/10 rounded-full flex items-center justify-center text-[#8F4AE3] group-hover:rotate-12 transition-transform">
+                  <div className="w-20 h-20 bg-[#5E13FD]/10 rounded-full flex items-center justify-center text-[#5E13FD] group-hover:rotate-12 transition-transform">
                     <PestControlRodent fontSize="large" />
                   </div>
                   <p className="text-sm text-gray-400 text-center max-w-xs mb-8">

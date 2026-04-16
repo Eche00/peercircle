@@ -46,7 +46,7 @@ function Aim() {
             <div className="absolute inset-0 pointer-events-none opacity-15 bg-[url('/bgoverlay.png')] bg-cover min-h-screen z-10" />
 
             {/* container  */}
-            <main className=' sm:max-w-[80%] max-w-[90%] mx-auto text-center  flex flex-col sm:gap-16 gap-8 sm:py-16.5 py-5 z-10'>
+            <main className=' sm:max-w-[80%] max-w-[90%] mx-auto text-center  flex flex-col sm:gap-16 gap-8 sm:py-16.5 py-5 z-20 relative'>
 
                 <section className="w-full  sm:px-10 ">
                     {/* header  */}

@@ -56,7 +56,7 @@ function MySessions() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search by Title, Session ID or Host Name"
-                  className="w-full bg-[#0F1116] rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border border border-[#8F4AE3]"
+                  className="w-full bg-[#0F1116] rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border border border-[#5E13FD]"
                 />
               </div>
             </div>
@@ -68,7 +68,7 @@ function MySessions() {
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="flex-1 min-w-10 sm:w-auto bg-[#0F1116] rounded-lg px-3 py-2 text-sm border border-[#8F4AE3] focus:outline-none cursor-pointer"
+                className="flex-1 min-w-10 sm:w-auto bg-[#0F1116] rounded-lg px-3 py-2 text-sm border border-[#5E13FD] focus:outline-none cursor-pointer"
               >
                 {statusOptions.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -81,7 +81,7 @@ function MySessions() {
               <select
                 value={service}
                 onChange={(e) => setService(e.target.value)}
-                className="flex-1 min-w-10 sm:w-auto bg-[#0F1116] rounded-lg px-3 py-2 text-sm border border-[#8F4AE3] focus:outline-none cursor-pointer"
+                className="flex-1 min-w-10 sm:w-auto bg-[#0F1116] rounded-lg px-3 py-2 text-sm border border-[#5E13FD] focus:outline-none cursor-pointer"
               >
                 {serviceOptions.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -111,7 +111,7 @@ function MySessions() {
               {/* TABLE BODY */}
               <div className="divide-y divide-gray-700">
                 {joinedSessions.length <= 0 ? <section className='flex flex-col items-center justify-center my-6'>
-                  <div className="w-20 h-20 bg-[#8F4AE3]/10 rounded-full flex items-center justify-center text-[#8F4AE3] group-hover:rotate-12 transition-transform">
+                  <div className="w-20 h-20 bg-[#5E13FD]/10 rounded-full flex items-center justify-center text-[#5E13FD] group-hover:rotate-12 transition-transform">
                     <PestControlRodent fontSize="large" />
                   </div>
                   <p className="text-sm text-gray-400 text-center max-w-xs mb-8">
@@ -185,7 +185,7 @@ function MySessions() {
                           </div>
 
                           <button
-                            className="w-full px-3 py-2 rounded-md bg-[#0F1116] hover:border hover:border-[#8F4AE3] cursor-pointer"
+                            className="w-full px-3 py-2 rounded-md bg-[#0F1116] hover:border hover:border-[#5E13FD] cursor-pointer"
                             onClick={() => {
                               setSelectedSession(session)
                               setDetailsModal(true)
@@ -222,7 +222,7 @@ function MySessions() {
 
                           <div className="flex justify-end gap-3">
                             <button
-                              className="px-3 py-1 rounded-md bg-[#0F1116] hover:border hover:border-[#8F4AE3] cursor-pointer"
+                              className="px-3 py-1 rounded-md bg-[#0F1116] hover:border hover:border-[#5E13FD] cursor-pointer"
                               onClick={() => {
                                 setSelectedSession(session)
                                 setDetailsModal(true)

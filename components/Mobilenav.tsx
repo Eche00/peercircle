@@ -44,8 +44,8 @@ function Mobilenav({ setOpenMenu }: mobileNavProps) {
             onClick={() => setOpenMenu(false)}
             className={
               pathname === item.link
-                ? "text-white font-bold bg-[#8F4AE3] py-3 px-4  rounded-lg flex items-center gap-2"
-                : "text-gray-400 py-3 px-4  rounded-lg hover:bg-[#8F4AE3]/10 flex items-center gap-2"
+                ? "text-white font-bold bg-[#5E13FD] py-3 px-4  rounded-lg flex items-center gap-2"
+                : "text-gray-400 py-3 px-4  rounded-lg hover:bg-[#5E13FD]/10 flex items-center gap-2"
             }
           >
             {item.icon} {item.name}
@@ -59,8 +59,8 @@ function Mobilenav({ setOpenMenu }: mobileNavProps) {
             onClick={() => setOpenMenu(false)}
             className={
               pathname === item.link
-                ? "text-white font-bold bg-[#8F4AE3] py-3 px-4  rounded-lg flex items-center gap-2"
-                : "text-gray-400 py-3 px-4  rounded-lg hover:bg-[#8F4AE3]/10 flex items-center gap-2"
+                ? "text-white font-bold bg-[#5E13FD] py-3 px-4  rounded-lg flex items-center gap-2"
+                : "text-gray-400 py-3 px-4  rounded-lg hover:bg-[#5E13FD]/10 flex items-center gap-2"
             }
           >
             {item.icon} {item.name}
@@ -74,8 +74,8 @@ function Mobilenav({ setOpenMenu }: mobileNavProps) {
             onClick={() => setOpenMenu(false)}
             className={
               pathname === item.link
-                ? "text-white font-bold bg-[#8F4AE3] py-3 px-4  rounded-lg flex items-center gap-2"
-                : "text-gray-400 py-3 px-4  rounded-lg hover:bg-[#8F4AE3]/10 flex items-center gap-2"
+                ? "text-white font-bold bg-[#5E13FD] py-3 px-4  rounded-lg flex items-center gap-2"
+                : "text-gray-400 py-3 px-4  rounded-lg hover:bg-[#5E13FD]/10 flex items-center gap-2"
             }
           >
             {item.icon} {item.name}

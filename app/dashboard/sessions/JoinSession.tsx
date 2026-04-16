@@ -55,13 +55,13 @@ function JoinSession() {
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder="Search by Title, Session ID or Host Name"
-                                className="w-full bg-[#0F1116] rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border border border-[#8F4AE3]"
+                                className="w-full bg-[#0F1116] rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border border border-[#5E13FD]"
                             />
                         </div>
                     </div>
 
                     {/* RIGHT — ACTION */}
-                    <button onClick={() => setCreateModal(true)} className="w-full sm:w-auto px-4 py-2 bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 rounded-lg text-sm whitespace-nowrap cursor-pointer">
+                    <button onClick={() => setCreateModal(true)} className="w-full sm:w-auto px-4 py-2 bg-[#5E13FD] hover:bg-[#5E13FD]/90 rounded-lg text-sm whitespace-nowrap cursor-pointer">
                         Create Session
                     </button>
                 </div>
@@ -106,12 +106,12 @@ function JoinSession() {
                                     return (
                                         <div
                                             key={session.id}
-                                            className="bg-[#212329] border border-gray-800 hover:border-[#8F4AE3] rounded-2xl p-5 shadow-lg flex flex-col justify-between"
+                                            className="bg-[#212329] border border-gray-800 hover:border-[#5E13FD] rounded-2xl p-5 shadow-lg flex flex-col justify-between"
                                         >
                                             {/* HEADER */}
                                             <div className="flex items-center justify-between mb-3">
                                                 <p className="text-sm font-medium line-clamp-1">{session.title}..</p>
-                                                <span className="text-xs px-2 py-1 rounded-full bg-purple-500/10 text-purple-400">
+                                                <span className="text-xs px-2 py-1 rounded-full bg-purple-500/10 text-[#5E13FD]">
                                                     {session.service}
                                                 </span>
                                             </div>
@@ -132,7 +132,7 @@ function JoinSession() {
 
                                                 <div className="w-full h-2 bg-[#0F1116] rounded-full overflow-hidden">
                                                     <div
-                                                        className="h-full bg-[#8F4AE3]"
+                                                        className="h-full bg-[#5E13FD]"
                                                         style={{
                                                             width: `${(session.joined / session.maxParticipants) * 100}%`,
                                                         }}
@@ -160,7 +160,7 @@ function JoinSession() {
                                                     disabled={disableJoin}
                                                     className={`px-4 py-2 rounded-lg text-sm ${disableJoin
                                                         ? 'bg-gray-700 cursor-not-allowed text-gray-400'
-                                                        : 'bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 cursor-pointer'
+                                                        : 'bg-[#5E13FD] hover:bg-[#5E13FD]/90 cursor-pointer'
                                                         }`}
                                                     onClick={() => {
                                                         if (disableJoin) return

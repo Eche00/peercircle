@@ -13,7 +13,7 @@ function DashboardSkeleton() {
         <div className="flex flex-col gap-8 pb-10">
 
             {/* HERO */}
-            <div className="bg-[#8F4AE3]/20 p-8 rounded-3xl">
+            <div className="bg-[#5E13FD]/20 p-8 rounded-3xl">
                 <SkeletonBox className="h-8 w-64 mb-4" />
                 <SkeletonBox className="h-4 w-96 mb-6" />
                 <SkeletonBox className="h-10 w-40 rounded-xl" />

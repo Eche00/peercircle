@@ -6,9 +6,9 @@ function EmptySession() {
     return (
         <motion.div
             whileHover={{ scale: 1.01 }}
-            className="bg-[#212329] border-2 border-dashed border-[#8F4AE3]/30 min-h-75 flex flex-col items-center justify-center rounded-[40px] mt-2 group hover:border-[#8F4AE3] transition-colors"
+            className="bg-[#212329] border-2 border-dashed border-[#5E13FD]/30 min-h-75 flex flex-col items-center justify-center rounded-[40px] mt-2 group hover:border-[#5E13FD] transition-colors"
         >
-            <div className="w-20 h-20 bg-[#8F4AE3]/10 rounded-full flex items-center justify-center text-[#8F4AE3] mb-6 group-hover:rotate-12 transition-transform">
+            <div className="w-20 h-20 bg-[#5E13FD]/10 rounded-full flex items-center justify-center text-[#5E13FD] mb-6 group-hover:rotate-12 transition-transform">
                 <PestControlRodent fontSize="large" />
             </div>
             <p className="text-lg text-white font-bold mb-2">

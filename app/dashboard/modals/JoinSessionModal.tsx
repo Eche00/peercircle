@@ -54,7 +54,7 @@ function JoinSessionModal({ session, onClose }: { session: Session, onClose: () 
                             value={link}
                             onChange={(e) => setLink(e.target.value)}
                             placeholder="Paste your profile URL"
-                            className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border border-[#8F4AE3]"
+                            className="w-full mt-1 bg-[#0F1116] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border border-[#5E13FD]"
                         />
                     </div>
 
@@ -66,7 +66,7 @@ function JoinSessionModal({ session, onClose }: { session: Session, onClose: () 
                         </div>
                         <div className="w-full h-2 bg-[#0F1116] rounded-full overflow-hidden">
                             <div
-                                className="h-full bg-[#8F4AE3]"
+                                className="h-full bg-[#5E13FD]"
                                 style={{ width: `${(session.joined / session.maxParticipants) * 100}%` }}
                             />
                         </div>
@@ -81,7 +81,7 @@ function JoinSessionModal({ session, onClose }: { session: Session, onClose: () 
                                     key={idx}
                                     className="flex items-start gap-2 text-xs text-gray-300"
                                 >
-                                    <CheckCircleOutline className="text-[#8F4AE3]" fontSize="small" />
+                                    <CheckCircleOutline className="text-[#5E13FD]" fontSize="small" />
                                     <span>{item}</span>
                                 </li>
                             ))}
@@ -117,7 +117,7 @@ function JoinSessionModal({ session, onClose }: { session: Session, onClose: () 
                                     value={enteredPassword}
                                     onChange={(e) => setEnteredPassword(e.target.value)}
                                     placeholder="Paste your profile URL"
-                                    className="w-full mt-1  bg-[#0F1116] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border border-[#8F4AE3]"
+                                    className="w-full mt-1  bg-[#0F1116] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border border-[#5E13FD]"
                                 />
                             </div></>
                     )}
@@ -137,7 +137,7 @@ function JoinSessionModal({ session, onClose }: { session: Session, onClose: () 
                         // Optionally log error or handle failure
                         console.error(error)
                     }
-                }} disabled={loading} className="mt-8 w-full py-3 rounded-lg bg-[#8F4AE3] hover:bg-[#8F4AE3]/90 text-sm font-medium cursor-pointer disabled:bg-[#8F4AE3]/80 disabled:cursor-not-allowed ">
+                }} disabled={loading} className="mt-8 w-full py-3 rounded-lg bg-[#5E13FD] hover:bg-[#5E13FD]/90 text-sm font-medium cursor-pointer disabled:bg-[#5E13FD]/80 disabled:cursor-not-allowed ">
                     {loading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mx-auto"></div> : 'Join Session'}
 
                 </button>

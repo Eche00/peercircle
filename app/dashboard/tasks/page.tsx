@@ -30,7 +30,7 @@ const PLATFORM_ICONS: Record<string, React.ReactNode> = {
   Twitter: <Twitter className="text-blue-400" />,
   Facebook: <Facebook className="text-blue-600" />,
   LinkedIn: <LinkedIn className="text-blue-700" />,
-  General: <AssignmentOutlined className="text-[#8F4AE3]" />,
+  General: <AssignmentOutlined className="text-[#5E13FD]" />,
 };
 
 export default function TasksPage() {
@@ -97,7 +97,7 @@ export default function TasksPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#8F4AE3]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#5E13FD]"></div>
       </div>
     );
   }
@@ -119,7 +119,7 @@ export default function TasksPage() {
 
         <div className="flex items-center gap-4 bg-[#212329] p-4 rounded-2xl border border-gray-800 shadow-lg">
           <div className="flex items-center gap-3 pr-4 border-r border-gray-700">
-            <div className="w-10 h-10 bg-[#8F4AE3]/10 rounded-xl flex items-center justify-center text-[#8F4AE3]">
+            <div className="w-10 h-10 bg-[#5E13FD]/10 rounded-xl flex items-center justify-center text-[#5E13FD]">
               <StarsOutlined />
             </div>
             <div>
@@ -128,7 +128,7 @@ export default function TasksPage() {
               </p>
               <p className="text-xl font-bold text-white">
                 {totalPoints}{" "}
-                <span className="text-[#8F4AE3] text-sm font-normal">pts</span>
+                <span className="text-[#5E13FD] text-sm font-normal">pts</span>
               </p>
             </div>
           </div>
@@ -154,7 +154,7 @@ export default function TasksPage() {
           <span className="text-sm font-medium text-gray-400">
             Daily Progress
           </span>
-          <span className="text-sm font-bold text-[#8F4AE3]">
+          <span className="text-sm font-bold text-[#5E13FD]">
             {tasks.length > 0
               ? Math.round((completedCount / tasks.length) * 100)
               : 0}
@@ -167,7 +167,7 @@ export default function TasksPage() {
             animate={{
               width: `${tasks.length > 0 ? (completedCount / tasks.length) * 100 : 0}%`,
             }}
-            className="h-full bg-gradient-to-r from-[#8F4AE3] to-[#a855f7] rounded-full"
+            className="h-full bg-gradient-to-r from-[#5E13FD] to-[#a855f7] rounded-full"
           />
         </div>
         <div className="flex items-center gap-2 mt-4 text-xs text-gray-500">
@@ -184,17 +184,15 @@ export default function TasksPage() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.1 }}
-            className={`group relative bg-[#212329] p-6 rounded-2xl border transition-all duration-300 flex items-center gap-4 ${
-              isCompleted(task.id)
+            className={`group relative bg-[#212329] p-6 rounded-2xl border transition-all duration-300 flex items-center gap-4 ${isCompleted(task.id)
                 ? "border-green-500/30 opacity-80"
-                : "border-gray-800 hover:border-[#8F4AE3]/50 hover:shadow-xl hover:shadow-[#8F4AE3]/5"
-            }`}
+                : "border-gray-800 hover:border-[#5E13FD]/50 hover:shadow-xl hover:shadow-[#5E13FD]/5"
+              }`}
           >
             {/* Task Icon */}
             <div
-              className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 text-2xl shadow-inner ${
-                isCompleted(task.id) ? "bg-green-500/10" : "bg-gray-800/50"
-              }`}
+              className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 text-2xl shadow-inner ${isCompleted(task.id) ? "bg-green-500/10" : "bg-gray-800/50"
+                }`}
             >
               {PLATFORM_ICONS[task.platform as any] || PLATFORM_ICONS.General}
             </div>
@@ -202,15 +200,14 @@ export default function TasksPage() {
             {/* Task Details */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#8F4AE3] bg-[#8F4AE3]/10 px-2 py-0.5 rounded-md">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#5E13FD] bg-[#5E13FD]/10 px-2 py-0.5 rounded-md">
                   {task.platform}
                 </span>
                 <span
-                  className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md ${
-                    isCompleted(task.id)
+                  className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md ${isCompleted(task.id)
                       ? "bg-green-500/10 text-green-500"
                       : "bg-yellow-500/10 text-yellow-500"
-                  }`}
+                    }`}
                 >
                   {isCompleted(task.id) ? "Done" : "XP " + task.points}
                 </span>
@@ -228,11 +225,10 @@ export default function TasksPage() {
             {/* Action Button */}
             <button
               onClick={() => handleComplete(task)}
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer ${
-                isCompleted(task.id)
+              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer ${isCompleted(task.id)
                   ? "bg-green-500 text-white"
-                  : "bg-[#8F4AE3]/10 text-[#8F4AE3] group-hover:bg-[#8F4AE3] group-hover:text-white"
-              }`}
+                  : "bg-[#5E13FD]/10 text-[#5E13FD] group-hover:bg-[#5E13FD] group-hover:text-white"
+                }`}
             >
               {isCompleted(task.id) ? (
                 <CheckCircleOutline />
@@ -260,13 +256,13 @@ export default function TasksPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8 }}
-        className="mt-12 bg-gradient-to-br from-[#8F4AE3]/10 to-transparent p-8 rounded-3xl border border-[#8F4AE3]/20 flex flex-col md:flex-row items-center gap-8 shadow-2xl overflow-hidden relative"
+        className="mt-12 bg-gradient-to-br from-[#5E13FD]/10 to-transparent p-8 rounded-3xl border border-[#5E13FD]/20 flex flex-col md:flex-row items-center gap-8 shadow-2xl overflow-hidden relative"
       >
         <div className="absolute top-0 right-0 p-4 opacity-10 blur-sm">
-          <Celebration className="text-[120px] text-[#8F4AE3]" />
+          <Celebration className="text-[120px] text-[#5E13FD]" />
         </div>
 
-        <div className="shrink-0 w-24 h-24 bg-[#8F4AE3] rounded-3xl flex items-center justify-center text-white shadow-2xl relative z-10">
+        <div className="shrink-0 w-24 h-24 bg-[#5E13FD] rounded-3xl flex items-center justify-center text-white shadow-2xl relative z-10">
           <Celebration className="text-[48px]" />
         </div>
 
@@ -282,7 +278,7 @@ export default function TasksPage() {
           <div className="flex flex-wrap justify-center md:justify-start gap-4">
             <Link
               href="/dashboard/profile"
-              className="px-6 py-2 bg-[#8F4AE3] hover:bg-[#7a3bc7] text-white rounded-xl text-sm font-bold transition-all"
+              className="px-6 py-2 bg-[#5E13FD] hover:bg-[#7a3bc7] text-white rounded-xl text-sm font-bold transition-all"
             >
               View My Profile
             </Link>

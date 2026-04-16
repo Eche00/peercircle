@@ -52,7 +52,7 @@ function Page() {
                                         value={search}
                                         onChange={(e) => setSearch(e.target.value)}
                                         placeholder="Search by Session ID"
-                                        className="w-full bg-[#0F1116] rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border border border-[#8F4AE3]"
+                                        className="w-full bg-[#0F1116] rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border border border-[#5E13FD]"
                                     />
                                 </div>
                             </div>
@@ -66,7 +66,7 @@ function Page() {
                                     key={i}
                                     className={`px-4 py-1.5 rounded-full text-sm transition
                     ${item === 'All'
-                                            ? 'bg-[#8F4AE3]'
+                                            ? 'bg-[#5E13FD]'
                                             : 'bg-[#1A1C22] hover:bg-[#23262F]'
                                         }`}
                                 >
@@ -81,7 +81,7 @@ function Page() {
                         {communities.map((c, i) => (
                             <div
                                 key={i}
-                                className="bg-[#15171C] rounded-2xl border border-[#2A2D35] overflow-hidden hover:border-[#8F4AE3] transition"
+                                className="bg-[#15171C] rounded-2xl border border-[#2A2D35] overflow-hidden hover:border-[#5E13FD] transition"
                             >
                                 {/* Image placeholder */}
                                 <div className="h-36 bg-linear-to-br from-[#2A2D35] to-[#1A1C22]" />
@@ -92,7 +92,7 @@ function Page() {
                                         {c.members} members · {c.tag}
                                     </p>
 
-                                    <button className="mt-4 w-full text-sm py-2 rounded-lg bg-[#8F4AE3]/20 text-[#C9A9FF] hover:bg-[#8F4AE3]/30 cursor-pointer" onClick={() => setJoinModal(true)}>
+                                    <button className="mt-4 w-full text-sm py-2 rounded-lg bg-[#5E13FD]/20 text-[#C9A9FF] hover:bg-[#5E13FD]/30 cursor-pointer" onClick={() => setJoinModal(true)}>
                                         Join
                                     </button>
                                 </div>
@@ -115,13 +115,13 @@ function Page() {
                                     className="flex items-center justify-between px-4 py-3 rounded-xl bg-[#1A1C22] hover:bg-[#23262F] transition"
                                 >
                                     <div className="flex items-center gap-3">
-                                        <div className="h-8 w-8 rounded-lg bg-[#8F4AE3]/30 flex items-center justify-center text-xs font-bold">
+                                        <div className="h-8 w-8 rounded-lg bg-[#5E13FD]/30 flex items-center justify-center text-xs font-bold">
                                             {name[0]}
                                         </div>
                                         <span className="text-sm">{name}</span>
                                     </div>
 
-                                    <span className="text-xs text-[#8F4AE3]">
+                                    <span className="text-xs text-[#5E13FD]">
                                         Joined
                                     </span>
                                 </div>
@@ -129,7 +129,7 @@ function Page() {
                         </div>
 
                         {/* FOOTER */}
-                        <button className="mt-5 w-full text-sm py-2 rounded-lg border border-[#8F4AE3] text-[#C9A9FF] hover:bg-[#8F4AE3]/10">
+                        <button className="mt-5 w-full text-sm py-2 rounded-lg border border-[#5E13FD] text-[#C9A9FF] hover:bg-[#5E13FD]/10">
                             Manage Communities
                         </button>
                     </div>

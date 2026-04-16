@@ -69,7 +69,7 @@ function SessionDetails({
         <div className="w-full flex flex-col justify-between">
           <div className="flex items-start justify-between gap-2">
             <div>
-              <h1 className="text-sm bg-[#0F1116] rounded-lg border-2 border-[#8F4AE3] max-h-20 overflow-scroll p-2 mb-2"><span className=' font-bold'>Title: </span>{liveSession.title}</h1>
+              <h1 className="text-sm bg-[#0F1116] rounded-lg border-2 border-[#5E13FD] max-h-20 overflow-scroll p-2 mb-2"><span className=' font-bold'>Title: </span>{liveSession.title}</h1>
               <p className="text-xs text-gray-400">
                 Session ID: {liveSession.id}
               </p>
@@ -133,7 +133,7 @@ function SessionDetails({
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => visitLink(p.id)}
-                      className="flex items-center justify-between bg-[#0F1116] px-4 py-3 rounded-lg border border-gray-800 hover:border-[#8F4AE3]"
+                      className="flex items-center justify-between bg-[#0F1116] px-4 py-3 rounded-lg border border-gray-800 hover:border-[#5E13FD]"
                     >
                       <span className="text-xs text-gray-300 truncate">
                         {p.link.length > 30
@@ -169,7 +169,7 @@ function SessionDetails({
             onClick={() =>
               markParticipantCompleted(myParticipant.id)
             }
-            className="w-full mt-4 bg-[#8F4AE3] hover:bg-[#7A3ED1] text-sm py-3 rounded-lg font-medium cursor-pointer"
+            className="w-full mt-4 bg-[#5E13FD] hover:bg-[#7A3ED1] text-sm py-3 rounded-lg font-medium cursor-pointer"
           >
             Mark Tasks As Completed
           </button>
@@ -261,7 +261,7 @@ function SessionDetails({
             ) : statusDisplay === 'In Progress' && allAwarded ? (
               <button
                 onClick={() => completeSession(liveSession.id)}
-                className="w-full bg-[#8F4AE3] hover:bg-[#7A3ED1] text-sm py-3 rounded-lg font-medium cursor-pointer"
+                className="w-full bg-[#5E13FD] hover:bg-[#5E13FD]/90 text-sm py-3 rounded-lg font-medium cursor-pointer"
               >
                 Complete Session
               </button>
@@ -288,7 +288,7 @@ function SessionDetails({
               >
                 <CheckCircleOutline
                   fontSize="small"
-                  className="text-[#8F4AE3]"
+                  className="text-[#5E13FD]"
                 />
                 <span>{item}</span>
               </li>

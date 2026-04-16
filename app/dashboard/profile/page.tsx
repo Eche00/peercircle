@@ -14,9 +14,9 @@ function ProfilePage() {
     <div className="min-h-screen text-white sm:p-6">
       <div className="max-w-6xl mx-auto grid grid-cols-12 gap-6">
         {/* SIDEBAR */}
-        <aside className="col-span-12 lg:col-span-5 bg-[#212329] rounded-2xl p-5 border border-[#8F4AE3]">
+        <aside className="col-span-12 lg:col-span-5 bg-[#212329] rounded-2xl p-5 border border-[#5E13FD]">
           <div className="flex items-center gap-3 mb-8">
-            <div className="h-12 w-12 rounded-full bg-[#8F4AE3] flex items-center justify-center text-xl font-bold">
+            <div className="h-12 w-12 rounded-full bg-[#5E13FD] flex items-center justify-center text-xl font-bold">
               {userInfo?.displayName?.[0] || "C"}
             </div>
             <div>
@@ -28,7 +28,7 @@ function ProfilePage() {
           <div className="bg-[#16181B] rounded-2xl p-6 shadow-lg flex flex-col items-center justify-center mb-4">
             <p className="text-sm text-gray-400 mb-4"> Trust Points </p>
             {/* CIRCLE BADGE */}
-            <div className="h-28 w-28 rounded-full border-4 border-[#8F4AE3] flex items-center justify-center">
+            <div className="h-28 w-28 rounded-full border-4 border-[#5E13FD] flex items-center justify-center">
               <div className="text-center">
                 <p className="text-2xl font-bold">{userInfo?.trustPoints || 0}</p>
                 <p className="text-xs text-gray-400">Points</p>
@@ -38,7 +38,7 @@ function ProfilePage() {
           <div className="w-full flex items-center justify-between">
             <Link
               href="/dashboard/tasks"
-              className="w-fit px-5 py-2 bg-[#8F4AE3] hover:bg-[#7A3ED1] rounded-lg text-sm cursor-pointer transition-colors"
+              className="w-fit px-5 py-2 bg-[#5E13FD] hover:bg-[#5E13FD]/80 rounded-lg text-sm cursor-pointer transition-colors"
             >
               Earn Points
             </Link>
@@ -54,7 +54,7 @@ function ProfilePage() {
         {/* MAIN CONTENT */}
         <main className="col-span-12 lg:col-span-7 space-y-6">
           {/* HEADER */}
-          <div className="bg-[#212329] rounded-2xl p-6 border border-gray-800 hover:border-[#8F4AE3] transition-all flex flex-wrap items-center justify-between gap-2">
+          <div className="bg-[#212329] rounded-2xl p-6 border border-gray-800 hover:border-[#5E13FD] transition-all flex flex-wrap items-center justify-between gap-2">
             <div>
               <h1 className="text-xl font-semibold">
                 Welcome, {userInfo?.displayName || "Creator"}
@@ -64,13 +64,13 @@ function ProfilePage() {
               </p>
             </div>
 
-            <span className="px-4 py-1 rounded-full text-xs bg-[#8F4AE3]/20 border border-[#8F4AE3]/30 text-[#C9A9FF]">
+            <span className="px-4 py-1 rounded-full text-xs bg-[#5E13FD]/20 border border-[#5E13FD]/30 text-[#C9A9FF]">
               Trusted Tier: {(userInfo?.trustPoints ?? 0) > 500 ? "Platinum" : "Newcomer"}
             </span>
           </div>
 
           {/* ACCOUNT DETAILS */}
-          <div className="bg-[#212329] rounded-2xl p-6 border border-gray-800 hover:border-[#8F4AE3] transition-all">
+          <div className="bg-[#212329] rounded-2xl p-6 border border-gray-800 hover:border-[#5E13FD] transition-all">
             <h2 className="text-sm font-semibold mb-4">Account Details</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -105,7 +105,7 @@ function ProfilePage() {
           </div>
 
           {/* CONNECT SOCIAL MEDIA */}
-          <div className="bg-[#212329] rounded-2xl p-6 border border-gray-800 hover:border-[#8F4AE3] transition-all">
+          <div className="bg-[#212329] rounded-2xl p-6 border border-gray-800 hover:border-[#5E13FD] transition-all">
             <h2 className="text-sm font-semibold mb-4">Connect Social Media</h2>
 
             <div className="space-y-4">
@@ -124,10 +124,10 @@ function SocialRow({ icon, name }: { icon: React.ReactNode; name: string }) {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3 text-sm text-gray-300">
-        <span className="text-[#8F4AE3]">{icon}</span>
+        <span className="text-[#5E13FD]">{icon}</span>
         {name}
       </div>
-      <button className="px-4 py-1 text-xs rounded-lg hover:border hover:border-[#8F4AE3] text-[#C9A9FF] bg-[#8F4AE3]/20 cursor-pointer transition-all">
+      <button className="px-4 py-1 text-xs rounded-lg hover:border hover:border-[#5E13FD] text-[#C9A9FF] bg-[#5E13FD]/20 cursor-pointer transition-all">
         Connect
       </button>
     </div>

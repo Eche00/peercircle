@@ -29,7 +29,7 @@ function Page() {
                             onClick={() => scrollToSection('joinable')}
                             className={`px-4 py-1 rounded-md transition-all duration-200 cursor-pointer
             ${activeSection === 'joinable'
-                                    ? 'bg-[#8F4AE3] text-white  '
+                                    ? 'bg-[#5E13FD] text-white  '
                                     : 'bg-transparent  text-gray-400'}
         `}
                         >
@@ -40,7 +40,7 @@ function Page() {
                             onClick={() => scrollToSection('joined')}
                             className={`px-4 py-1 rounded-md transition-all duration-200 cursor-pointer
             ${activeSection === 'joined'
-                                    ? 'bg-[#8F4AE3] text-white  '
+                                    ? 'bg-[#5E13FD] text-white  '
                                     : 'bg-transparent  text-gray-400'}
         `}
                         >
@@ -51,7 +51,7 @@ function Page() {
                             onClick={() => scrollToSection('hosted')}
                             className={`px-4 py-1 rounded-md transition-all duration-200 cursor-pointer
             ${activeSection === 'hosted'
-                                    ? 'bg-[#8F4AE3] text-white  '
+                                    ? 'bg-[#5E13FD] text-white  '
                                     : 'bg-transparent  text-gray-400'}
         `}
                         >

@@ -72,7 +72,7 @@ function HostedSessions() {
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                     placeholder="Search by Title, Session ID or Host Name"
-                                    className="w-full bg-[#0F1116] rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border border border-[#8F4AE3]"
+                                    className="w-full bg-[#0F1116] rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border border border-[#5E13FD]"
                                 />
                             </div>
                         </div>
@@ -81,7 +81,7 @@ function HostedSessions() {
                             <select
                                 value={status}
                                 onChange={(e) => setStatus(e.target.value)}
-                                className="flex-1 bg-[#0F1116] rounded-lg px-3 py-2 text-sm border border-[#8F4AE3]"
+                                className="flex-1 bg-[#0F1116] rounded-lg px-3 py-2 text-sm border border-[#5E13FD]"
                             >
                                 {statusOptions.map((opt) => (
                                     <option key={opt.value} value={opt.value}>
@@ -93,7 +93,7 @@ function HostedSessions() {
                             <select
                                 value={service}
                                 onChange={(e) => setService(e.target.value)}
-                                className="flex-1 bg-[#0F1116] rounded-lg px-3 py-2 text-sm border border-[#8F4AE3]"
+                                className="flex-1 bg-[#0F1116] rounded-lg px-3 py-2 text-sm border border-[#5E13FD]"
                             >
                                 {serviceOptions.map((opt) => (
                                     <option key={opt.value} value={opt.value}>
@@ -120,7 +120,7 @@ function HostedSessions() {
 
                             <div className="divide-y divide-gray-800">
                                 {mySessions.length <= 0 ? <section className='flex flex-col items-center justify-center my-6'>
-                                    <div className="w-20 h-20 bg-[#8F4AE3]/10 rounded-full flex items-center justify-center text-[#8F4AE3] group-hover:rotate-12 transition-transform">
+                                    <div className="w-20 h-20 bg-[#5E13FD]/10 rounded-full flex items-center justify-center text-[#5E13FD] group-hover:rotate-12 transition-transform">
                                         <PestControlRodent fontSize="large" />
                                     </div>
                                     <p className="text-sm text-gray-400 text-center max-w-xs mb-8">
@@ -199,7 +199,7 @@ function HostedSessions() {
                                                     </p>
 
                                                     <button
-                                                        className="w-full px-4 py-2 rounded-lg text-sm bg-[#0F1116] hover:border hover:border-[#8F4AE3]"
+                                                        className="w-full px-4 py-2 rounded-lg text-sm bg-[#0F1116] hover:border hover:border-[#5E13FD]"
                                                         onClick={() => {
                                                             setSelectedSession(session)
                                                             setDetailsModal(true)
@@ -234,7 +234,7 @@ function HostedSessions() {
 
                                                     <div className="flex justify-end">
                                                         <button
-                                                            className="px-4 py-2 rounded-lg text-sm bg-[#0F1116] hover:border hover:border-[#8F4AE3]"
+                                                            className="px-4 py-2 rounded-lg text-sm bg-[#0F1116] hover:border hover:border-[#5E13FD]"
                                                             onClick={() => {
                                                                 setSelectedSession(session)
                                                                 setDetailsModal(true)

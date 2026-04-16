@@ -47,7 +47,7 @@ const HISTORY_DATA: HistoryItem[] = [
     date: "Yesterday",
     time: "09:00",
     icon: <RocketLaunchOutlined />,
-    color: "text-[#8F4AE3]",
+    color: "text-[#5E13FD]",
   },
   {
     id: "3",
@@ -101,7 +101,7 @@ export default function HistoryPage() {
       >
         <div>
           <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-            <HistoryOutlined className="text-[#8F4AE3]" fontSize="large" />{" "}
+            <HistoryOutlined className="text-[#5E13FD]" fontSize="large" />{" "}
             Activity History
           </h1>
           <p className="text-gray-400">
@@ -111,7 +111,7 @@ export default function HistoryPage() {
 
         {/* Points Summary Card */}
         <div className="bg-[#212329] p-4 px-6 rounded-2xl border border-gray-800 shadow-xl flex items-center gap-4">
-          <div className="w-12 h-12 bg-[#8F4AE3]/10 rounded-xl flex items-center justify-center text-[#8F4AE3]">
+          <div className="w-12 h-12 bg-[#5E13FD]/10 rounded-xl flex items-center justify-center text-[#5E13FD]">
             <StarsOutlined fontSize="large" />
           </div>
           <div>
@@ -120,7 +120,7 @@ export default function HistoryPage() {
             </p>
             <p className="text-2xl font-black text-white">
               8,450{" "}
-              <span className="text-[#8F4AE3] text-sm font-normal">pts</span>
+              <span className="text-[#5E13FD] text-sm font-normal">pts</span>
             </p>
           </div>
         </div>
@@ -132,11 +132,10 @@ export default function HistoryPage() {
           <button
             key={tab}
             onClick={() => setFilter(tab)}
-            className={`px-6 py-2 rounded-lg text-sm font-bold capitalize transition-all ${
-              filter === tab
-                ? "bg-[#8F4AE3] text-white shadow-lg shadow-[#8F4AE3]/20"
+            className={`px-6 py-2 rounded-lg text-sm font-bold capitalize transition-all ${filter === tab
+                ? "bg-[#5E13FD] text-white shadow-lg shadow-[#5E13FD]/20"
                 : "text-gray-500 hover:text-gray-300"
-            }`}
+              }`}
           >
             {tab}
           </button>
@@ -146,7 +145,7 @@ export default function HistoryPage() {
       {/* Timeline */}
       <div className="relative">
         {/* Vertical Line */}
-        <div className="absolute left-6 md:left-8 top-0 bottom-0 w-[2px] bg-gradient-to-b from-[#8F4AE3] via-gray-800 to-transparent"></div>
+        <div className="absolute left-6 md:left-8 top-0 bottom-0 w-[2px] bg-gradient-to-b from-[#5E13FD] via-gray-800 to-transparent"></div>
 
         <div className="flex flex-col gap-6">
           <AnimatePresence mode="popLayout">
@@ -162,19 +161,18 @@ export default function HistoryPage() {
               >
                 {/* Timeline Dot/Icon */}
                 <div
-                  className={`relative z-10 w-12 h-12 md:w-16 md:h-16 rounded-2xl flex items-center justify-center shrink-0 border-4 border-[#191A1E] transition-all duration-300 ${
-                    item.type === "points"
+                  className={`relative z-10 w-12 h-12 md:w-16 md:h-16 rounded-2xl flex items-center justify-center shrink-0 border-4 border-[#191A1E] transition-all duration-300 ${item.type === "points"
                       ? "bg-green-500/10 text-green-500 group-hover:bg-green-500 group-hover:text-white"
                       : item.type === "milestone"
-                        ? "bg-[#8F4AE3]/10 text-[#8F4AE3] group-hover:bg-[#8F4AE3] group-hover:text-white"
+                        ? "bg-[#5E13FD]/10 text-[#5E13FD] group-hover:bg-[#5E13FD] group-hover:text-white"
                         : "bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white"
-                  } shadow-xl`}
+                    } shadow-xl`}
                 >
                   {item.icon}
                 </div>
 
                 {/* Content Card */}
-                <div className="flex-1 bg-[#212329] p-5 md:p-6 rounded-3xl border border-gray-800 hover:border-[#8F4AE3]/30 transition-all duration-300 shadow-lg relative overflow-hidden">
+                <div className="flex-1 bg-[#212329] p-5 md:p-6 rounded-3xl border border-gray-800 hover:border-[#5E13FD]/30 transition-all duration-300 shadow-lg relative overflow-hidden">
                   {/* Glass reflection effect */}
                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
 
@@ -182,13 +180,12 @@ export default function HistoryPage() {
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <span
-                          className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${
-                            item.type === "points"
+                          className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${item.type === "points"
                               ? "bg-green-500/10 text-green-500"
                               : item.type === "milestone"
-                                ? "bg-[#8F4AE3]/10 text-[#8F4AE3]"
+                                ? "bg-[#5E13FD]/10 text-[#5E13FD]"
                                 : "bg-blue-500/10 text-blue-500"
-                          }`}
+                            }`}
                         >
                           {item.type}
                         </span>
