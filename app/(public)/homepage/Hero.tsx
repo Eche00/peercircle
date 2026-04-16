@@ -9,7 +9,7 @@ function Hero() {
       className="relative flex min-h-screen bg-cover bg-center overflow-x-hidden"
     >
       {/* Overlay */}
-      <div className="absolute inset-0 pointer-events-none opacity-15 bg-[url('/bgoverlay.png')] bg-cover min-h-[100vh]" />
+      <div className="absolute inset-0 pointer-events-none opacity-15 bg-[url('/bgoverlay.png')] bg-cover " />
 
       <section className=" max-w-[90%] mx-auto flex  md:flex-row flex-col items-center  justify-center md:gap-0 gap-10 z-20">
         {/* Left hero section  */}
