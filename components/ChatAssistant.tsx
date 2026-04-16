@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Close, AutoAwesome } from "@mui/icons-material";
+import { Send, Close } from "@mui/icons-material";
 import { chatWithAssistant } from "@/lib/actions/chat-assistant";
+import { PeercircleAwesomeIcon } from "./ui/svg";
 
 interface Message {
   role: "user" | "model";
@@ -99,7 +100,7 @@ export default function ChatAssistant() {
             {/* Header */}
             <div className="bg-[#5E13FD] p-4 flex items-center justify-between text-white">
               <div className="flex items-center gap-2">
-                <AutoAwesome fontSize="small" />
+                <PeercircleAwesomeIcon />
                 <span className="font-semibold soraFont tracking-wide text-sm uppercase">
                   PeerCircle AI assistant
                 </span>
@@ -121,8 +122,8 @@ export default function ChatAssistant() {
                 >
                   <div
                     className={`max-w-[85%] p-3 rounded-2xl text-[14px] leading-relaxed ${m.role === "user"
-                        ? "bg-[#5E13FD] text-white rounded-tr-none"
-                        : "bg-[#212329] text-gray-200 border border-gray-800 rounded-tl-none shadow-sm"
+                      ? "bg-[#5E13FD] text-white rounded-tr-none"
+                      : "bg-[#212329] text-gray-200 border border-gray-800 rounded-tl-none shadow-sm"
                       }`}
                   >
                     {m.text}
@@ -215,7 +216,7 @@ export default function ChatAssistant() {
               exit={{ opacity: 0, x: 20, scale: 0.9 }}
               className="bg-[#5E13FD] text-white px-4 py-2 rounded-full text-sm font-semibold shadow-xl soraFont border border-white/20 hidden sm:flex items-center gap-2"
             >
-              <AutoAwesome sx={{ fontSize: 16 }} />
+              <PeercircleAwesomeIcon />
               Ask PeerCircle AI
             </motion.div>
           )}
@@ -227,7 +228,7 @@ export default function ChatAssistant() {
           whileTap={{ scale: 0.95 }}
           className="w-16 h-16 bg-[#5E13FD] rounded-full flex items-center justify-center text-white shadow-[0_8px_30px_rgb(143,74,227,0.4)] hover:shadow-[0_8px_30px_rgb(143,74,227,0.6)] transition-all relative border border-white/10"
         >
-          {isOpen ? <Close /> : <AutoAwesome fontSize="large" />}
+          {isOpen ? <Close /> : <PeercircleAwesomeIcon />}
 
           {!isOpen && (
             <span className="absolute -top-1 -right-1 flex h-4 w-4">
