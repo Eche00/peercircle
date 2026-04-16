@@ -6,7 +6,7 @@ import Link from "next/link";
 function Hero() {
   return (
     <div
-      className="relative flex min-h-[100vh] bg-cover bg-center overflow-x-hidden"
+      className="relative flex min-h-[100dvh] bg-cover bg-center overflow-x-hidden"
     >
       {/* Overlay */}
       <div className="absolute inset-0 pointer-events-none opacity-15 bg-[url('/bgoverlay.png')] bg-cover " />
@@ -58,59 +58,59 @@ function Hero() {
           <section className="sm:w-[432px] w-[350px] sm:h-[418px] h-[350px] flex flex-wrap relative">
 
             {/* Outer circular border (background ring) */}
-            <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 sm:w-[432px] w-[350px] sm:h-[418px] h-[350px] border border-[#FFFFFF1A] rounded-full" />
+            <div className="absolute pointer-events-none top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 sm:w-[432px] w-[350px] sm:h-[418px] h-[350px] border border-[#FFFFFF1A] rounded-full" />
 
             {/* Blurred glow effect at the center */}
-            <span className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
+            <span className="absolute pointer-events-none top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
               <CircularBlur />
             </span>
 
             {/* Top floating icons */}
-            <span className="absolute top-5 left-5">
+            <span className="absolute pointer-events-none top-5 left-5">
               <FaceBookIcon />
             </span>
-            <span className="absolute top-5 right-5">
+            <span className="absolute pointer-events-none top-5 right-5">
               <WhatsappIcon />
             </span>
 
             {/* Inner circular container (main hub) */}
-            <div className="absolute inset-0 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-[200px] h-[200px] bg-[#FFFFFF1A] border border-[#FFFFFF1A] rounded-full">
+            <div className="absolute pointer-events-none inset-0 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-[200px] h-[200px] bg-[#FFFFFF1A] border border-[#FFFFFF1A] rounded-full">
 
               {/* Relative wrapper for positioning inner icons */}
               <section className="relative h-full w-full">
 
                 {/* Top icon (Instagram) */}
-                <span className="absolute -top-10 left-1/2 -translate-x-1/2">
+                <span className="absolute pointer-events-none -top-10 left-1/2 -translate-x-1/2">
                   <InstagramIcon />
                 </span>
 
                 {/* Left icon (Apple Music) */}
-                <span className="absolute top-1/2 -left-10 -translate-y-1/2">
+                <span className="absolute pointer-events-none top-1/2 -left-10 -translate-y-1/2">
                   <AppleMusicIcon />
                 </span>
 
                 {/* Center logo (main focus) */}
-                <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 border-2 border-[#5E13FD] rounded-full p-2 mr-2 flex items-center justify-center">
+                <div className="absolute pointer-events-none top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 border-2 border-[#5E13FD] rounded-full p-2 mr-2 flex items-center justify-center">
                   <img src="/logo.png" alt="" className="w-8 h-8 object-cover" />
                 </div>
 
                 {/* Right icon (X / Twitter) */}
-                <span className="absolute top-1/2 -right-10 -translate-y-1/2">
+                <span className="absolute pointer-events-none top-1/2 -right-10 -translate-y-1/2">
                   <XIcon />
                 </span>
 
                 {/* Bottom icon (Snapchat) */}
-                <span className="absolute -bottom-10 left-1/2 -translate-x-1/2">
+                <span className="absolute pointer-events-none -bottom-10 left-1/2 -translate-x-1/2">
                   <SnapchatIcon />
                 </span>
               </section>
             </div>
 
             {/* Bottom floating icons */}
-            <span className="absolute bottom-5 left-5">
+            <span className="absolute pointer-events-none bottom-5 left-5">
               <TikTokIcon />
             </span>
-            <span className="absolute bottom-5 right-5">
+            <span className="absolute pointer-events-none bottom-5 right-5">
               <YouTubeIcon />
             </span>
 
