@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { ArrowPointedSmh } from "@/components/ui/svg";
 
 const teamMembers = [
     {
@@ -70,8 +71,8 @@ function Team() {
                             <p className="text-[16px] text-[#FFFFFF99]">{member.role}</p>
 
                             {/* Contact */}
-                            <a href={"mailto:" + member.email} className=" text-[16px] text-[#FFFFFFCC] hover:text-white underline transition cursor-pointer">
-                                Contact email ↗
+                            <a href={"mailto:" + member.email} className=" text-[16px] text-[#FFFFFFCC] hover:text-white underline transition cursor-pointer flex items-baseline gap-1">
+                                Contact email <ArrowPointedSmh />
                             </a>
                             <a href={member.link} target="_blank" rel="noopener noreferrer" className=" text-[16px] text-[#FFFFFFCC] hover:text-white underline transition cursor-pointer">
                                 <img src="/twitterlogo.jpg" alt="" className="w-6 h-6 rounded-full" />

@@ -6,7 +6,7 @@ import Link from "next/link";
 function Hero() {
   return (
     <div
-      className="relative flex min-h-screen bg-cover bg-center overflow-x-hidden"
+      className="relative flex min-h-[100vh] bg-cover bg-center overflow-x-hidden"
     >
       {/* Overlay */}
       <div className="absolute inset-0 pointer-events-none opacity-15 bg-[url('/bgoverlay.png')] bg-cover " />

@@ -926,3 +926,9 @@ export const ContactMessageIcon = () => (
         <path d="M9.50929 4.23001L18.0693 8.51001C21.9093 10.43 21.9093 13.57 18.0693 15.49L9.50929 19.77C3.74929 22.65 1.39929 20.29 4.27929 14.54L5.14929 12.81C5.36929 12.37 5.36929 11.64 5.14929 11.2L4.27929 9.46001C1.39929 3.71001 3.75929 1.35001 9.50929 4.23001Z" fill="white" />
     </svg>
 )
+export const ArrowPointedSmh = () => (
+    <svg width="19" height="16" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 14L18 2M18 2H9M18 2V11" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+
+)
