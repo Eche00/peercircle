@@ -137,7 +137,7 @@ function JoinSessionModal({ session, onClose }: { session: Session, onClose: () 
                         // Optionally log error or handle failure
                         console.error(error)
                     }
-                }} disabled={loading} className="mt-8 w-full py-3 rounded-lg bg-[#5E13FD] hover:bg-[#5E13FD]/90 text-sm font-medium cursor-pointer disabled:bg-[#5E13FD]/80 disabled:cursor-not-allowed ">
+                }} disabled={loading} className="mt-8 w-full py-3 rounded-lg bg-[#5E13FD] hover:bg-[#5E13FD]/90 text-sm font-medium cursor-pointer disabled:bg-[#5E13FD]/80 disabled:cursor-not-allowed shadow-[inset_2px_4px_4px_0px_#FFFFFF4D,_inset_-2px_-4px_4px_0px_#00000033]">
                     {loading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mx-auto"></div> : 'Join Session'}
 
                 </button>

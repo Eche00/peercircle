@@ -185,8 +185,8 @@ export default function TasksPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.1 }}
             className={`group relative bg-[#212329] p-6 rounded-2xl border transition-all duration-300 flex items-center gap-4 ${isCompleted(task.id)
-                ? "border-green-500/30 opacity-80"
-                : "border-gray-800 hover:border-[#5E13FD]/50 hover:shadow-xl hover:shadow-[#5E13FD]/5"
+              ? "border-green-500/30 opacity-80"
+              : "border-gray-800 hover:border-[#5E13FD]/50 hover:shadow-xl hover:shadow-[#5E13FD]/5"
               }`}
           >
             {/* Task Icon */}
@@ -205,8 +205,8 @@ export default function TasksPage() {
                 </span>
                 <span
                   className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md ${isCompleted(task.id)
-                      ? "bg-green-500/10 text-green-500"
-                      : "bg-yellow-500/10 text-yellow-500"
+                    ? "bg-green-500/10 text-green-500"
+                    : "bg-yellow-500/10 text-yellow-500"
                     }`}
                 >
                   {isCompleted(task.id) ? "Done" : "XP " + task.points}
@@ -226,8 +226,8 @@ export default function TasksPage() {
             <button
               onClick={() => handleComplete(task)}
               className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer ${isCompleted(task.id)
-                  ? "bg-green-500 text-white"
-                  : "bg-[#5E13FD]/10 text-[#5E13FD] group-hover:bg-[#5E13FD] group-hover:text-white"
+                ? "bg-green-500 text-white"
+                : "bg-[#5E13FD]/10 text-[#5E13FD] group-hover:bg-[#5E13FD] group-hover:text-white group-hover:shadow-[inset_2px_4px_4px_0px_#FFFFFF4D,_inset_-2px_-4px_4px_0px_#00000033]"
                 }`}
             >
               {isCompleted(task.id) ? (
@@ -278,7 +278,7 @@ export default function TasksPage() {
           <div className="flex flex-wrap justify-center md:justify-start gap-4">
             <Link
               href="/dashboard/profile"
-              className="px-6 py-2 bg-[#5E13FD] hover:bg-[#7a3bc7] text-white rounded-xl text-sm font-bold transition-all"
+              className="px-6 py-2 bg-[#5E13FD] hover:bg-[#5E13FD]/80 text-white rounded-xl text-sm font-bold transition-all shadow-[inset_2px_4px_4px_0px_#FFFFFF4D,_inset_-2px_-4px_4px_0px_#00000033]"
             >
               View My Profile
             </Link>

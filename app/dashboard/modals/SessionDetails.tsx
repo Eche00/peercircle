@@ -169,7 +169,7 @@ function SessionDetails({
             onClick={() =>
               markParticipantCompleted(myParticipant.id)
             }
-            className="w-full mt-4 bg-[#5E13FD] hover:bg-[#7A3ED1] text-sm py-3 rounded-lg font-medium cursor-pointer"
+            className="w-full mt-4 bg-[#5E13FD] hover:bg-[#5E13FD]/90 shadow-[inset_2px_4px_4px_0px_#FFFFFF4D,_inset_-2px_-4px_4px_0px_#00000033] text-sm py-3 rounded-lg font-medium cursor-pointer"
           >
             Mark Tasks As Completed
           </button>
@@ -261,7 +261,7 @@ function SessionDetails({
             ) : statusDisplay === 'In Progress' && allAwarded ? (
               <button
                 onClick={() => completeSession(liveSession.id)}
-                className="w-full bg-[#5E13FD] hover:bg-[#5E13FD]/90 text-sm py-3 rounded-lg font-medium cursor-pointer"
+                className="w-full bg-[#5E13FD] hover:bg-[#5E13FD]/90 shadow-[inset_2px_4px_4px_0px_#FFFFFF4D,_inset_-2px_-4px_4px_0px_#00000033] text-sm py-3 rounded-lg font-medium cursor-pointer"
               >
                 Complete Session
               </button>

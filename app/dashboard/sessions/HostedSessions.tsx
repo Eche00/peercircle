@@ -199,7 +199,7 @@ function HostedSessions() {
                                                     </p>
 
                                                     <button
-                                                        className="w-full px-4 py-2 rounded-lg text-sm bg-[#0F1116] hover:border hover:border-[#5E13FD]"
+                                                        className="w-full px-4 py-2 rounded-lg text-sm bg-[#0F1116] hover:border hover:border-[#5E13FD] shadow-[inset_2px_4px_4px_0px_#FFFFFF4D,_inset_-2px_-4px_4px_0px_#00000033]"
                                                         onClick={() => {
                                                             setSelectedSession(session)
                                                             setDetailsModal(true)

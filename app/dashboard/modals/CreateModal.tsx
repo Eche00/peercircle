@@ -156,7 +156,7 @@ function CreateModal({ onClose }: { onClose: () => void }) {
 
                         <div className="relative w-full bg-[#0F1116] rounded-lg overflow-hidden ">
                             <div
-                                className="absolute top-0 left-0 h-full w-1/2 bg-[#5E13FD] rounded-lg transition-all duration-300 "
+                                className="absolute top-0 left-0 h-full w-1/2 bg-[#5E13FD] shadow-[inset_2px_4px_4px_0px_#FFFFFF4D,_inset_-2px_-4px_4px_0px_#00000033] rounded-lg transition-all duration-300 "
                                 style={{
                                     transform:
                                         visibility === 'private'
@@ -169,7 +169,7 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                                     <button
                                         key={type}
                                         onClick={() => setVisibility(type as any)}
-                                        className="flex-1 py-2 text-sm capitalize text-gray-300 cursor-pointer"
+                                        className="flex-1 py-2 text-sm capitalize text-gray-300 cursor-pointer "
                                     >
                                         {type}
                                     </button>
@@ -190,7 +190,7 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                                 />
                                 <button
                                     onClick={copyPassword}
-                                    className="p-2 bg-[#5E13FD] rounded-lg cursor-pointer"
+                                    className="p-2 bg-[#5E13FD] rounded-lg cursor-pointer shadow-[inset_2px_4px_4px_0px_#FFFFFF4D,_inset_-2px_-4px_4px_0px_#00000033]"
                                 >
                                     <ContentCopyIcon fontSize="small" />
                                 </button>
@@ -216,7 +216,7 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                             />
                             <button
                                 onClick={addRule}
-                                className="px-4 rounded-lg bg-[#5E13FD] text-sm cursor-pointer"
+                                className="px-4 rounded-lg bg-[#5E13FD] text-sm cursor-pointer shadow-[inset_2px_4px_4px_0px_#FFFFFF4D,_inset_-2px_-4px_4px_0px_#00000033]"
                             >
                                 Add
                             </button>
@@ -244,7 +244,7 @@ function CreateModal({ onClose }: { onClose: () => void }) {
                 </div>
 
                 {/* ACTION */}
-                <button onClick={handleCreate} disabled={loading || !title || !linkInput} className="mt-8 w-full py-3 rounded-lg bg-[#5E13FD] hover:bg-[#5E13FD]/90 text-sm font-medium cursor-pointer disabled:bg-[#5E13FD]/70 disabled:cursor-not-allowed ">
+                <button onClick={handleCreate} disabled={loading || !title || !linkInput} className="mt-8 w-full py-3 rounded-lg bg-[#5E13FD] hover:bg-[#5E13FD]/90 text-sm font-medium cursor-pointer disabled:bg-[#5E13FD]/70 disabled:cursor-not-allowed shadow-[inset_2px_4px_4px_0px_#FFFFFF4D,_inset_-2px_-4px_4px_0px_#00000033]">
                     {loading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mx-auto"></div> : 'Create Session'}
                 </button>
             </motion.aside>

@@ -185,7 +185,7 @@ export default function TasksUpdatePage() {
             <button
               disabled={isAdding}
               type="submit"
-              className="mt-4 bg-[#5E13FD] hover:bg-[#7a3bc7] text-white py-4 rounded-xl font-bold transition-all shadow-xl shadow-[#5E13FD]/20 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+              className="mt-4 bg-[#5E13FD] hover:bg-[#5E13FD]/80 text-white py-4 rounded-xl font-bold transition-all shadow-xl shadow-[#5E13FD]/20 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
             >
               {isAdding ? "Saving..." : "Create Task"} <Add fontSize="small" />
             </button>
@@ -244,7 +244,7 @@ export default function TasksUpdatePage() {
                   </div>
                   <button
                     onClick={() => handleDeleteTask(task.id)}
-                    className="p-2 text-gray-500 hover:text-red-500 bg-white/0 hover:bg-red-500/10 rounded-lg transition-all cursor-pointer"
+                    className="p-2 text-gray-500 hover:text-red-500 bg-white/0 hover:bg-red-500/10 shadow-[inset_2px_4px_4px_0px_#FFFFFF4D,_inset_-2px_-4px_4px_0px_#00000033] rounded-lg transition-all cursor-pointer"
                   >
                     <Delete fontSize="small" />
                   </button>

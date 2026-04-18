@@ -160,7 +160,7 @@ function JoinSession() {
                                                     disabled={disableJoin}
                                                     className={`px-4 py-2 rounded-lg text-sm ${disableJoin
                                                         ? 'bg-gray-700 cursor-not-allowed text-gray-400'
-                                                        : 'bg-[#5E13FD] hover:bg-[#5E13FD]/90 cursor-pointer'
+                                                        : 'bg-[#5E13FD] hover:bg-[#5E13FD]/90 cursor-pointer shadow-[inset_2px_4px_4px_0px_#FFFFFF4D,_inset_-2px_-4px_4px_0px_#00000033]'
                                                         }`}
                                                     onClick={() => {
                                                         if (disableJoin) return
