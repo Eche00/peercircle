@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
 import { Search } from '@mui/icons-material'
+import CommunitySkeleton from '../ui/CommunitySkeleton'
 
 const communities = [
     { title: 'AI & Tech', members: '120k', tag: 'Official' },
@@ -19,11 +20,15 @@ const joinedCommunities = [
     'Product Builders',
     'Fintech',
 ]
-
 function Page() {
     const [search, setSearch] = useState<string>('')
     const [joinModal, setJoinModal] = useState<boolean>(false)
     const [openModal, setOpenModal] = useState<boolean>(false)
+
+    const [loader, setoader] = useState(true)
+
+    if (loader) return <CommunitySkeleton />
+
     return (
         <div className="min-h-screen  text-white ">
             <div className="max-w-7xl mx-auto grid grid-cols-12 gap-6">
