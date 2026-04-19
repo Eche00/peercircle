@@ -1,4 +1,5 @@
 "use client";
+import { useUserInfo } from "@/utils/logics/userinfo";
 import { adminSideBarItems, sideBarItems, sideBarItems2 } from "@/utils/routes";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -11,7 +12,7 @@ interface mobileNavProps {
 function Mobilenav({ setOpenMenu }: mobileNavProps) {
   const pathname = usePathname();
   const menuRef = useRef<HTMLDivElement>(null);
-
+  const userInfo = useUserInfo();
   // effect to handle closing nav on page.
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -51,21 +52,7 @@ function Mobilenav({ setOpenMenu }: mobileNavProps) {
             {item.icon} {item.name}
           </Link>
         ))}
-        <hr className=" w-full h-[0.1px] bg-gray-600 border-none" />
-        {adminSideBarItems.map((item) => (
-          <Link
-            href={item.link}
-            key={item.name}
-            onClick={() => setOpenMenu(false)}
-            className={
-              pathname === item.link
-                ? "text-white font-bold bg-[#5E13FD] py-3 px-4  rounded-lg flex items-center gap-2"
-                : "text-gray-400 py-3 px-4  rounded-lg hover:bg-[#5E13FD]/10 flex items-center gap-2"
-            }
-          >
-            {item.icon} {item.name}
-          </Link>
-        ))}
+
         <hr className=" w-full h-[0.1px] bg-gray-600 border-none" />
         {sideBarItems2.map((item) => (
           <Link
@@ -80,6 +67,26 @@ function Mobilenav({ setOpenMenu }: mobileNavProps) {
           >
             {item.icon} {item.name}
           </Link>
+        ))}
+
+
+        {userInfo?.role === 'admin' && adminSideBarItems.map((item) => (
+          <>
+            <hr className=" w-full h-[0.1px] bg-gray-600 border-none" />
+            <Link
+              href={item.link}
+              key={item.name}
+              onClick={() => setOpenMenu(false)}
+              className={
+                pathname === item.link
+                  ? "text-white font-bold bg-[#5E13FD] py-3 px-4  rounded-lg flex items-center gap-2"
+                  : "text-gray-400 py-3 px-4  rounded-lg hover:bg-[#5E13FD]/10 flex items-center gap-2"
+              }
+            >
+              {item.icon} {item.name}
+            </Link>
+          </>
+
         ))}
       </section>
     </motion.div>

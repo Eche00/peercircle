@@ -1,3 +1,4 @@
+import { Groups } from "@mui/icons-material";
 import React from "react";
 
 function SkeletonBox({ className }: { className?: string }) {
@@ -13,9 +14,24 @@ function CommunitySkeleton() {
         <div className="h-[80vh] text-white ">
             {/* OVERLAY */}
             <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/10 backdrop-blur-xs">
-                <h2 className="text-3xl sm:text-5xl font-bold bg-gradient-to-r from-[#5E13FD] to-[#C9A9FF] bg-clip-text text-transparent">
-                    Coming Soon !!
-                </h2>
+                {/*  COMMUNITIES (DUMMY) */}
+                <div className="bg-[#212329] border border-gray-800 rounded-2xl p-4 flex flex-col justify-center items-center text-center">
+                    <div className="w-16 h-16 bg-[#5E13FD]/10 rounded-full flex items-center justify-center mb-4">
+                        <Groups className="text-[#5E13FD]" />
+                    </div>
+
+                    <h2 className="text-lg font-semibold mb-2">
+                        Communities
+                    </h2>
+
+                    <p className="text-sm text-gray-400 max-w-xs">
+                        Create / Join Communities, engage / share resources with peers will be available here.
+                    </p>
+
+                    <span className="mt-3 text-xs bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">
+                        Coming Soon
+                    </span>
+                </div>
             </div>
             <div className="max-w-7xl mx-auto grid grid-cols-12 gap-6">
 

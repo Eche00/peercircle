@@ -1,5 +1,6 @@
 'use client';
 
+import { useUserInfo } from '@/utils/logics/userinfo';
 import { adminSideBarItems, sideBarItems, sideBarItems2 } from '@/utils/routes';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -7,6 +8,7 @@ import { usePathname } from 'next/navigation';
 
 function Sidebar() {
     const pathname = usePathname()
+    const userInfo = useUserInfo()
 
 
     return (
@@ -25,15 +27,21 @@ function Sidebar() {
                 {sideBarItems.map((item) =>
                     <Link href={item.link} key={item.name} className={pathname === item.link ? 'text-white font-bold bg-[#5E13FD] py-3 px-4 rounded-lg flex items-center gap-3 shadow-[inset_2px_4px_4px_0px_#FFFFFF4D,_inset_-2px_-4px_4px_0px_#00000033]' : 'text-gray-400 py-3 px-4 rounded-lg hover:bg-[#5E13FD]/10 flex items-center gap-3 '}>{item.icon} {item.name}</Link>)
                 }
-                <hr className=' w-full h-[0.1px] bg-gray-600 border-none' />
-                {adminSideBarItems.map((item) =>
-                    <Link href={item.link} key={item.name} className={pathname === item.link ? 'text-white font-bold bg-[#5E13FD] py-3 px-4 rounded-lg flex items-center gap-3 shadow-[inset_2px_4px_4px_0px_#FFFFFF4D,_inset_-2px_-4px_4px_0px_#00000033]' : 'text-gray-400 py-3 px-4 rounded-lg hover:bg-[#5E13FD]/10 flex items-center gap-3'}>{item.icon} {item.name}</Link>)
-                }
+
                 <hr className=' w-full h-[0.1px] bg-gray-600 border-none' />
                 {sideBarItems2.map((item) =>
                     <Link href={item.link} key={item.name} className={pathname === item.link ? 'text-white font-bold bg-[#5E13FD] py-3 px-4 rounded-lg flex items-center gap-3 shadow-[inset_2px_4px_4px_0px_#FFFFFF4D,_inset_-2px_-4px_4px_0px_#00000033]' : 'text-gray-400 py-3 px-4 rounded-lg hover:bg-[#5E13FD]/10 flex items-center gap-3'}>{item.icon} {item.name}</Link>)
                 }
 
+                {userInfo?.role === 'admin' && adminSideBarItems.map((item) =>
+                    <>
+                        <hr className=' w-full h-[0.1px] bg-gray-600 border-none' />
+                        <Link href={item.link} key={item.name} className={pathname === item.link ? 'text-white font-bold bg-[#5E13FD] py-3 px-4 rounded-lg flex items-center gap-3 shadow-[inset_2px_4px_4px_0px_#FFFFFF4D,_inset_-2px_-4px_4px_0px_#00000033]' : 'text-gray-400 py-3 px-4 rounded-lg hover:bg-[#5E13FD]/10 flex items-center gap-3'}>{item.icon} {item.name}</Link>
+
+                    </>
+
+                )
+                }
 
             </section>
         </div>

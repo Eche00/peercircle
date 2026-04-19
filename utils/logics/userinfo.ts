@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 export interface UserInfo {
     uid: string
     displayName: string
+    role: string
     email: string | null
     firstName: string
     trustPoints: number
@@ -27,6 +28,7 @@ export function useUserInfo(): UserInfo | null {
                     setUserInfo({
                         uid: user.uid,
                         displayName: user.displayName || 'Creator',
+                        role: data?.role || 'user',
                         firstName: user.displayName?.split(' ')[0] || 'Creator',
                         email: user.email,
                         trustPoints: data?.trustPoints || 0,
