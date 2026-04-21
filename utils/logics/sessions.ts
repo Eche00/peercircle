@@ -14,10 +14,10 @@ import {
     where,
     updateDoc,
     arrayUnion,
-    addDoc
 } from 'firebase/firestore'
 import toast from 'react-hot-toast'
 import { useUserInfo } from './userinfo'
+import { createHistoryEntry } from './history'
 
 // TYPES
 export type Visibility = 'public' | 'private'
@@ -62,26 +62,6 @@ interface CreateSessionParams {
     link: string
 }
 
-
-// HELPER FUNCTION TO ADD HISTORY
-
-const addHistory = async ({
-    userId,
-    title,
-    description,
-}: {
-    userId: string
-    title: string
-    description: string
-}) => {
-    await addDoc(collection(db, 'history'), {
-        userId,
-        type: 'activity',
-        title,
-        description,
-        createdAt: serverTimestamp(),
-    })
-}
 
 //  CREATE SESSION 
 
@@ -164,7 +144,7 @@ const createSessionDB = async ({
         toast.success('Session created successfully', {
             id: loadingToast,
         })
-        await addHistory({
+        await createHistoryEntry({
             userId: hostId,
             title: 'Session Created',
             description: `You created "${title}" session`,
@@ -271,7 +251,7 @@ export const joinSession = async ({
         })
 
         await batch.commit()
-        await addHistory({
+        await createHistoryEntry({
             userId: currentUser.uid,
             title: 'Joined Session',
             description: `You joined "${sessionData.title}"`,

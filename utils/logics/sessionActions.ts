@@ -1,16 +1,14 @@
 import {
-    collection,
     doc,
     updateDoc,
     increment,
     writeBatch,
-    addDoc,
-    serverTimestamp,
 } from 'firebase/firestore'
 
 import { db } from '@/lib/firebase'
 import { markLinkVisited } from '@/utils/logics/sessions'
 import toast from 'react-hot-toast'
+import { createHistoryEntry } from './history'
 
 // GLOBAL LOADING STATE
 export const awardingState = {
@@ -67,7 +65,7 @@ export const awardParticipantPoints = async (
 
         await batch.commit()
 
-        await addDoc(collection(db, 'history'), {
+        await createHistoryEntry({
             userId,
             type: 'points',
             title: points > 0 ? 'Points Earned' : 'Points Deducted',
@@ -76,7 +74,6 @@ export const awardParticipantPoints = async (
                     ? 'You were rewarded for completing a session'
                     : 'Points deducted due to incomplete engagement',
             value: `${points > 0 ? '+' : ''}${points} XP`,
-            createdAt: serverTimestamp(),
         })
 
         toast.success(

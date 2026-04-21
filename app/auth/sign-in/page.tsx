@@ -6,6 +6,8 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
+import { createHistoryEntry } from "@/utils/logics/history";
+import { FirebaseError } from "firebase/app";
 
 export default function SignInPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,11 +25,23 @@ export default function SignInPage() {
     const password = formData.get("password") as string;
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
+
+      await createHistoryEntry({
+        userId: userCredential.user.uid,
+        title: "User logged in",
+        description: "You signed in to PeerCircle.",
+      });
+
       router.push("/dashboard");
-    } catch (err: any) {
-      console.error("Sign In Error:", err);
-      if (err.code === "auth/invalid-credential") {
+    } catch (err: unknown) {
+      const error = err as FirebaseError;
+      console.error("Sign In Error:", error);
+      if (error.code === "auth/invalid-credential") {
         setError("Invalid email or password.");
       } else {
         setError("Failed to sign in. Please try again.");
@@ -39,7 +53,7 @@ export default function SignInPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="text-center">
-        <h1 className="text-2xl font-bold mb-2">Welcome Back</h1>
+        <h1 className="text-2xl font-bold mb-2 text-white">Welcome Back</h1>
         <p className="text-gray-400 text-sm">
           Sign in to continue your growth journey
         </p>
@@ -61,7 +75,7 @@ export default function SignInPage() {
             name="email"
             id="email"
             required
-            className="bg-[#16181B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#8F4AE3] transition-colors"
+            className="bg-[#16181B] border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#5E13FD] focus:ring-2 focus:ring-[#5E13FD]/20 transition-all"
             placeholder="you@example.com"
           />
         </div>
@@ -76,7 +90,7 @@ export default function SignInPage() {
             </label>
             <Link
               href="/auth/forgot-password"
-              className="text-xs text-[#8F4AE3] hover:underline"
+              className="text-xs text-[#5E13FD] hover:underline"
             >
               Forgot Password?
             </Link>
@@ -87,13 +101,13 @@ export default function SignInPage() {
               name="password"
               id="password"
               required
-              className="w-full bg-[#16181B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#8F4AE3] transition-colors pr-12"
-              placeholder="••••••••"
+              className="w-full bg-[#16181B] border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#5E13FD] focus:ring-2 focus:ring-[#5E13FD]/20 transition-all pr-12"
+              placeholder="********"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#8F4AE3] transition-colors cursor-pointer"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#5E13FD] transition-colors cursor-pointer"
             >
               {showPassword ? (
                 <VisibilityOff fontSize="small" />
@@ -107,17 +121,17 @@ export default function SignInPage() {
         <button
           type="submit"
           disabled={isLoading}
-          className="mt-2 bg-[#8F4AE3] hover:bg-[#7a3bc7] text-white py-3 rounded-lg font-semibold transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+          className="mt-2 bg-[#5E13FD] hover:bg-[#4f0fd9] text-white py-3 rounded-xl font-semibold transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer shadow-lg shadow-[#5E13FD]/20"
         >
           {isLoading ? "Signing In..." : "Sign In"}
         </button>
       </form>
 
       <div className="text-center text-sm text-gray-400">
-        Don't have an account?{" "}
+        Don&apos;t have an account?{" "}
         <Link
           href="/auth/sign-up"
-          className="text-[#8F4AE3] hover:underline font-medium"
+          className="text-[#5E13FD] hover:underline font-medium"
         >
           Sign Up
         </Link>
