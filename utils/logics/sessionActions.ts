@@ -6,6 +6,7 @@ import {
     writeBatch,
     addDoc,
     serverTimestamp,
+    getDoc,
 } from 'firebase/firestore'
 
 import { db } from '@/lib/firebase'
@@ -16,14 +17,16 @@ import toast from 'react-hot-toast'
 export const awardingState = {
     loadingId: null as string | null,
 }
+
 //  VISIT LINK 
 export const visitLink = async (participantId: string) => {
     try {
         await markLinkVisited(participantId)
-        // toast.success('Link marked as visited')
+
+        //  OPTIONAL: you can log this if needed later
+
     } catch (err) {
         console.error(err)
-        // toast.error('Failed to mark link as visited')
     }
 }
 
@@ -33,6 +36,22 @@ export const markParticipantCompleted = async (participantId: string) => {
         const ref = doc(db, 'participants', participantId)
 
         await updateDoc(ref, { completed: true })
+
+        //  fetch participant to get userId
+        const snap = await getDoc(ref)
+        if (snap.exists()) {
+            const data = snap.data()
+
+            await addDoc(collection(db, 'history'), {
+                userId: data.userId,
+                type: 'activity',
+                title: 'Session Completed',
+                description: 'You marked your session as completed',
+                value: '+0 XP',
+                seen: false,
+                createdAt: serverTimestamp(),
+            })
+        }
 
         toast.success('Session marked as completed ')
     } catch (err) {
@@ -67,15 +86,17 @@ export const awardParticipantPoints = async (
 
         await batch.commit()
 
+        //  history log (standardized)
         await addDoc(collection(db, 'history'), {
             userId,
-            type: 'points',
+            type: 'activity',
             title: points > 0 ? 'Points Earned' : 'Points Deducted',
             description:
                 points > 0
-                    ? 'You were rewarded for completing a session'
-                    : 'Points deducted due to incomplete engagement',
+                    ? 'You were rewarded for successfully completing a session'
+                    : 'Points were deducted due to incomplete engagement',
             value: `${points > 0 ? '+' : ''}${points} XP`,
+            seen: false,
             createdAt: serverTimestamp(),
         })
 
@@ -97,9 +118,29 @@ export const completeSession = async (sessionId: string) => {
     try {
         const ref = doc(db, 'sessions', sessionId)
 
+        //  get session first (for userId)
+        const snap = await getDoc(ref)
+
+        if (!snap.exists()) {
+            throw new Error('Session not found')
+        }
+
+        const session = snap.data()
+
         await updateDoc(ref, {
             status: 'Finished',
             finishedAt: new Date(),
+        })
+
+        //  history log
+        await addDoc(collection(db, 'history'), {
+            userId: session.userId,
+            type: 'activity',
+            title: 'Session Finished',
+            description: 'You successfully completed your session',
+            value: '+0 XP',
+            seen: false,
+            createdAt: serverTimestamp(),
         })
 
         toast.success('Session marked as finished')

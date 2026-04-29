@@ -7,89 +7,33 @@ import {
   StarsOutlined,
   RocketLaunchOutlined,
   AccountBalanceWalletOutlined,
-  AssignmentTurnedIn,
   GroupsOutlined,
-  ArrowForwardIos,
-  FilterList,
   LocalActivity,
   TaskAlt,
+  VisibilityOutlined,
+  Article,
+  QueryStats,
 } from "@mui/icons-material";
 
-interface HistoryItem {
-  id: string;
-  type: "points" | "activity" | "milestone";
-  title: string;
-  description: string;
-  date: string;
-  time: string;
-  value?: string;
-  icon: React.ReactNode;
-  color: string;
-}
-
-const HISTORY_DATA: HistoryItem[] = [
-  {
-    id: "1",
-    type: "points",
-    title: "Points Earned",
-    description: 'Completed "Follow @creative_mind on Instagram"',
-    date: "Today",
-    time: "14:20",
-    value: "+50 XP",
-    icon: <AccountBalanceWalletOutlined />,
-    color: "text-green-500",
-  },
-  {
-    id: "2",
-    type: "milestone",
-    title: "New Milestone Reached",
-    description: "7-Day Streak achieved! Bonus multiplier unlocked.",
-    date: "Yesterday",
-    time: "09:00",
-    icon: <RocketLaunchOutlined />,
-    color: "text-[#5E13FD]",
-  },
-  {
-    id: "3",
-    type: "activity",
-    title: "Session Joined",
-    description: 'Joined the "Web3 Builders" peer circle session.',
-    date: "Yesterday",
-    time: "18:30",
-    icon: <GroupsOutlined />,
-    color: "text-blue-500",
-  },
-  {
-    id: "4",
-    type: "points",
-    title: "Points Earned",
-    description: "Shared PeerCircle milestone on LinkedIn",
-    date: "2 days ago",
-    time: "11:15",
-    value: "+60 XP",
-    icon: <AccountBalanceWalletOutlined />,
-    color: "text-green-500",
-  },
-  {
-    id: "5",
-    type: "activity",
-    title: "Task Completed",
-    description: "Liked 3 posts from #PeerCommunity",
-    date: "3 days ago",
-    time: "16:45",
-    icon: <TaskAlt />,
-    color: "text-yellow-500",
-  },
-];
+import { useUserHistory, markHistoryAsSeen } from "@/utils/logics/history";
 
 export default function HistoryPage() {
   const [filter, setFilter] = useState<
     "all" | "points" | "activity" | "milestone"
   >("all");
 
-  const filteredHistory = HISTORY_DATA.filter(
-    (item) => filter === "all" || item.type === filter,
+  const { history } = useUserHistory();
+
+  const filteredHistory = history.filter(
+    (item) => filter === "all" || item.type === filter
   );
+
+  const iconMap = {
+    wallet: <AccountBalanceWalletOutlined />,
+    rocket: <RocketLaunchOutlined />,
+    group: <GroupsOutlined />,
+    task: <TaskAlt />,
+  };
 
   return (
     <div className="flex flex-col gap-8 pb-10">
@@ -101,7 +45,7 @@ export default function HistoryPage() {
       >
         <div>
           <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-            <HistoryOutlined className="text-[#5E13FD]" fontSize="large" />{" "}
+            <HistoryOutlined className="text-[#5E13FD]" fontSize="large" />
             Activity History
           </h1>
           <p className="text-gray-400">
@@ -109,32 +53,57 @@ export default function HistoryPage() {
           </p>
         </div>
 
-        {/* Points Summary Card */}
-        <div className="bg-[#212329] p-4 px-6 rounded-2xl border border-gray-800 shadow-xl flex items-center gap-4">
-          <div className="w-12 h-12 bg-[#5E13FD]/10 rounded-xl flex items-center justify-center text-[#5E13FD]">
-            <StarsOutlined fontSize="large" />
+        <div className="bg-[#212329] p-3 px-4 rounded-xl border border-gray-800 shadow-md flex flex-wrap items-center sm:gap-4 gap-2 text-white">
+
+          {/* Activities */}
+          <div className="flex items-center justify-between gap-2 flex-1 min-w-[120px]">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-md bg-blue-500/10 flex items-center justify-center">
+                <Article className="text-blue-400 text-sm" />
+              </div>
+              <span className="text-xs text-gray-400">Act</span>
+            </div>
+            <span className="font-bold text-sm"> {history.filter((item) => item.seen).length}</span>
           </div>
-          <div>
-            <p className="text-xs text-gray-500 uppercase font-black tracking-widest">
-              Lifetime Earnings
-            </p>
-            <p className="text-2xl font-black text-white">
-              8,450{" "}
-              <span className="text-[#5E13FD] text-sm font-normal">pts</span>
-            </p>
+          <hr className=' h-5 w-[0.1px] bg-gray-600 border-none ' />
+
+          {/* New */}
+          <div className="flex items-center justify-between gap-2 flex-1 min-w-[120px]">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-md bg-[#5E13FD]/10 flex items-center justify-center">
+                <VisibilityOutlined className="text-[#5E13FD] text-sm" />
+              </div>
+              <span className="text-xs text-gray-400">New</span>
+            </div>
+            <span className="font-bold text-sm">
+              {history.filter((item) => !item.seen).length}
+            </span>
           </div>
+          <hr className=' h-5 w-[0.1px] bg-gray-600 border-none' />
+
+          {/* Total */}
+          <div className="flex items-center justify-between gap-2 flex-1 min-w-[120px]">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-md bg-green-500/10 flex items-center justify-center">
+                <QueryStats className="text-green-400 text-sm" />
+              </div>
+              <span className="text-xs text-gray-400">Tot</span>
+            </div>
+            <span className="font-bold text-sm">{history.length}</span>
+          </div>
+
         </div>
       </motion.div>
 
-      {/* Filter Tabs */}
+      {/* Filter */}
       <div className="flex items-center gap-2 p-1 bg-[#212329] w-fit rounded-xl border border-gray-800">
         {(["all", "points", "activity", "milestone"] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setFilter(tab)}
-            className={`px-6 py-2 rounded-lg text-sm font-bold capitalize transition-all ${filter === tab
-                ? "bg-[#5E13FD] text-white shadow-lg shadow-[#5E13FD]/20"
-                : "text-gray-500 hover:text-gray-300"
+            className={`sm:px-6 px-2 py-2 rounded-lg text-sm font-bold capitalize transition-all ${filter === tab
+              ? "bg-[#5E13FD] text-white shadow-lg shadow-[#5E13FD]/20"
+              : "text-gray-500 hover:text-gray-300"
               }`}
           >
             {tab}
@@ -144,8 +113,7 @@ export default function HistoryPage() {
 
       {/* Timeline */}
       <div className="relative">
-        {/* Vertical Line */}
-        <div className="absolute left-6 md:left-8 top-0 bottom-0 w-[2px] bg-gradient-to-b from-[#5E13FD] via-gray-800 to-transparent"></div>
+        <div className="absolute left-1 md:left-3 top-0 bottom-0 w-1 rounded-full bg-gradient-to-b from-[#5E13FD] via-gray-800 to-transparent"></div>
 
         <div className="flex flex-col gap-6">
           <AnimatePresence mode="popLayout">
@@ -159,32 +127,42 @@ export default function HistoryPage() {
                 transition={{ duration: 0.3, delay: index * 0.05 }}
                 className="relative flex items-start gap-6 md:gap-10 pl-4 md:pl-6 group"
               >
-                {/* Timeline Dot/Icon */}
+
+                {/* ICON + CLICK MARK AS SEEN */}
                 <div
-                  className={`relative z-10 w-12 h-12 md:w-16 md:h-16 rounded-2xl flex items-center justify-center shrink-0 border-4 border-[#191A1E] transition-all duration-300 ${item.type === "points"
+
+                  className={`cursor-pointer relative z-10 w-12 h-12 md:w-16 md:h-16 rounded-2xl flex items-center justify-center shrink-0 border-4 border-[#191A1E] transition-all duration-300 ${item.seen
+                    ? ""
+                    : "ring-2 ring-[#5E13FD]/40 shadow-[0_0_20px_rgba(94,19,253,0.25)]"
+                    } ${item.type === "points"
                       ? "bg-green-500/10 text-green-500 group-hover:bg-green-500 group-hover:text-white"
                       : item.type === "milestone"
                         ? "bg-[#5E13FD]/10 text-[#5E13FD] group-hover:bg-[#5E13FD] group-hover:text-white"
                         : "bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white"
                     } shadow-xl`}
                 >
-                  {item.icon}
+                  {iconMap[item.icon]}
                 </div>
 
-                {/* Content Card */}
-                <div className="flex-1 bg-[#212329] p-5 md:p-6 rounded-3xl border border-gray-800 hover:border-[#5E13FD]/30 transition-all duration-300 shadow-lg relative overflow-hidden">
-                  {/* Glass reflection effect */}
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-
+                {/* CONTENT */}
+                <div
+                  onClick={() => markHistoryAsSeen(item.id)}
+                  className={`cursor-pointer flex-1 p-5 md:p-6 rounded-3xl border transition-all duration-300 shadow-lg relative overflow-hidden ${item.seen
+                    ? "bg-[#212329] border-gray-800"
+                    : "bg-[#1b1c20] border-[#5E13FD]/40 shadow-[#5E13FD]/10"
+                    }`}>
+                  {!item.seen && (
+                    <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-[#5E13FD]" />
+                  )}
                   <div className="flex flex-col md:flex-row justify-between gap-4">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <span
                           className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${item.type === "points"
-                              ? "bg-green-500/10 text-green-500"
-                              : item.type === "milestone"
-                                ? "bg-[#5E13FD]/10 text-[#5E13FD]"
-                                : "bg-blue-500/10 text-blue-500"
+                            ? "bg-green-500/10 text-green-500"
+                            : item.type === "milestone"
+                              ? "bg-[#5E13FD]/10 text-[#5E13FD]"
+                              : "bg-blue-500/10 text-blue-500"
                             }`}
                         >
                           {item.type}
@@ -193,9 +171,11 @@ export default function HistoryPage() {
                           {item.date} • {item.time}
                         </span>
                       </div>
+
                       <h3 className="text-lg font-bold text-white mb-1">
                         {item.title}
                       </h3>
+
                       <p className="text-sm text-gray-400 leading-relaxed">
                         {item.description}
                       </p>
@@ -203,7 +183,7 @@ export default function HistoryPage() {
 
                     {item.value && (
                       <div className="flex items-center shrink-0">
-                        <span className="text-xl font-black text-green-500 drop-shadow-[0_0_10px_rgba(34,197,94,0.3)]">
+                        <span className="text-xl font-black text-green-500">
                           {item.value}
                         </span>
                       </div>
@@ -216,7 +196,7 @@ export default function HistoryPage() {
         </div>
       </div>
 
-      {/* Empty State */}
+      {/* EMPTY STATE */}
       {filteredHistory.length === 0 && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -226,7 +206,9 @@ export default function HistoryPage() {
           <div className="w-20 h-20 bg-gray-800/50 rounded-full flex items-center justify-center text-gray-600 mb-4">
             <LocalActivity fontSize="large" />
           </div>
-          <h3 className="text-xl font-bold text-gray-400">No activity found</h3>
+          <h3 className="text-xl font-bold text-gray-400">
+            No activity found
+          </h3>
           <p className="text-sm text-gray-500 mt-1">
             Start engaging to see your history grow!
           </p>

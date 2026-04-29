@@ -22,6 +22,7 @@ import { fetchDailyTasks, Task } from "@/utils/taskActions";
 import SessionDetails from "./modals/SessionDetails";
 import SessionsSkeleton from "./ui/SessionsSkeleton";
 import DashboardSkeleton from "./ui/DashboardSkeleton";
+import { useUserHistory } from "@/utils/logics/history";
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
@@ -32,9 +33,10 @@ export default function DashboardPage() {
   const {
     selectedSession,
     detailsModal,
-    setDetailsModal, mySessions,
+    setDetailsModal, mySessions, joinedSessions,
     hostedSessionLoading
   } = useSessionForm();
+  const { history } = useUserHistory();
 
   useEffect(() => {
     let unsubscribeUser: (() => void) | undefined;
@@ -82,8 +84,8 @@ export default function DashboardPage() {
   }, [])
   const stats = [
     {
-      label: "Active Sessions",
-      value: "12",
+      label: "Total Sessions",
+      value: joinedSessions.length.toString(),
       icon: <AssessmentOutlined />,
       color: "text-blue-500",
       bg: "bg-blue-500/10",
@@ -231,29 +233,30 @@ export default function DashboardPage() {
           </div>
 
           <div className="space-y-4">
-            {[
-              { event: "Trust Points Updated", date: "Just now" },
-              { event: "Daily Tasks Refreshed", date: "Today" },
-              { event: "Session Attendance Verified", date: "Yesterday" },
-            ].map((item, i) => (
+            {history.slice(0, 3).map((item) => (
               <div
-                key={i}
+                key={item.id}
                 className="flex items-center justify-between group cursor-pointer hover:translate-x-1 transition-transform"
               >
                 <span className="text-gray-300 group-hover:text-white transition-colors flex items-center gap-3 font-medium">
-                  <div className="w-1.5 h-1.5 rounded-full bg-gray-700 group-hover:bg-[#5E13FD]"></div>
-                  {item.event}
+                  <div
+                    className={`w-1.5 h-1.5 rounded-full ${item.seen ? "bg-gray-700" : "bg-[#5E13FD]"
+                      }`}
+                  ></div>
+
+                  {item.title || item.type}
                 </span>
-                <span className="text-[#5E13FD] text-xs font-bold bg-[#5E13FD]/5 px-3 py-1 rounded-lg border border-[#5E13FD]/10">
-                  {item.date}
+
+                <span className="text-white text-xs font-bold bg-[#5E13FD]/10 px-3 py-1 rounded-lg border border-[#5E13FD]/10">
+                  {item.date} • {item.time}
                 </span>
               </div>
             ))}
           </div>
 
-          <button className="mt-8 text-sm text-gray-500 hover:text-white transition-colors font-bold uppercase tracking-wider text-center">
+          <Link href='/dashboard/history' className="mt-8 text-sm text-gray-500 hover:text-white transition-colors font-bold uppercase tracking-wider text-center">
             View Full History
-          </button>
+          </Link>
         </motion.div>
       </div>
 
@@ -500,6 +503,11 @@ export default function DashboardPage() {
                       </div>
                     )
                   })}
+                <div className=" flex items-center justify-center">
+                  <Link href='/dashboard/sessions' className="mt-8 text-sm text-gray-500 hover:text-white transition-colors font-bold uppercase tracking-wider text-center w-full">
+                    View Full Session
+                  </Link>
+                </div>
               </div>
             </div>
           )}

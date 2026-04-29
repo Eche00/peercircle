@@ -6,12 +6,12 @@ import Link from "next/link";
 function Hero() {
   return (
     <div
-      className="relative flex min-h-[100dvh] bg-cover bg-center overflow-x-hidden"
+      className="relative flex min-h-[100vh] bg-cover bg-center overflow-x-hidden"
     >
       {/* Overlay */}
       <div className="absolute inset-0 pointer-events-none opacity-15 bg-[url('/bgoverlay.png')] bg-cover " />
 
-      <section className=" max-w-[90%] mx-auto flex  md:flex-row flex-col items-center  justify-center md:gap-0 gap-10 z-20">
+      <section className=" max-w-[90%] mx-auto flex  md:flex-row flex-col items-center  justify-center md:gap-0 gap-2 z-20">
         {/* Left hero section  */}
         <motion.div
           className=" flex-1 flex flex-col gap-9 sm:pt-0 pt-10"
@@ -52,10 +52,10 @@ function Hero() {
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, ease: "linear" }}
           viewport={{ once: true }}
-          className="flex flex-1 items-center justify-center md:pb-0 pb-10 z-20"
+          className="flex flex-1 items-center justify-center md:pb-0 pb-10 z-20 "
         >
           {/* Main container (acts as the positioning canvas) */}
-          <section className="sm:w-[432px] w-[350px] sm:h-[418px] h-[350px] flex flex-wrap relative">
+          <section className="relative sm:w-[432px] w-[350px] sm:h-[418px] h-[350px] will-change-transform isolate">
 
             {/* Outer circular border (background ring) */}
             <div className="absolute pointer-events-none top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 sm:w-[432px] w-[350px] sm:h-[418px] h-[350px] border border-[#FFFFFF1A] rounded-full" />
@@ -74,7 +74,7 @@ function Hero() {
             </span>
 
             {/* Inner circular container (main hub) */}
-            <div className="absolute pointer-events-none inset-0 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-[200px] h-[200px] bg-[#FFFFFF1A] border border-[#FFFFFF1A] rounded-full">
+            <div className="absolute pointer-events-none  top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-[200px] h-[200px] bg-[#FFFFFF1A] border border-[#FFFFFF1A] rounded-full">
 
               {/* Relative wrapper for positioning inner icons */}
               <section className="relative h-full w-full">

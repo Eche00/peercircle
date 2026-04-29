@@ -73,6 +73,8 @@ const addHistory = async ({
     userId: string
     title: string
     description: string
+    seen: boolean
+    createdAt: any
 }) => {
     await addDoc(collection(db, 'history'), {
         userId,
@@ -168,6 +170,8 @@ const createSessionDB = async ({
             userId: hostId,
             title: 'Session Created',
             description: `You created "${title}" session`,
+            seen: false,
+            createdAt: serverTimestamp(),
         })
         return createSessionRef.id
     } catch (error: any) {
@@ -275,6 +279,8 @@ export const joinSession = async ({
             userId: currentUser.uid,
             title: 'Joined Session',
             description: `You joined "${sessionData.title}"`,
+            seen: false,
+            createdAt: serverTimestamp(),
         })
         toast.success('Successfully joined session!', {
             id: loadingToast,

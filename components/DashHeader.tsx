@@ -5,10 +5,13 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import Mobilenav from './Mobilenav'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useUserHistory } from '@/utils/logics/history'
 
 function DashHeader() {
     const pathname = usePathname()
     const [openMenu, setOpenMenu] = useState<boolean>(false)
+    const { history } = useUserHistory();
+
     return (
         <div className='bg-[#16181B] text-white sm:py-3 py-2  fixed top-0 left-0 md:left-67.5 right-0 z-10  '>
 
@@ -28,7 +31,7 @@ function DashHeader() {
                     <div className='hidden sm:flex items-center justify-center gap-2'>
                         <p>User Dashboard </p>
                         <hr className=' h-5 w-[0.1px] bg-gray-600 border-none mx-1' />
-                        <button><Notifications /></button>
+                        <Link href='/dashboard/history' className=' relative'><Notifications /> <span className='absolute -top-1 -right-2 bg-[#5E13FD] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center'>{history.filter((item) => !item.seen).length}</span></Link>
                     </div>
                 </div>
                 {/* Mobile Nav Button  */}
@@ -62,7 +65,8 @@ function DashHeader() {
                                 </motion.button>
                                 <div className='sm:hidden flex items-center justify-center gap-2'>
                                     <hr className=' h-5 w-[0.1px] bg-gray-600 border-none mx-1' />
-                                    <span><Notifications /></span>
+                                    <Link href='/dashboard/history' className=' relative'><Notifications /> <span className='absolute -top-1 -right-2 bg-[#5E13FD] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center'>{history.filter((item) => !item.seen).length}</span></Link>
+
                                 </div>
                             </div>
                         }

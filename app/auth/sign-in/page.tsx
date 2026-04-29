@@ -1,40 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
-import { useRouter } from "next/navigation";
+import { useAuth } from "@/utils/logics/auth";
 
 export default function SignInPage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
-
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      router.push("/dashboard");
-    } catch (err: any) {
-      console.error("Sign In Error:", err);
-      if (err.code === "auth/invalid-credential") {
-        setError("Invalid email or password.");
-      } else {
-        setError("Failed to sign in. Please try again.");
-      }
-      setIsLoading(false);
-    }
-  };
+  const { handleLogin,
+    isLoading,
+    error,
+    showPassword,
+    setShowPassword } = useAuth();
 
   return (
     <div className="flex flex-col gap-6">
@@ -51,7 +26,7 @@ export default function SignInPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleLogin} className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <label htmlFor="email" className="text-sm font-medium text-gray-300">
             Email Address
@@ -61,7 +36,7 @@ export default function SignInPage() {
             name="email"
             id="email"
             required
-            className="bg-[#16181B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#8F4AE3] transition-colors"
+            className="bg-[#16181B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#5E13FD] transition-colors"
             placeholder="you@example.com"
           />
         </div>
@@ -76,7 +51,7 @@ export default function SignInPage() {
             </label>
             <Link
               href="/auth/forgot-password"
-              className="text-xs text-[#8F4AE3] hover:underline"
+              className="text-xs text-[#5E13FD] hover:underline"
             >
               Forgot Password?
             </Link>
@@ -87,13 +62,13 @@ export default function SignInPage() {
               name="password"
               id="password"
               required
-              className="w-full bg-[#16181B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#8F4AE3] transition-colors pr-12"
+              className="w-full bg-[#16181B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#5E13FD] transition-colors pr-12"
               placeholder="••••••••"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#8F4AE3] transition-colors cursor-pointer"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#5E13FD] transition-colors cursor-pointer"
             >
               {showPassword ? (
                 <VisibilityOff fontSize="small" />
@@ -107,7 +82,7 @@ export default function SignInPage() {
         <button
           type="submit"
           disabled={isLoading}
-          className="mt-2 bg-[#8F4AE3] hover:bg-[#7a3bc7] text-white py-3 rounded-lg font-semibold transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+          className="mt-2 bg-[#5E13FD] hover:bg-[#5E13FD]/80 text-white py-3 rounded-lg font-semibold transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
         >
           {isLoading ? "Signing In..." : "Sign In"}
         </button>
@@ -117,7 +92,7 @@ export default function SignInPage() {
         Don't have an account?{" "}
         <Link
           href="/auth/sign-up"
-          className="text-[#8F4AE3] hover:underline font-medium"
+          className="text-[#5E13FD] hover:underline font-medium"
         >
           Sign Up
         </Link>

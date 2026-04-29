@@ -1,73 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from "@/lib/firebase";
-import { useRouter } from "next/navigation";
+import { useAuth } from "@/utils/logics/auth";
 
 export default function SignUpPage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const router = useRouter();
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
-
-    const formData = new FormData(e.currentTarget);
-    const fullName = formData.get("fullName") as string;
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const confirmPassword = formData.get("confirmPassword") as string;
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      // Create Authentication User
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password,
-      );
-      const user = userCredential.user;
-
-      // Update Profile Display Name
-      await updateProfile(user, { displayName: fullName });
-
-      // Create User Document in Firestore
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        email: user.email,
-        fullName: fullName,
-        createdAt: new Date().toISOString(),
-        trustPoints: 0,
-        role: "user",
-      });
-
-      console.log("User created:", user.uid);
-      router.push("/dashboard");
-    } catch (err: any) {
-      console.error("Sign Up Error:", err);
-      if (err.code === "auth/email-already-in-use") {
-        setError("Email is already in use.");
-      } else if (err.code === "auth/weak-password") {
-        setError("Password should be at least 6 characters.");
-      } else {
-        setError("Failed to create account. Please try again.");
-      }
-      setIsLoading(false);
-    }
-  };
+  const { handleSignup,
+    isLoading,
+    error,
+    showPassword,
+    setShowPassword,
+    showConfirmPassword,
+    setShowConfirmPassword } = useAuth();
 
   return (
     <div className="flex flex-col gap-6">
@@ -84,7 +28,7 @@ export default function SignUpPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSignup} className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <label
             htmlFor="fullName"
@@ -97,7 +41,7 @@ export default function SignUpPage() {
             name="fullName"
             id="fullName"
             required
-            className="bg-[#16181B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#8F4AE3] transition-colors"
+            className="bg-[#16181B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#5E13FD] transition-colors"
             placeholder="John Doe"
           />
         </div>
@@ -111,7 +55,7 @@ export default function SignUpPage() {
             name="email"
             id="email"
             required
-            className="bg-[#16181B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#8F4AE3] transition-colors"
+            className="bg-[#16181B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#5E13FD] transition-colors"
             placeholder="you@example.com"
           />
         </div>
@@ -129,13 +73,13 @@ export default function SignUpPage() {
               name="password"
               id="password"
               required
-              className="w-full bg-[#16181B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#8F4AE3] transition-colors pr-12"
+              className="w-full bg-[#16181B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#5E13FD] transition-colors pr-12"
               placeholder="••••••••"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#8F4AE3] transition-colors cursor-pointer"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#5E13FD] transition-colors cursor-pointer"
             >
               {showPassword ? (
                 <VisibilityOff fontSize="small" />
@@ -160,13 +104,13 @@ export default function SignUpPage() {
               id="confirmPassword"
               required
               onPaste={(e) => e.preventDefault()}
-              className="w-full bg-[#16181B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#8F4AE3] transition-colors pr-12"
+              className="w-full bg-[#16181B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#5E13FD] transition-colors pr-12"
               placeholder="••••••••"
             />
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#8F4AE3] transition-colors cursor-pointer"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#5E13FD] transition-colors cursor-pointer"
             >
               {showConfirmPassword ? (
                 <VisibilityOff fontSize="small" />
@@ -180,7 +124,7 @@ export default function SignUpPage() {
         <button
           type="submit"
           disabled={isLoading}
-          className="mt-2 bg-[#8F4AE3] hover:bg-[#7a3bc7] text-white py-3 rounded-lg font-semibold transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+          className="mt-2 bg-[#5E13FD] hover:bg-[#5E13FD]/80 text-white py-3 rounded-lg font-semibold transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
         >
           {isLoading ? "Creating Account..." : "Sign Up"}
         </button>
@@ -190,7 +134,7 @@ export default function SignUpPage() {
         Already have an account?{" "}
         <Link
           href="/auth/sign-in"
-          className="text-[#8F4AE3] hover:underline font-medium"
+          className="text-[#5E13FD] hover:underline font-medium"
         >
           Sign In
         </Link>

@@ -76,9 +76,9 @@ function Header() {
               {/* CTA */}
               <Link
                 href="/dashboard"
-                className="text-xs font-semibold text-[#5E13FD] hover:text-[#5E13FD]/80 transition"
+                className="text-xs font-semibold text-[#5E13FD] hover:text-[#5E13FD]/80 transition flex items-center gap-2"
               >
-                Dashboard →
+                Dashboard <ArrowForward fontSize="small" />
               </Link>
             </div>
           ) : (
@@ -149,7 +149,7 @@ function Header() {
                     {/* Right: Dashboard */}
                     <Link
                       href="/dashboard"
-                      className="text-sm font-semibold text-[#5E13FD] active:scale-95 transition"
+                      className="text-sm font-semibold text-[#5E13FD] active:scale-95 transition flex justify-between"
                     >
                       Dashboard <ArrowForward />
                     </Link>

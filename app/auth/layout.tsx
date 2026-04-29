@@ -17,7 +17,7 @@ export default function AuthLayout({
       <div className="z-10 w-full max-w-md flex flex-col items-center gap-8">
         {/* Logo / Header */}
         <Link href="/" className="flex items-center gap-2">
-          <span className="flex items-center justify-center border-2 border-[#8F4AE3] rounded-full p-2 w-10 h-10">
+          <span className="flex items-center justify-center border-2 border-[#5E13FD] rounded-full p-2 w-10 h-10">
             <img
               src="/logo.png"
               alt="PeerCircle"
