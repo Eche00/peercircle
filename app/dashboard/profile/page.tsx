@@ -65,7 +65,19 @@ function ProfilePage() {
             </div>
 
             <span className="px-4 py-1 rounded-full text-xs bg-[#5E13FD]/20 border border-[#5E13FD]/30 text-[#C9A9FF]">
-              Trusted Tier: {(userInfo?.trustPoints ?? 0) > 500 ? "Platinum" : "Newcomer"}
+              Trusted Tier: <span className="text-white">
+                {(userInfo?.trustPoints ?? 0) >= 2000
+                  ? "Legend"
+                  : (userInfo?.trustPoints ?? 0) >= 1000
+                    ? "Platinum"
+                    : (userInfo?.trustPoints ?? 0) >= 500
+                      ? "Gold"
+                      : (userInfo?.trustPoints ?? 0) >= 200
+                        ? "Silver"
+                        : (userInfo?.trustPoints ?? 0) >= 50
+                          ? "Bronze"
+                          : "Newcomer"}
+              </span>
             </span>
           </div>
 

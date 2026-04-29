@@ -11,24 +11,54 @@ import {
   Bolt,
   PestControlRodent,
   ArrowForwardIos,
+  CheckCircleOutline,
+  TimerOutlined,
 } from "@mui/icons-material";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import { useSessionForm } from "@/utils/logics/sessions";
-import { fetchDailyTasks, Task } from "@/utils/taskActions";
 import SessionDetails from "./modals/SessionDetails";
 import SessionsSkeleton from "./ui/SessionsSkeleton";
 import DashboardSkeleton from "./ui/DashboardSkeleton";
 import { useUserHistory } from "@/utils/logics/history";
+import { useTasks } from "@/utils/logics/tasks";
 
+const getGrowthScore = ({
+  sessions,
+  tasksCompleted,
+  totalTasks,
+  trustPoints,
+}: {
+  sessions: number;
+  tasksCompleted: number;
+  totalTasks: number;
+  trustPoints: number;
+}) => {
+  // 1. Sessions (diminishing returns)
+  const sessionScore = Math.min(
+    Math.log2(sessions + 1) * 12,
+    40
+  );
+
+  // 2. Task completion (percentage still good, but smoother scaling)
+  const taskRate = totalTasks > 0 ? tasksCompleted / totalTasks : 0;
+  const taskScore = Math.pow(taskRate, 0.8) * 40;
+
+  // 3. Trust (soft curve instead of linear)
+  const trustScore = Math.min(
+    Math.sqrt(trustPoints) * 1.2,
+    20
+  );
+
+  return Math.round(sessionScore + taskScore + trustScore);
+};
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState<string>("Creator");
   const [trustPoints, setTrustPoints] = useState<number>(0);
-  const [dailyTasks, setDailyTasks] = useState<Task[]>([]);
   const router = useRouter();
   const {
     selectedSession,
@@ -37,6 +67,14 @@ export default function DashboardPage() {
     hostedSessionLoading
   } = useSessionForm();
   const { history } = useUserHistory();
+  const { tasks, isCompleted } = useTasks();
+
+  const growthScore = getGrowthScore({
+    sessions: joinedSessions.length,
+    tasksCompleted: tasks.filter((task) => isCompleted(task.id)).length,
+    totalTasks: tasks.length,
+    trustPoints,
+  });
 
   useEffect(() => {
     let unsubscribeUser: (() => void) | undefined;
@@ -56,13 +94,6 @@ export default function DashboardPage() {
           }
         });
 
-        // Fetch real daily tasks
-        try {
-          const tasks = await fetchDailyTasks();
-          setDailyTasks(tasks.slice(0, 3));
-        } catch (error) {
-          console.error("Error fetching tasks for dashboard:", error);
-        }
 
         setLoading(false);
       }
@@ -82,6 +113,8 @@ export default function DashboardPage() {
 
     return () => clearInterval(interval)
   }, [])
+
+
   const stats = [
     {
       label: "Total Sessions",
@@ -91,8 +124,8 @@ export default function DashboardPage() {
       bg: "bg-blue-500/10",
     },
     {
-      label: "Tasks Pending",
-      value: dailyTasks.length.toString(),
+      label: "Active Tasks",
+      value: tasks.length.toString(),
       icon: <TaskAltOutlined />,
       color: "text-yellow-500",
       bg: "bg-yellow-500/10",
@@ -106,7 +139,7 @@ export default function DashboardPage() {
     },
     {
       label: "Growth Score",
-      value: "+24%",
+      value: `${growthScore}%`,
       icon: <TrendingUpOutlined />,
       color: "text-green-500",
       bg: "bg-green-500/10",
@@ -133,7 +166,7 @@ export default function DashboardPage() {
               Welcome back, {userName}!
             </h1>
             <p className="text-white/80 max-w-md">
-              Your peer circle is growing. You have {dailyTasks.length} tasks
+              Your peer circle is growing. You have {tasks.length} tasks
               waiting for your attention today.
             </p>
             <Link
@@ -210,7 +243,17 @@ export default function DashboardPage() {
             <p className="text-xs text-[#5E13FD] font-bold">
               Tier:{" "}
               <span className="text-white">
-                {trustPoints > 500 ? "Platinum" : "Newcomer"}
+                {trustPoints >= 2000
+                  ? "Legend"
+                  : trustPoints >= 1000
+                    ? "Platinum"
+                    : trustPoints >= 500
+                      ? "Gold"
+                      : trustPoints >= 200
+                        ? "Silver"
+                        : trustPoints >= 50
+                          ? "Bronze"
+                          : "Newcomer"}
               </span>
             </p>
           </div>
@@ -300,40 +343,70 @@ export default function DashboardPage() {
             </Link>
           </div>
           <div className="p-2">
-            {dailyTasks.length === 0 ? (
+            {tasks.length === 0 ? (
               <div className="p-10 text-center text-gray-500 italic">
                 No tasks available
               </div>
             ) : (
-              dailyTasks.map((task, i) => (
-                <div
-                  key={task.id}
-                  className="flex items-center justify-between p-4 hover:bg-white/5 rounded-2xl transition-colors group"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-2 h-2 rounded-full bg-[#5E13FD] group-hover:scale-150 transition-transform"></div>
-                    <div>
-                      <p className="font-bold text-white group-hover:text-[#5E13FD] transition-colors">
-                        {task.title}
-                      </p>
-                      <div className="flex items-center gap-3 mt-1">
-                        <span className="text-xs text-green-500 font-bold">
-                          +{task.points} XP
-                        </span>
-                        <span className="text-xs text-gray-500 flex items-center gap-1 uppercase tracking-tighter">
-                          {task.platform}
-                        </span>
+              tasks.map((task) => {
+                const done = isCompleted(task.id);
+
+                return (
+                  <div
+                    key={task.id}
+                    className="flex items-center justify-between p-4 hover:bg-white/5 rounded-2xl transition-colors group"
+                  >
+                    <div className="flex items-center gap-4">
+                      {/* status dot */}
+                      <div
+                        className={`w-2 h-2 rounded-full transition-transform ${done
+                          ? "bg-green-500"
+                          : "bg-[#5E13FD] group-hover:scale-150"
+                          }`}
+                      />
+
+                      <div>
+                        <p
+                          className={`font-bold transition-colors ${done
+                            ? "text-gray-400 line-through"
+                            : "text-white group-hover:text-[#5E13FD]"
+                            }`}
+                        >
+                          {task.title}
+                        </p>
+
+                        <div className="flex items-center gap-3 mt-1">
+                          <span className="text-xs text-green-500 font-bold">
+                            +{task.points} XP
+                          </span>
+
+                          <span className="text-xs text-gray-500 flex items-center gap-1 uppercase tracking-tighter">
+                            {task.platform}
+                          </span>
+
+                          {done && (
+                            <span className="text-[10px] text-green-500 uppercase font-bold">
+                              completed
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
+
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center shadow-lg shrink-0">
+                      {done ? (
+                        <div className="bg-green-500 text-white w-6 h-6 rounded-full flex items-center justify-center">
+                          <CheckCircleOutline className="text-[14px]" />
+                        </div>
+                      ) : (
+                        <div className=" text-gray-300 w-6 h-6 rounded-full flex items-center justify-center">
+                          <TimerOutlined className="text-[14px]" />
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <Link
-                    href="/dashboard/tasks"
-                    className="text-gray-500 hover:text-white transition-colors"
-                  >
-                    <ArrowForwardIos style={{ fontSize: "14px" }} />
-                  </Link>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </motion.div>

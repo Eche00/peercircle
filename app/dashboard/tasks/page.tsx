@@ -15,15 +15,8 @@ import {
   Celebration,
 } from "@mui/icons-material";
 import Link from "next/link";
-import {
-  fetchDailyTasks,
-  completeUserTask,
-  fetchUserCompletions,
-  Task,
-} from "@/utils/taskActions";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { auth } from "@/lib/firebase";
-import { toast } from "react-hot-toast";
+import { useTasks } from "@/utils/logics/tasks";
+import TasksSkeleton from "../ui/TasksSkeleton";
 
 const PLATFORM_ICONS: Record<string, React.ReactNode> = {
   Instagram: <Instagram className="text-pink-500" />,
@@ -34,72 +27,11 @@ const PLATFORM_ICONS: Record<string, React.ReactNode> = {
 };
 
 export default function TasksPage() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<User | null>(null);
-  const [completions, setCompletions] = useState<string[]>([]);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-        loadData(currentUser.uid);
-      } else {
-        setLoading(false);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  const loadData = async (userId: string) => {
-    try {
-      const [allTasks, userCompletions] = await Promise.all([
-        fetchDailyTasks(),
-        fetchUserCompletions(userId),
-      ]);
-      setTasks(allTasks);
-      setCompletions(userCompletions);
-    } catch (error) {
-      console.error("Failed to fetch tasks:", error);
-      toast.error("Failed to load tasks");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const isCompleted = (taskId: string) => completions.includes(taskId);
-
-  const completedCount = tasks.filter((t) => isCompleted(t.id)).length;
-  const totalPoints = tasks
-    .filter((t) => isCompleted(t.id))
-    .reduce((sum, t) => sum + t.points, 0);
-
-  const handleComplete = async (task: Task) => {
-    if (!user) {
-      toast.error("Please sign in to complete tasks");
-      return;
-    }
-    if (isCompleted(task.id)) {
-      toast.error("Task already completed today");
-      return;
-    }
-
-    try {
-      await completeUserTask(user.uid, task);
-      setCompletions((prev) => [...prev, task.id]);
-      toast.success(`Task completed! +${task.points} XP`);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to complete task");
-    }
-  };
+  const { tasks, loading, isCompleted, handleComplete, completedCount, totalPoints } = useTasks();
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#5E13FD]"></div>
-      </div>
-    );
+    return <TasksSkeleton />
+      ;
   }
 
   return (
