@@ -36,7 +36,7 @@ function Sidebar() {
                 {userInfo?.role === 'admin' && adminSideBarItems.map((item) =>
                     <div key={item.name}>
                         <hr className=' w-full h-[0.1px] bg-gray-600 border-none' />
-                        <Link href={item.link} key={item.name} className={pathname === item.link ? 'text-white font-bold bg-[#5E13FD] py-3 px-4 rounded-lg flex items-center gap-3 shadow-[inset_2px_4px_4px_0px_#FFFFFF4D,_inset_-2px_-4px_4px_0px_#00000033]' : 'text-gray-400 py-3 px-4 rounded-lg hover:bg-[#5E13FD]/10 flex items-center gap-3'}>{item.icon} {item.name}</Link>
+                        <Link href={item.link} key={item.name} className={pathname === item.link ? 'text-white font-bold bg-[#5E13FD] py-3 px-4 rounded-lg flex items-center gap-3 shadow-[inset_2px_4px_4px_0px_#FFFFFF4D,_inset_-2px_-4px_4px_0px_#00000033] mt-2' : 'text-gray-400 py-3 px-4 rounded-lg hover:bg-[#5E13FD]/10 flex items-center gap-3 mt-2'}>{item.icon} {item.name}</Link>
 
                     </div>
 
