@@ -78,7 +78,7 @@ function Header() {
                 href="/dashboard"
                 className="text-xs font-semibold text-[#5E13FD] hover:text-[#5E13FD]/80 transition flex items-center gap-2"
               >
-                Dashboard <ArrowForward fontSize="small" />
+                Dashboard <ArrowForward />
               </Link>
             </div>
           ) : (
