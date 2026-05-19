@@ -5,11 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Twitter, LinkedIn, GitHub, Lock } from "@mui/icons-material";
 import { handleSignOut, useUserInfo } from "@/utils/logics/userinfo";
+import ProfileSkeleton from "../ui/ProfileSkeleton";
 
 function ProfilePage() {
   const userInfo = useUserInfo()
   const router = useRouter()
-
+  if (!userInfo) return <ProfileSkeleton />;
   return (
     <div className="min-h-screen text-white sm:p-6">
       <div className="max-w-6xl mx-auto grid grid-cols-12 gap-6">
