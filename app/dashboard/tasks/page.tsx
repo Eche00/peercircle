@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import {
   AssignmentOutlined,
@@ -14,8 +14,11 @@ import {
   ArrowForwardIos,
   Celebration,
 } from "@mui/icons-material";
+
 import Link from "next/link";
+
 import { useTasks } from "@/utils/logics/tasks";
+
 import TasksSkeleton from "../ui/TasksSkeleton";
 
 const PLATFORM_ICONS: Record<string, React.ReactNode> = {
@@ -27,11 +30,21 @@ const PLATFORM_ICONS: Record<string, React.ReactNode> = {
 };
 
 export default function TasksPage() {
-  const { tasks, loading, isCompleted, handleComplete, completedCount, totalPoints } = useTasks();
+  const {
+    tasks,
+    loading,
+    isCompleted,
+    handleComplete,
+    completedCount,
+    totalPoints,
+    allTasksCompleted,
+    claimPoints,
+    claiming,
+    claimed
+  } = useTasks();
 
   if (loading) {
-    return <TasksSkeleton />
-      ;
+    return <TasksSkeleton />;
   }
 
   return (
@@ -43,7 +56,10 @@ export default function TasksPage() {
         className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6"
       >
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Daily Tasks</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">
+            Daily Tasks
+          </h1>
+
           <p className="text-gray-400">
             Complete tasks to earn points and grow your circle.
           </p>
@@ -54,24 +70,31 @@ export default function TasksPage() {
             <div className="w-10 h-10 bg-[#5E13FD]/10 rounded-xl flex items-center justify-center text-[#5E13FD]">
               <StarsOutlined />
             </div>
+
             <div>
               <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">
                 Total Earned Today
               </p>
+
               <p className="text-xl font-bold text-white">
                 {totalPoints}{" "}
-                <span className="text-[#5E13FD] text-sm font-normal">pts</span>
+                <span className="text-[#5E13FD] text-sm font-normal">
+                  pts
+                </span>
               </p>
             </div>
           </div>
+
           <div className="flex items-center gap-3 pl-2">
             <div className="w-10 h-10 bg-green-500/10 rounded-xl flex items-center justify-center text-green-500">
               <CheckCircleOutline />
             </div>
+
             <div>
               <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">
                 Completed
               </p>
+
               <p className="text-xl font-bold text-white">
                 {completedCount}/{tasks.length}
               </p>
@@ -80,31 +103,42 @@ export default function TasksPage() {
         </div>
       </motion.div>
 
-      {/* Progress Bar Container */}
+      {/* Progress Bar */}
       <div className="w-full bg-[#212329] p-6 rounded-2xl border border-gray-800 shadow-md">
         <div className="flex justify-between items-center mb-4">
           <span className="text-sm font-medium text-gray-400">
             Daily Progress
           </span>
+
           <span className="text-sm font-bold text-[#5E13FD]">
             {tasks.length > 0
-              ? Math.round((completedCount / tasks.length) * 100)
+              ? Math.round(
+                (completedCount / tasks.length) * 100
+              )
               : 0}
             %
           </span>
         </div>
+
         <div className="w-full h-3 bg-gray-800 rounded-full overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
             animate={{
-              width: `${tasks.length > 0 ? (completedCount / tasks.length) * 100 : 0}%`,
+              width: `${tasks.length > 0
+                ? (completedCount / tasks.length) * 100
+                : 0
+                }%`,
             }}
             className="h-full bg-gradient-to-r from-[#5E13FD] to-[#a855f7] rounded-full"
           />
         </div>
+
         <div className="flex items-center gap-2 mt-4 text-xs text-gray-500">
           <TimerOutlined fontSize="small" />
-          <span>Earn points to increase your trust score!</span>
+
+          <span>
+            Earn points to increase your trust score!
+          </span>
         </div>
       </div>
 
@@ -123,10 +157,13 @@ export default function TasksPage() {
           >
             {/* Task Icon */}
             <div
-              className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 text-2xl shadow-inner ${isCompleted(task.id) ? "bg-green-500/10" : "bg-gray-800/50"
+              className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 text-2xl shadow-inner ${isCompleted(task.id)
+                ? "bg-green-500/10"
+                : "bg-gray-800/50"
                 }`}
             >
-              {PLATFORM_ICONS[task.platform as any] || PLATFORM_ICONS.General}
+              {PLATFORM_ICONS[task.platform] ||
+                PLATFORM_ICONS.General}
             </div>
 
             {/* Task Details */}
@@ -135,20 +172,28 @@ export default function TasksPage() {
                 <span className="text-[10px] font-bold uppercase tracking-widest text-[#5E13FD] bg-[#5E13FD]/10 px-2 py-0.5 rounded-md">
                   {task.platform}
                 </span>
+
                 <span
                   className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md ${isCompleted(task.id)
                     ? "bg-green-500/10 text-green-500"
                     : "bg-yellow-500/10 text-yellow-500"
                     }`}
                 >
-                  {isCompleted(task.id) ? "Done" : "XP " + task.points}
+                  {isCompleted(task.id)
+                    ? "Done"
+                    : "XP " + task.points}
                 </span>
               </div>
+
               <h3
-                className={`text-lg font-bold truncate ${isCompleted(task.id) ? "text-gray-500 line-through" : "text-white"}`}
+                className={`text-lg font-bold truncate ${isCompleted(task.id)
+                  ? "text-gray-500 line-through"
+                  : "text-white"
+                  }`}
               >
                 {task.title}
               </h3>
+
               <p className="text-sm text-gray-400 truncate">
                 {task.description}
               </p>
@@ -157,8 +202,9 @@ export default function TasksPage() {
             {/* Action Button */}
             <button
               onClick={() => handleComplete(task)}
+              disabled={isCompleted(task.id)}
               className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer ${isCompleted(task.id)
-                ? "bg-green-500 text-white"
+                ? "bg-green-500 text-white cursor-not-allowed"
                 : "bg-[#5E13FD]/10 text-[#5E13FD] group-hover:bg-[#5E13FD] group-hover:text-white group-hover:shadow-[inset_2px_4px_4px_0px_#FFFFFF4D,_inset_-2px_-4px_4px_0px_#00000033]"
                 }`}
             >
@@ -169,7 +215,7 @@ export default function TasksPage() {
               )}
             </button>
 
-            {/* Completed Overlay Hint */}
+            {/* Completed Overlay */}
             {isCompleted(task.id) && (
               <motion.div
                 initial={{ scale: 0 }}
@@ -183,7 +229,31 @@ export default function TasksPage() {
         ))}
       </div>
 
-      {/* Extra Stuffs */}
+      {/* Claim Button */}
+      {/* Claim Button */}
+      {allTasksCompleted && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex justify-center"
+        >
+          <button
+            onClick={claimPoints}
+            disabled={claiming || claimed}
+            className={`px-8 py-4 rounded-2xl font-bold shadow-2xl transition-all duration-300 ${claimed
+              ? "bg-green-500 text-white cursor-not-allowed opacity-80"
+              : "bg-gradient-to-r from-[#5E13FD] to-[#7c3aed] text-white hover:scale-[1.02]"
+              }`}
+          >
+            {claiming
+              ? "Claiming..."
+              : claimed
+                ? "Claimed"
+                : `Claim ${totalPoints} XP`}
+          </button>
+        </motion.div>
+      )}
+      {/* Extra Section */}
       <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -202,11 +272,14 @@ export default function TasksPage() {
           <h2 className="text-2xl font-bold text-white mb-2">
             Points & Trust Score
           </h2>
+
           <p className="text-gray-400 mb-4 max-w-lg">
-            Earn points every day to increase your trust score. High trust
-            scores unlock exclusive privileges and higher engagement priority
-            within your circle.
+            Earn points every day to increase your trust
+            score. High trust scores unlock exclusive
+            privileges and higher engagement priority within
+            your circle.
           </p>
+
           <div className="flex flex-wrap justify-center md:justify-start gap-4">
             <Link
               href="/dashboard/profile"

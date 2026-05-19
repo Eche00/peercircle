@@ -33,11 +33,13 @@ export default function TasksUpdatePage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
+
   const [newTask, setNewTask] = useState<Omit<Task, "id">>({
     title: "",
     description: "",
     points: 10,
     platform: "General",
+    link: "",
   });
 
   useEffect(() => {
@@ -57,16 +59,22 @@ export default function TasksUpdatePage() {
 
   const handleAddTask = async (e: React.FormEvent) => {
     e.preventDefault();
+
     setIsAdding(true);
+
     try {
       const id = await addTask(newTask);
+
       setTasks([...tasks, { ...newTask, id }]);
+
       setNewTask({
         title: "",
         description: "",
         points: 10,
         platform: "General",
+        link: "",
       });
+
       toast.success("Task added successfully");
     } catch (error) {
       toast.error("Failed to add task");
@@ -77,9 +85,12 @@ export default function TasksUpdatePage() {
 
   const handleDeleteTask = async (id: string) => {
     if (!confirm("Are you sure you want to delete this task?")) return;
+
     try {
       await deleteTask(id);
+
       setTasks(tasks.filter((t) => t.id !== id));
+
       toast.success("Task deleted");
     } catch (error) {
       toast.error("Failed to delete task");
@@ -97,7 +108,10 @@ export default function TasksUpdatePage() {
           >
             <ArrowBack />
           </Link>
-          <h1 className="text-3xl font-bold text-white">Manage Daily Tasks</h1>
+
+          <h1 className="text-3xl font-bold text-white">
+            Manage Daily Tasks
+          </h1>
         </div>
       </div>
 
@@ -109,13 +123,17 @@ export default function TasksUpdatePage() {
           className="lg:col-span-5 bg-[#212329] p-8 rounded-3xl border border-white/5 shadow-2xl h-fit"
         >
           <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-            <Add className="text-[#5E13FD]" /> Create New Task
+            <Add className="text-[#5E13FD]" />
+            Create New Task
           </h2>
+
           <form onSubmit={handleAddTask} className="flex flex-col gap-5">
+            {/* Title */}
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium text-gray-400 ml-1">
                 Title
               </label>
+
               <input
                 required
                 type="text"
@@ -123,20 +141,28 @@ export default function TasksUpdatePage() {
                 className="bg-[#16181B] border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#5E13FD] transition-colors"
                 value={newTask.title}
                 onChange={(e) =>
-                  setNewTask({ ...newTask, title: e.target.value })
+                  setNewTask({
+                    ...newTask,
+                    title: e.target.value,
+                  })
                 }
               />
             </div>
 
+            {/* Platform */}
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium text-gray-400 ml-1">
                 Platform
               </label>
+
               <select
                 className="bg-[#16181B] border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#5E13FD] transition-colors appearance-none"
                 value={newTask.platform}
                 onChange={(e) =>
-                  setNewTask({ ...newTask, platform: e.target.value as any })
+                  setNewTask({
+                    ...newTask,
+                    platform: e.target.value as any,
+                  })
                 }
               >
                 {PLATFORMS.map((p) => (
@@ -147,10 +173,12 @@ export default function TasksUpdatePage() {
               </select>
             </div>
 
+            {/* Points */}
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium text-gray-400 ml-1">
                 Points (XP)
               </label>
+
               <input
                 required
                 type="number"
@@ -166,10 +194,33 @@ export default function TasksUpdatePage() {
               />
             </div>
 
+            {/* Task Link */}
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium text-gray-400 ml-1">
+                Task Link
+              </label>
+
+              <input
+                required
+                type="url"
+                placeholder="https://instagram.com/yourpage"
+                className="bg-[#16181B] border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#5E13FD] transition-colors"
+                value={newTask.link}
+                onChange={(e) =>
+                  setNewTask({
+                    ...newTask,
+                    link: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            {/* Description */}
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium text-gray-400 ml-1">
                 Description
               </label>
+
               <textarea
                 required
                 placeholder="Briefly describe what needs to be done..."
@@ -177,7 +228,10 @@ export default function TasksUpdatePage() {
                 className="bg-[#16181B] border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#5E13FD] transition-colors resize-none"
                 value={newTask.description}
                 onChange={(e) =>
-                  setNewTask({ ...newTask, description: e.target.value })
+                  setNewTask({
+                    ...newTask,
+                    description: e.target.value,
+                  })
                 }
               />
             </div>
@@ -187,7 +241,9 @@ export default function TasksUpdatePage() {
               type="submit"
               className="mt-4 bg-[#5E13FD] hover:bg-[#5E13FD]/80 text-white py-4 rounded-xl font-bold transition-all shadow-xl shadow-[#5E13FD]/20 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
             >
-              {isAdding ? "Saving..." : "Create Task"} <Add fontSize="small" />
+              {isAdding ? "Saving..." : "Create Task"}
+
+              <Add fontSize="small" />
             </button>
           </form>
         </motion.div>
@@ -199,7 +255,8 @@ export default function TasksUpdatePage() {
           className="lg:col-span-7 bg-[#212329] p-8 rounded-3xl border border-white/5 shadow-2xl"
         >
           <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-            <AssignmentOutlined className="text-[#5E13FD]" /> Active Daily Tasks
+            <AssignmentOutlined className="text-[#5E13FD]" />
+            Active Daily Tasks
           </h2>
 
           <div className="flex flex-col gap-4">
@@ -222,26 +279,44 @@ export default function TasksUpdatePage() {
                       {task.platform === "Instagram" && (
                         <Instagram className="text-pink-500" />
                       )}
+
                       {task.platform === "Twitter" && (
                         <Twitter className="text-blue-400" />
                       )}
+
                       {task.platform === "Facebook" && (
                         <Facebook className="text-blue-600" />
                       )}
+
                       {task.platform === "LinkedIn" && (
                         <LinkedIn className="text-blue-700" />
                       )}
+
                       {task.platform === "General" && (
                         <AssignmentOutlined className="text-[#5E13FD]" />
                       )}
                     </div>
+
                     <div>
-                      <h4 className="font-bold text-white">{task.title}</h4>
+                      <h4 className="font-bold text-white">
+                        {task.title}
+                      </h4>
+
                       <p className="text-xs text-[#5E13FD]/80 font-semibold">
                         {task.points} Points • {task.platform}
                       </p>
+
+                      <a
+                        href={task.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-gray-400 hover:text-[#5E13FD] transition-colors break-all"
+                      >
+                        {task.link}
+                      </a>
                     </div>
                   </div>
+
                   <button
                     onClick={() => handleDeleteTask(task.id)}
                     className="p-2 text-gray-500 hover:text-red-500 bg-white/0 hover:bg-red-500/10 shadow-[inset_2px_4px_4px_0px_#FFFFFF4D,_inset_-2px_-4px_4px_0px_#00000033] rounded-lg transition-all cursor-pointer"

@@ -6,13 +6,13 @@ import {
   doc,
   updateDoc,
   query,
-  orderBy,
   setDoc,
   increment,
   addDoc,
   deleteDoc,
-  where,
 } from "firebase/firestore";
+
+import toast from "react-hot-toast";
 
 export interface Task {
   id: string;
@@ -20,7 +20,8 @@ export interface Task {
   description: string;
   points: number;
   platform: "Instagram" | "Twitter" | "Facebook" | "LinkedIn" | "General";
-  status?: "pending" | "completed"; // Local UI status
+  link: string;
+  status?: "pending" | "completed";
 }
 
 const TASKS_COLLECTION = "dailyTasks";
@@ -31,13 +32,16 @@ const TASKS_COLLECTION = "dailyTasks";
 export const fetchDailyTasks = async (): Promise<Task[]> => {
   try {
     const tasksQuery = query(collection(db, TASKS_COLLECTION));
+
     const querySnapshot = await getDocs(tasksQuery);
+
     return querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...(doc.data() as Omit<Task, "id">),
     }));
   } catch (error) {
     console.error("Error fetching daily tasks:", error);
+    toast.error("Failed to load tasks");
     throw error;
   }
 };
@@ -45,12 +49,21 @@ export const fetchDailyTasks = async (): Promise<Task[]> => {
 /**
  * Adds a new global daily task.
  */
-export const addTask = async (task: Omit<Task, "id">): Promise<string> => {
+export const addTask = async (
+  task: Omit<Task, "id">,
+): Promise<string> => {
   try {
-    const docRef = await addDoc(collection(db, TASKS_COLLECTION), task);
+    const docRef = await addDoc(
+      collection(db, TASKS_COLLECTION),
+      task,
+    );
+
+    toast.success("Task added successfully");
+
     return docRef.id;
   } catch (error) {
     console.error("Error adding task:", error);
+    toast.error("Failed to add task");
     throw error;
   }
 };
@@ -58,47 +71,70 @@ export const addTask = async (task: Omit<Task, "id">): Promise<string> => {
 /**
  * Deletes a global daily task.
  */
-export const deleteTask = async (taskId: string): Promise<void> => {
+export const deleteTask = async (
+  taskId: string,
+): Promise<void> => {
   try {
     await deleteDoc(doc(db, TASKS_COLLECTION, taskId));
+
+    toast.success("Task deleted");
   } catch (error) {
     console.error("Error deleting task:", error);
+    toast.error("Failed to delete task");
     throw error;
   }
 };
 
 /**
- * Records a task as completed for a specific user and increments their points.
+ * Records a task as completed for a specific user
+ * and increments their trust points.
  */
 export const completeUserTask = async (
   userId: string,
   task: Task,
 ): Promise<void> => {
-  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+  const today = new Date().toISOString().split("T")[0];
+
   const completionId = `${task.id}_${today}`;
-  const completionRef = doc(db, "users", userId, "completions", completionId);
+
+  const completionRef = doc(
+    db,
+    "users",
+    userId,
+    "completions",
+    completionId,
+  );
 
   try {
-    // 1. Check if already completed today
+    // Check if already completed today
     const completionSnap = await getDoc(completionRef);
+
     if (completionSnap.exists()) {
+      toast.error("Task already completed today");
       throw new Error("Task already completed today");
     }
 
-    // 2. Record completion
+    // Record completion
     await setDoc(completionRef, {
       taskId: task.id,
       completedAt: new Date().toISOString(),
       points: task.points,
+      platform: task.platform,
+      title: task.title,
+      link: task.link,
     });
 
-    // 3. Increment User Trust Points
+    // Increment user trust points
     const userRef = doc(db, "users", userId);
+
     await updateDoc(userRef, {
       trustPoints: increment(task.points),
     });
+
+    toast.success(`+${task.points} XP earned`);
   } catch (error) {
     console.error("Error completing user task:", error);
+    toast.error("Failed to complete task");
     throw error;
   }
 };
@@ -110,17 +146,24 @@ export const fetchUserCompletions = async (
   userId: string,
 ): Promise<string[]> => {
   const today = new Date().toISOString().split("T")[0];
-  const completionsRef = collection(db, "users", userId, "completions");
-  // Simple way: check all docs and filter or use query if we store date specifically.
-  // For now, let's just get the IDs that contain today's date in their key.
+
+  const completionsRef = collection(
+    db,
+    "users",
+    userId,
+    "completions",
+  );
+
   try {
     const snap = await getDocs(completionsRef);
+
     return snap.docs
       .map((d) => d.id)
       .filter((id) => id.endsWith(today))
-      .map((id) => id.split("_")[0]); // return taskId
+      .map((id) => id.split("_")[0]);
   } catch (error) {
     console.error("Error fetching user completions:", error);
+    toast.error("Failed to load completions");
     return [];
   }
 };
