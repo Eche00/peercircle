@@ -43,7 +43,7 @@ export async function chatWithAssistant(
     throw new Error("GEMINI_API_KEY is not defined");
   }
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
   const body = {
     system_instruction: {
@@ -75,12 +75,12 @@ export async function chatWithAssistant(
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error(
-        "Gemini API Error Detail:",
-        JSON.stringify(errorData, null, 2),
-      );
-      throw new Error(`Gemini API error: ${response.statusText}`);
+      const text = await response.text();
+
+      console.log("Status:", response.status);
+      console.log("Response:", text);
+
+      throw new Error(text);
     }
 
     const data = await response.json();
@@ -101,10 +101,12 @@ export async function chatWithAssistant(
       };
     }
   } catch (error) {
-    console.error("Chat Error:", error);
+    console.error(error);
+
     return {
       success: false,
-      message: "Something went wrong. Please try again later.",
+      message:
+        error instanceof Error ? error.message : "Unknown error",
       suggestions: [],
     };
   }

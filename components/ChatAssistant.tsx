@@ -57,6 +57,7 @@ export default function ChatAssistant() {
 
       const result = await chatWithAssistant(userMessage, historyForApi);
 
+      console.log(result);
       if (result.success) {
         setMessages((prev) => [
           ...prev,
